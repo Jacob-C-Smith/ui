@@ -1,0 +1,8 @@
+{
+    "name"       : "UI default color theme",
+    "primary"    : [ 255, 255, 255 ],
+    "accent 1"   : [ 128, 128, 128 ],
+    "accent 2"   : [ 192, 192, 192 ],
+    "accent 3"   : [ 0  , 128, 255 ],
+    "background" : [ 0  , 0  , 0   ]
+}
