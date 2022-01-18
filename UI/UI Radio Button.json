@@ -1,0 +1,7 @@
+{
+    "x"           : 112,
+    "y"           : 16,
+    "checked"     : true,
+    "label"       : "Radio Button 1",
+    "radio group" : "group 1"
+}

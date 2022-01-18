@@ -23,14 +23,17 @@ typedef struct { f32 x, y; } vec2;
 typedef struct { s32 x, y; } ivec2;
 
 // Color
-typedef u32 color_t;
+typedef u32 color;
 
-// Structures
+// UI Structures
 struct mouse_state_s;
 typedef struct mouse_state_s mouse_state_t;
 
 struct UIInstance_s;
 typedef struct UIInstance_s UIInstance_t;
+
+struct UILabel_s;
+typedef struct UILabel_s UILabel_t;
 
 struct UIButton_s;
 typedef struct UIButton_s UIButton_t;
@@ -67,3 +70,6 @@ typedef struct UITextInput_s UITextInput_t;
 
 struct UIWindow_s;
 typedef struct UIWindow_s UIWindow_t;
+
+struct UIElement_s;
+typedef struct UIElement_s UIElement_t;

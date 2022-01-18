@@ -22,14 +22,12 @@ struct UIDropdown_s
                hidden;
     char     **options;
     u8         text_align;
-    long int   index,
+    i32        index,
                hover_index,
                width,
                height,
                x,
-               y,
-               text_color,
-               border_color;
+               y;
     size_t     options_len;
     
 
@@ -47,14 +45,13 @@ struct UIDropdown_s
     void      *next;
 };
 
-UIDropdown_t *createDropdown     ( void );
+UIDropdown_t *create_dropdown              ( void );
 
-UIDropdown_t *loadDropdown       ( const char    path[] );
-UIDropdown_t *loadDropdownAsJSON ( char         *token );
+UIDropdown_t *load_dropdown_as_json_tokens ( JSONToken_t* tokens     , size_t        token_count );
 
-int           drawDropdown       ( UIWindow_t   *window, UIDropdown_t *dropdown );
+int           draw_dropdown                ( UIWindow_t   *window    , UIDropdown_t *dropdown );
 
-int           hoverDropdown      ( UIDropdown_t *dropdown, mouse_state_t mouse_state );
-int           clickDropdown      ( UIDropdown_t *dropdown, mouse_state_t mouse_state );
+int           hover_dropdown               ( UIDropdown_t *dropdown  , mouse_state_t mouse_state );
+int           click_dropdown               ( UIDropdown_t *dropdown  , mouse_state_t mouse_state );
 
-int           destroyDropdown    ( UIDropdown_t *dropdown ); 
+int           destroy_dropdown             ( UIDropdown_t *dropdown ); 

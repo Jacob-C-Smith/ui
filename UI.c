@@ -20,17 +20,67 @@ u64 font[132] = {
     0x80C0E070371E1C08, 0x003C7E7E7E7E3C00, 0x040C1C3C3C1C0C04, 0x0000ff4224180000
 };
 
-UIInstance_t *UIInit           ( const char        *path )
+char* default_config = "{\n\t\"name\"       : \"Default color theme\",\n\t\"primary\"    : [ 0, 0, 0 ],\n\t\"accent 1\"   : [ 128, 128, 128 ],\n\t\"accent 2\"   : [ 192, 192, 192 ],\n\t\"accent 3\"   : [ 0, 128, 255 ],\n\t\"background\" : [ 255, 255, 255 ]\n}\n";
+
+UIInstance_t *ui_init           ( const char        *path )
 {
     // TODO: Argument check
-    UIInstance_t *ret = calloc(1, sizeof(UIInstance_t));
+    // Uninitialized data
+    FILE         *config_file;
 
+    // Initialized data
+    UIInstance_t *ret         = calloc(1, sizeof(UIInstance_t));
+
+    // Search AppData for a config
+    created_config_file:
+    //config_file = fopen("%APPDATA%/ui_config.json", "r");
+
+    // 
+    //if (config_file == 0)
+       // goto no_config_file;
+
+
+    //printf(default_config);
 
     return ret;
-    // TODO: Error handling
+
+    // Error handling
+    {
+
+        // User errors
+        {
+
+            // Create a config file 
+            no_config_file:
+            {
+
+                // Create the file
+                config_file = fopen("~/AppData/Roaming/ui_config.json", "w+");
+
+                // Write the default config
+                fwrite(default_config, 1, strlen(default_config), config_file);
+
+                // Flush the stream and close the file
+                fclose(default_config);
+
+                // Try again
+                goto created_config_file;
+            }
+        }
+
+        // Standard library errors
+        {
+
+        }
+
+        // Argument errors
+        {
+
+        }
+    }
 }
 
-size_t        UILoadFile       ( const char        *path,   void* buffer)
+size_t        ui_load_file       ( const char        *path,   void* buffer)
 {
     // Argument checking 
     {
@@ -66,19 +116,19 @@ size_t        UILoadFile       ( const char        *path,   void* buffer)
     {
         noPath:
             #ifndef NDEBUG
-                UIPrintError("[G10] Null path provided to funciton \"%s\\n", __FUNCSIG__);
+                ui_print_error("[G10] Null path provided to funciton \"%s\\n", __FUNCSIG__);
             #endif
             return 0;
 
         invalidFile:
             #ifndef NDEBUG
-                UIPrintError("[G10] Failed to load file \"%s\"\n", path);
+                ui_print_error("[G10] Failed to load file \"%s\"\n", path);
             #endif
            return 0;
     }
 }
 
-int           UIPrintError     ( const char *const  format, ...)
+int           ui_print_error     ( const char *const  format, ...)
 {
     // We use the varadic argument list in vprintf
     va_list aList;
@@ -86,15 +136,17 @@ int           UIPrintError     ( const char *const  format, ...)
 
     // Uses ANSI terminal escapes to set the color to red, 
     // print the message, and restore the color.
-    printf("\033[91m");
-    vprintf(format, aList);
-    printf("\033[0m");
+    {
+        printf("\033[91m");
+        vprintf(format, aList);
+        printf("\033[0m");
+    }
 
     va_end(aList);
 
     return 0;
 }
-int           UIPrintWarning   ( const char *const  format, ...)
+int           ui_print_warning   ( const char *const  format, ...)
 {
     // We use the varadic argument list in vprintf
     va_list aList;
@@ -110,7 +162,7 @@ int           UIPrintWarning   ( const char *const  format, ...)
 
     return 0;
 }
-int           UIPrintLog       ( const char *const  format, ...)
+int           ui_print_log       ( const char *const  format, ...)
 {
     // We use the varadic argument list in vprintf
     va_list aList;
@@ -127,7 +179,7 @@ int           UIPrintLog       ( const char *const  format, ...)
     return 0;
 }
 
-int           UIDrawFormatText ( const char *const  format, UIWindow_t * window, int x, int y, int size, ...)
+int           ui_draw_format_text ( const char *const  format, UIWindow_t * window, int x, int y, int size, ...)
 {
     // We use the varadic argument list in vprintf
     va_list aList;
@@ -136,9 +188,11 @@ int           UIDrawFormatText ( const char *const  format, UIWindow_t * window,
     // TODO: Dynamically allocate size
     char* buffer = calloc(1024, sizeof(u8));
 
+    // TODO: Check memory
+
     vsprintf(buffer, format, aList);
 
-    UIDrawText(buffer, window, x, y, size);
+    ui_draw_text(buffer, window, x, y, size);
     
     free(buffer);
 
@@ -160,18 +214,24 @@ void          UIDrawChar       ( char               c     , UIWindow_t *window, 
         }
 
 }
-int           UIDrawText       ( const char *const  text  , UIWindow_t *window, int x, int y, int size)
+int           ui_draw_text       ( const char *const  text  , UIWindow_t *window, int x, int y, int size)
 {  
-    for (size_t i = 0; i < strlen(text); i++)
+    size_t len = strlen(text);
+    for (size_t i = 0; i < len; i++)
         UIDrawChar(text[i], window, y, x + (i * (8*size)), size);
 
     return 0;
 }
 
-int           UIExit           ( UIInstance_t      *instance )
+int           ui_draw_circle(int radius, UIWindow_t* window, int x_center, int y_center)
 {
-    SDL_DestroyRenderer(instance->windows->renderer);
-    SDL_DestroyWindow(instance->windows->window);
+    // TODO:
+    return 0;
+}
+
+int           ui_exit           ( UIInstance_t      *instance )
+{
+    free(instance);
     
     return 0;
 }

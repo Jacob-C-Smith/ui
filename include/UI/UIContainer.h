@@ -6,5 +6,5 @@
 
 struct UIContainer_s
 {
-
+	int i;
 };

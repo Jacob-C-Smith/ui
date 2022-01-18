@@ -1,9 +1,10 @@
 #include <UI/UIButton.h>
 
-UIButton_t* createButton()
+UIElement_t* create_button()
 {
     // Initialized data
-    UIButton_t* ret = calloc(1, sizeof(UIButton_t));
+    UIElement_t *ret    = create_element();
+    ret->element.button = calloc(1, sizeof(UIButton_t));
 
     // Check allocated memory, if in debug mode
     {
@@ -19,83 +20,65 @@ UIButton_t* createButton()
     {
     outOfMemory:
         #ifndef NDEBUG
-            UIPrintError("[UI] [Button] Failed to create a button; Out of memory\n");
+            ui_print_error("[UI] [Button] Failed to create a button; Out of memory\n");
         #endif
         return (void*)0;
     }
 }
 
-UIButton_t* loadButton ( const char* path )
+UIButton_t* load_button_as_json_tokens ( JSONToken_t *tokens, size_t token_count )
 {
-    // Argument check
+    UIButton_t *ret = create_button();
+
+    // Search through values and pull out relevent information
+    for (size_t j = 0; j < token_count; j++)
     {
-        #ifndef NDEBUG
-        if (path == (void*)0)
-            goto noPath;
-        #endif
+        // Handle comments
+        if (strcmp("type", tokens[j].key) == 0)
+        {
+            if (tokens[j].type == JSONstring)
+                if (strcmp(tokens[j].value.n_where, "BUTTON") != 0)
+                    goto notAButton;
+        }
+        else if (strcmp("text", tokens[j].key) == 0)
+        {
+            size_t len = strlen(tokens[j].value.n_where);
+
+            ret->text = calloc(len + 1, sizeof(char));
+            strncpy(ret->text, tokens[j].value.n_where, len);
+
+            continue;
+        }
+        else if (strcmp("x", tokens[j].key) == 0)
+        {
+            ret->x = atoi(tokens[j].value.n_where);
+            continue;
+        }
+        else if (strcmp("y", tokens[j].key) == 0)
+        {
+            ret->y = atoi(tokens[j].value.n_where);
+            continue;
+        }
+        else
+            ui_print_warning("[UI] [Button] Unknown token encountered when parsing button, token %d/%d\n", j + 1, token_count);
     }
-
-    // Uninitialized data
-    u8         *data;
-    UIButton_t *ret;
-
-    // Initialized data
-    size_t      i    = 0;
-
-    // Load up the file
-    i    = UILoadFile(path, 0, false);
-    data = calloc(i, sizeof(u8));
-    UILoadFile(path, data, false);
-
-    // Parse the JSON into a button
-    ret = loadButtonAsJSON(data);
-
-    // Free resources
-    free(data);
 
     return ret;
 
-    // Error handling
+    // TODO: Error handling
     {
-    noPath:
-        #ifndef NDEBUG
-            UIPrintError("[UI] [Button] No path provided to function \"%s\"\n", __FUNCSIG__);
-        #endif
-        return 0;
-
+        notAButton:
+            ui_print_error("[UI] [Button] NOT A BUTTON\n");
+            return 0;
     }
 }
 
-UIButton_t* loadButtonAsJSON(char* token)
-{
-    // Initialized data
-    UIButton_t* ret = createButton();
-    size_t       len = strlen(token),
-        tokenCount = parseJSON(token, len, 0, (void*)0);
-    JSONToken_t* tokens = calloc(tokenCount, sizeof(JSONToken_t));
-
-    // Parse the JSON
-    parseJSON(token, len, tokenCount, tokens);
-
-    // Search through values and pull out relevent information
-    for (size_t j = 0; j < tokenCount; j++)
-    {
-        // Handle comments
-        if (strcmp("comment", tokens[j].key) == 0)
-        {
-
-        }
-
-        // 
-    }
-}
-
-int hoverButton(UIButton_t* button, mouse_state_t mouse_state)
+int hover_button(UIButton_t* button, mouse_state_t mouse_state)
 {
     return 0;
 }
 
-int clickButton(UIButton_t* button, mouse_state_t mouse_state)
+int click_button(UIButton_t* button, mouse_state_t mouse_state)
 {
     button->depressed = true;
 
@@ -113,13 +96,54 @@ int clickButton(UIButton_t* button, mouse_state_t mouse_state)
     return 0;
 }
 
-int releaseButton(UIButton_t* button, mouse_state_t mouse_state)
+int release_button ( UIButton_t* button, mouse_state_t mouse_state )
 {
     button->depressed = false;
     return 0;
 }
 
-int drawButton(UIWindow_t* window, UIButton_t* button)
+int add_hover_callback_button(UIButton_t* button, void(*callback)(UIButton_t*, mouse_state_t))
+{
+    // TODO: Argument check
+
+    // If this is the first callback, set the max to 1 and 
+    if (button->on_click_max == 0)
+    {
+        button->on_click_max = 1;
+        button->on_click     = calloc(1, sizeof(void*));
+    }
+
+
+    // Simple heuristic that doubles callbacks lists length if there is no space to 
+    // store the callback pointer
+    if (button->on_click_count + 1 > button->on_click_max)
+    {
+        // Double the max
+        button->on_click_max *= 2;
+
+        // Allocate the maximum number of callbacks
+        void **callbacks = calloc(button->on_click_max, sizeof(void*)),
+              *t         = button->on_click;
+
+        // Copy all the callbacks from the button to the new callback list
+        memcpy(callbacks, button->on_click, button->on_click_count * sizeof(void *));
+
+        // Set the click callback list pointer to the new list
+        button->on_click = callbacks;
+
+        // Free the old callback list
+        free(t);
+    }
+
+    // Increment the callback counter and install the new callback
+    button->on_click[button->on_click_count++] = callback;
+
+    return 0;
+
+    // TODO: Error handling
+}
+
+int draw_button ( UIWindow_t* window, UIButton_t* button )
 {
     size_t   l = strlen(button->text);
 
@@ -139,12 +163,13 @@ int drawButton(UIWindow_t* window, UIButton_t* button)
     SDL_SetRenderDrawColor(window->renderer, 0x00, 0x00, 0x00, 0xff);
     SDL_RenderDrawRect(window->renderer, &r);
     
-    UIDrawText(button->text, window, r.x + 3, r.y + 1, 1);
+    ui_draw_text(button->text, window, r.x + 3, r.y + 1, 1);
 
     return 0;
 }
 
-int destroyButton(UIButton_t* button)
+int destroy_button(UIButton_t* button)
 {
+    free(button);
     return 0;
 }

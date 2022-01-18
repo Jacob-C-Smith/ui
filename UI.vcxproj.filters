@@ -33,6 +33,15 @@
     <ClCompile Include="include\UI\UIDropdown.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UICheckbox.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="include\UI\UIImage.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UIElement.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\UI\UI.h">
@@ -77,5 +86,18 @@
     <ClInclude Include="include\UI\UIWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\UI\UIElement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

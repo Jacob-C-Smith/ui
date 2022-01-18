@@ -19,20 +19,26 @@
 
 struct UIWindow_s {
 	bool               is_open;
-	size_t             ui_elements_count;
-	void             **ui_elements;
 	char              *name;
+	UIElement_t       *elements;
+	UIElement_t       *last;
 	SDL_Window        *window;
 	SDL_Renderer      *renderer;
 	struct UIWindow_s *next;
 };
 
-UIWindow_t  *createWindow       ( );
+UIWindow_t  *create_window            ( void );
  
-UIWindow_t  *loadWindow         ( const char *path );
-UIWindow_t  *loadWindowAsJSON   ( char       *token );
+UIWindow_t  *load_window              ( const char *path );
+UIWindow_t  *load_window_as_json      ( char       *token );
 
-int          drawWindow         ( UIWindow_t *window );
+int          append_element_to_window ( UIWindow_t *window, UIElement_t   *element );
+UIElement_t *find_element             ( UIWindow_t *window, char *name );
 
-int          destroyWindow      ( UIWindow_t *window );
+int          click_window             ( UIWindow_t *window, mouse_state_t  mouse_state );
+int          hover_window             ( UIWindow_t *window, mouse_state_t  mouse_state );
+
+int          draw_window              ( UIWindow_t *window );
+
+int          destroy_window           ( UIWindow_t *window );
 

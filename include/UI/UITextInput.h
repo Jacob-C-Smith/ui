@@ -16,8 +16,6 @@ struct UITextInput_s
     long int height;
     long int x;
     long int y;
-    long int textColor;
-    long int backColor;
     bool     hidden;
 
     // Callbacks

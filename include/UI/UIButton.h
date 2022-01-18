@@ -9,6 +9,7 @@
 
 #include <UI/UItypedef.h>
 #include <UI/UIWindow.h>
+#include <UI/UIElement.h>
 #include <UI/UI.h>
 
 struct UIButton_s
@@ -34,29 +35,29 @@ struct UIButton_s
     void   **on_click,
            **on_hover;
     size_t   on_click_count,
-             on_hover_count;
+             on_click_max,
+             on_hover_count,
+             on_hover_max;
 
-    
-
-    // Next
-    void* next;
 };
 
 
 // Allocators
-UIButton_t *createButton     ( );
+UIElement_t *create_button                ( void );
 
 // Constructors
-UIButton_t *loadButton       ( const char *path );
-UIButton_t *loadButtonAsJSON ( char       *tokens );
+UIButton_t  *load_button_as_json_tokens   ( JSONToken_t *tokens, size_t token_count );
 
 // Callbacks
-int         hoverButton      ( UIButton_t *button, mouse_state_t mouse_state );
-int         clickButton      ( UIButton_t *button, mouse_state_t mouse_state );
-int         releaseButton    ( UIButton_t *button, mouse_state_t mouse_state );
+int         hover_button                 ( UIButton_t *button    , mouse_state_t mouse_state );
+int         click_button                 ( UIButton_t *button    , mouse_state_t mouse_state );
+int         release_button               ( UIButton_t *button    , mouse_state_t mouse_state );
+
+// Add callbacks
+int         add_hover_callback_button    ( UIButton_t* button, void (*callback)(UIButton_t*, mouse_state_t));
 
 // Drawing
-int         drawButton       ( UIWindow_t *window, UIButton_t *button );
+int         draw_button                  ( UIWindow_t *window    , UIButton_t   *button );
 
-// 
-int         destroyButton    ( UIButton_t *button );
+// Deallocators
+int         destroy_button               ( UIButton_t *button );

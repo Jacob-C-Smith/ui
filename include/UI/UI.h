@@ -33,30 +33,36 @@
 #define UI_SWDOWN 0x40
 
 struct mouse_state_s {
-	u32 x,
-		y;
-	u8  button;
+    u32 x,
+        y;
+    u8  button;
 };
 
 
 struct UIInstance_s {
-	UIWindow_t   *windows;
-	color_t       primary,
-		          background, 
-		          accent_1,
-		          accent_2,
-		          accent_3;
+    UIWindow_t   *windows;
+    color         primary,
+                  background, 
+                  accent_1,
+                  accent_2,
+                  accent_3;
 };
 
-UIInstance_t *UIInit           ( const char       *path );
+// Initializers
+UIInstance_t *ui_init             ( const char       *path );
 
-int           UIPrintLog       ( const char* const format  , ... );
-int           UIPrintWarning   ( const char* const format  , ... );
-int           UIPrintError     ( const char* const format  , ... );
+// Colored prints
+int           ui_print_log        ( const char* const format  , ... );
+int           ui_print_warning    ( const char* const format  , ... );
+int           ui_print_error      ( const char* const format  , ... );
 
-int           UIDrawFormatText ( const char* const format  , UIWindow_t *window, int x, int y, int size, ... );
-int           UIDrawText       ( const char* const text    , UIWindow_t *window, int x, int y, int size );
+// Text drawing
+int           ui_draw_format_text ( const char* const format  , UIWindow_t *window, int x, int y, int size, ... );
+int           ui_draw_text        ( const char* const text    , UIWindow_t *window, int x, int y, int size );
+int           ui_draw_circle      ( int               radius  , UIWindow_t *window, int x, int y );
 
-size_t        UILoadFile       ( const char       *path    , void       *buffer );
+// File I/O
+size_t        ui_load_file        ( const char       *path    , void       *buffer );
 
-int           UIExit           ( UIInstance_t     *instance );
+// Exit
+int           ui_exit             ( UIInstance_t     *instance );

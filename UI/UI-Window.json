@@ -1,0 +1,38 @@
+{
+    "name"     : "Test window",
+    "width"    : 160,
+    "height"   : 120,
+    "elements" : [
+        {
+            "type"     : "LABEL",
+            "text"     : "Label",
+            "x"        : 16,
+            "y"        : 16
+        },
+        {
+            "type"     : "BUTTON",
+            "text"     : "Button",
+            "x"        : 16,
+            "y"        : 32
+        },
+        {
+            "type"      : "CHECKBOX",
+            "x"         : 16,
+            "y"         : 48,
+            "checked"   : true,
+            "label"     : "Checkbox"
+        },
+        {
+            "type"      : "DROPDOWN",
+            "x"         : 16,
+            "y"         : 64,
+            "options"   : [
+                "Option 1",
+                "Option 2",
+                "Option 3"
+            ],
+            "index"     : -1,
+            "collapsed" : false
+        }
+    ]
+}

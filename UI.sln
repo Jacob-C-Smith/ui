@@ -11,6 +11,10 @@ Global
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
+		Static Library Debug|x64 = Static Library Debug|x64
+		Static Library Debug|x86 = Static Library Debug|x86
+		Static Library Release|x64 = Static Library Release|x64
+		Static Library Release|x86 = Static Library Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Debug|x64.ActiveCfg = Debug|x64
@@ -21,6 +25,14 @@ Global
 		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Release|x64.Build.0 = Release|x64
 		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Release|x86.ActiveCfg = Release|Win32
 		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Release|x86.Build.0 = Release|Win32
+		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Static Library Debug|x64.ActiveCfg = Static Library|x64
+		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Static Library Debug|x64.Build.0 = Static Library|x64
+		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Static Library Debug|x86.ActiveCfg = Static Library|Win32
+		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Static Library Debug|x86.Build.0 = Static Library|Win32
+		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Static Library Release|x64.ActiveCfg = Static Library Release|x64
+		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Static Library Release|x64.Build.0 = Static Library Release|x64
+		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Static Library Release|x86.ActiveCfg = Static Library Release|Win32
+		{B2FB84B8-03BD-4E7C-87D5-DFB441FF7278}.Static Library Release|x86.Build.0 = Static Library Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
