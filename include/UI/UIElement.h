@@ -21,16 +21,25 @@ union UIElement_u
 struct UIElement_s
 {
     u16                 type;
+    char               *name;
     union UIElement_u   element;
     struct UIElement_s *next;
 };
 
+// Allocators
 UIElement_t *create_element       ( void );
 
+// Constructors
 UIElement_t *load_element         ( const char   path[] );
 UIElement_t *load_element_as_json ( char        *token_text );
 
-int          click_element        ( UIElement_t *element   , mouse_state_t mouse_state ); 
-int          hover_element        ( UIElement_t *element   , mouse_state_t mouse_state );
-bool         in_bounds            ( UIElement_t *element   , mouse_state_t mouse_state );
-int          draw_element         ( UIWindow_t  *window    , UIElement_t *element );
+// Callbacks
+int          click_element        ( UIElement_t *element   , mouse_state_t  mouse_state ); 
+int          hover_element        ( UIElement_t *element   , mouse_state_t  mouse_state );
+int          release_element      ( UIElement_t *element   , mouse_state_t  mouse_state );
+
+// Bounds detection
+bool         in_bounds            ( UIElement_t *element   , mouse_state_t  mouse_state );
+
+// Drawing
+int          draw_element         ( UIWindow_t  *window    , UIElement_t   *element );

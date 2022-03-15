@@ -27,18 +27,26 @@ struct UIWindow_s {
 	struct UIWindow_s *next;
 };
 
+// Allocators
 UIWindow_t  *create_window            ( void );
  
+// Constructors
 UIWindow_t  *load_window              ( const char *path );
 UIWindow_t  *load_window_as_json      ( char       *token );
 
+// Element operations
 int          append_element_to_window ( UIWindow_t *window, UIElement_t   *element );
 UIElement_t *find_element             ( UIWindow_t *window, char *name );
 
+// User interaction
+int          process_window_input     ( UIWindow_t *window );
 int          click_window             ( UIWindow_t *window, mouse_state_t  mouse_state );
 int          hover_window             ( UIWindow_t *window, mouse_state_t  mouse_state );
+int          release_window           ( UIWindow_t *window, mouse_state_t  mouse_state );
 
+// Drawing 
 int          draw_window              ( UIWindow_t *window );
 
+// Destruction
 int          destroy_window           ( UIWindow_t *window );
 

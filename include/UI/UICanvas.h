@@ -6,9 +6,14 @@
 
 struct UICanvas_s
 {
-    // ID
-    char* ID;
-
-    // Next
-    void* next;
+    // TODO
+    
+    // Callbacks
+    size_t     on_click_count , on_click_max,
+               on_hover_count , on_hover_max,
+               on_change_count, on_change_max;
+    
+    void     **on_click,
+             **on_hover,
+             **on_change;
 };

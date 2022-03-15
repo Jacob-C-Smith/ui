@@ -1,6 +1,6 @@
 #include <UI/UIDropdown.h>
 
-UIDropdown_t *create_dropdown()
+UIDropdown_t *create_dropdown              ( void )
 {
 	UIDropdown_t *ret = calloc(1, sizeof(UIDropdown_t));
 	// TODO: Check memory
@@ -9,7 +9,7 @@ UIDropdown_t *create_dropdown()
 	// TODO: Error handling
 }
  
-int hover_dropdown(UIDropdown_t* dropdown, mouse_state_t mouse_state)
+int           hover_dropdown               ( UIDropdown_t* dropdown, mouse_state_t mouse_state)
 {
 	if ( dropdown->collapsed == false )
 	{
@@ -43,7 +43,7 @@ int hover_dropdown(UIDropdown_t* dropdown, mouse_state_t mouse_state)
 
 }
 
-int click_dropdown ( UIDropdown_t *dropdown, mouse_state_t mouse_state )
+int           click_dropdown               ( UIDropdown_t *dropdown, mouse_state_t mouse_state )
 {
 	// Toggle dropdown
 	dropdown->collapsed = (dropdown->collapsed ) ? false : true;
@@ -61,13 +61,13 @@ int click_dropdown ( UIDropdown_t *dropdown, mouse_state_t mouse_state )
 	return 0;
 }
 
-int destroy_dropdown(UIDropdown_t* dropdown)
+int           destroy_dropdown             ( UIDropdown_t* dropdown)
 {
 	free(dropdown);
 	return 0;
 }
 
-UIDropdown_t* load_dropdown_as_json_tokens(JSONToken_t* tokens, size_t token_count)
+UIDropdown_t *load_dropdown_as_json_tokens ( JSONToken_t* tokens, size_t token_count)
 {
 	// TODO: Argument check
 
@@ -85,6 +85,8 @@ UIDropdown_t* load_dropdown_as_json_tokens(JSONToken_t* tokens, size_t token_cou
 					goto notADropdown;
 			}
 		}
+		else if (strcmp("name", tokens[j].key) == 0)
+			continue;
 		else if (strcmp(tokens[j].key, "x")         == 0)
 		{
 			if (tokens[j].type == JSONprimative)
@@ -154,7 +156,7 @@ UIDropdown_t* load_dropdown_as_json_tokens(JSONToken_t* tokens, size_t token_cou
 		return 0;
 }
 
-int draw_dropdown(UIWindow_t* window, UIDropdown_t* dropdown)
+int           draw_dropdown                ( UIWindow_t* window, UIDropdown_t* dropdown)
 {
 	// TODO: Argument check
 

@@ -140,6 +140,9 @@ UIWindow_t* load_window_as_json(char* token)
 	ret->window   = SDL_CreateWindow(ret->name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_BORDERLESS);
 	SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 	ret->renderer = SDL_CreateRenderer(ret->window, -1, SDL_RENDERER_ACCELERATED);
+	
+	SDL_ShowWindow(ret->window);
+	ret->is_open = true;
 
 	return ret;
 	// TODO: Error handling
@@ -173,12 +176,16 @@ int append_element_to_window ( UIWindow_t* window, UIElement_t* element )
 
 UIElement_t* find_element(UIWindow_t* window, char* name)
 {
-	UIElement_t *ret = 0,
-		        *i   = window->elements;
+	UIElement_t *i = window->elements;
 
+	while (i)
+	{
+		if (strcmp(i->name, name) == 0)
+			return i;
+		i = i->next;
+	}
 
-
-	return ret;
+	return 0;
 }
 
 int draw_window ( UIWindow_t *window )
@@ -244,20 +251,165 @@ int draw_window ( UIWindow_t *window )
 		element = element->next;
 	}
 
+	// Present the window
+	SDL_RenderPresent(window->renderer);
+
+	return 0;
+}
+
+int process_window_input(UIWindow_t* window)
+{
+	UIInstance_t *instance = ui_get_active_instance();
+	SDL_Event     e;
+
+	// Process events
+	while (SDL_PollEvent(&e)) {
+		switch (e.type)
+		{
+
+		case SDL_QUIT:
+			window->is_open = false;
+			break;
+
+		case SDL_KEYDOWN:
+		{
+			const  u8* keyboardState = SDL_GetKeyboardState(NULL);
+
+			if (keyboardState[SDL_SCANCODE_F2])
+			{
+				destroy_window(window);
+				window = load_window("UI/UI Window.json");
+				instance->windows = window;
+				window->is_open = true;
+			}
+			if (keyboardState[SDL_SCANCODE_ESCAPE])
+				window->is_open = 0;
+
+		}
+		break;
+
+		case SDL_MOUSEBUTTONUP:
+		{
+			mouse_state_t mouse_state = { 0,0,0 };
+
+			if (e.button.button == SDL_BUTTON_LEFT)
+				mouse_state.button |= UI_M1;
+			if (e.button.button == SDL_BUTTON_MIDDLE)
+				mouse_state.button |= UI_M3;
+			if (e.button.button == SDL_BUTTON_RIGHT)
+				mouse_state.button |= UI_M2;
+			if (e.wheel.y > 0)
+			{
+				mouse_state.button |= UI_SWUP;
+			}
+			if (e.wheel.y < 0)
+			{
+				mouse_state.button |= UI_SWDOWN;
+			}
+			mouse_state.x = e.button.x;
+			mouse_state.y = e.button.y;
+			release_window(instance->windows, mouse_state);
+
+		}
+		break;
+
+		case SDL_MOUSEBUTTONDOWN:
+		{
+			mouse_state_t mouse_state = { 0,0,0 };
+
+			// Create the mouse_state struct
+			{
+				if (e.button.button == SDL_BUTTON_LEFT)
+					mouse_state.button |= UI_M1;
+				if (e.button.button == SDL_BUTTON_MIDDLE)
+					mouse_state.button |= UI_M3;
+				if (e.button.button == SDL_BUTTON_RIGHT)
+					mouse_state.button |= UI_M2;
+				if (e.wheel.y > 0)
+					mouse_state.button |= UI_SWUP;
+				if (e.wheel.y < 0)
+					mouse_state.button |= UI_SWDOWN;
+				mouse_state.x = e.button.x;
+				mouse_state.y = e.button.y;
+			}
+
+			click_window(instance->windows, mouse_state);
+		}
+		break;
+
+		case SDL_MOUSEMOTION:
+		{
+			mouse_state_t mouse_state = { 0,0,0 };
+
+			if (e.button.button == SDL_BUTTON_LEFT)
+				mouse_state.button |= UI_M1;
+			if (e.button.button == SDL_BUTTON_RIGHT)
+				mouse_state.button |= UI_M2;
+			if (e.button.button == SDL_BUTTON_MIDDLE)
+				mouse_state.button |= UI_M3;
+
+			if (e.type == SDL_MOUSEWHEEL)
+			{
+				if (e.wheel.y > 0)
+					mouse_state.button |= UI_SWUP;
+				else if (e.wheel.y < 0)
+					mouse_state.button |= UI_SWDOWN;
+				else;
+			}
+
+			mouse_state.x = e.button.x;
+			mouse_state.y = e.button.y;
+
+			hover_window(instance->windows, mouse_state);
+		}
+		break;
+
+		case SDL_WINDOWEVENT:
+			break;
+		default:
+			break;
+		}
+	}
+
 	return 0;
 }
 
 int click_window ( UIWindow_t *window, mouse_state_t mouse_state )
 {
 	UIElement_t *i = window->elements;
-
+	
+	// Iterate over elements
 	while (i)
 	{
+
+		// Did the user click on the element on the iterator?
 		if (in_bounds(i, mouse_state))
+		{
+			window->last = i;
 			click_element(i, mouse_state);
-		
+		}
+
 		i = i->next;
 	}
+
+	// Close window?
+	{
+		int w, h;
+
+		SDL_GetWindowSize(window->window, &w, &h);
+
+		if (mouse_state.x >= w - 48 && mouse_state.y >= 0 && mouse_state.x <= w - 20 && mouse_state.y <= 11)
+		{
+			// Left clicks minimize the window
+			if (mouse_state.button & UI_M1)
+				SDL_MinimizeWindow(window->window); 
+
+			// Right clicks close the window
+			else if (mouse_state.button & UI_M2)
+				window->is_open = false;
+		}
+	}
+	
 	return 0;
 }
 
@@ -269,10 +421,24 @@ int hover_window(UIWindow_t* window, mouse_state_t mouse_state)
 	{
 		if (in_bounds(i, mouse_state))
 			hover_element(i, mouse_state);
-
 		i = i->next;
 	}
 
+	return 0;
+}
+
+int release_window(UIWindow_t* window, mouse_state_t mouse_state)
+{
+	UIElement_t* i = window->elements;
+
+	while (i)
+	{
+		if (in_bounds(i, mouse_state))
+			release_element(i, mouse_state);
+		i = i->next;
+	}
+
+	return 0;
 	return 0;
 }
 

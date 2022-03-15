@@ -1,6 +1,6 @@
 #include <UI/UI.h>
 
-u64 font[132] = {
+u64 font[133] = {
     0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,
     0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,
     0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,
@@ -17,12 +17,14 @@ u64 font[132] = {
     0x0706366E66666700,	0x0C000E0C0C0C1E00,	0x300030303033331E,	0x070666361E366700,	0x0E0C0C0C0C0C1E00,	0x0000337F7F6B6300,	0x00001F3333333300,	0x00001E3333331E00,
     0x00003B66663E060F,	0x00006E33333E3078,	0x00003B6E66060F00,	0x00003E031E301F00,	0x080C3E0C0C2C1800,	0x0000333333336E00,	0x00003333331E0C00,	0x0000636B7F7F3600,
     0x000063361C366300,	0x00003333333E301F,	0x00003F190C263F00,	0x380C0C070C0C3800,	0x1818180018181800,	0x070C0C380C0C0700,	0x6E3B000000000000,	0x0000000000000000,
-    0x80C0E070371E1C08, 0x003C7E7E7E7E3C00, 0x040C1C3C3C1C0C04, 0x0000ff4224180000
+    0x80C0E070371E1C08, 0x00001c3e3e3e1c00, 0x040C1C3C3C1C0C04, 0x0000ff4224180000, 0x7E7E7E7E7E7E6018
 };
 
 char* default_config = "{\n\t\"name\"       : \"Default color theme\",\n\t\"primary\"    : [ 0, 0, 0 ],\n\t\"accent 1\"   : [ 128, 128, 128 ],\n\t\"accent 2\"   : [ 192, 192, 192 ],\n\t\"accent 3\"   : [ 0, 128, 255 ],\n\t\"background\" : [ 255, 255, 255 ]\n}\n";
 
-UIInstance_t *ui_init           ( const char        *path )
+UIInstance_t* active_instance = 0;
+
+UIInstance_t *ui_init                ( const char        *path )
 {
     // TODO: Argument check
     // Uninitialized data
@@ -41,6 +43,8 @@ UIInstance_t *ui_init           ( const char        *path )
 
 
     //printf(default_config);
+
+    active_instance = ret;
 
     return ret;
 
@@ -80,7 +84,7 @@ UIInstance_t *ui_init           ( const char        *path )
     }
 }
 
-size_t        ui_load_file       ( const char        *path,   void* buffer)
+size_t        ui_load_file           ( const char        *path,   void* buffer, bool binary)
 {
     // Argument checking 
     {
@@ -92,7 +96,7 @@ size_t        ui_load_file       ( const char        *path,   void* buffer)
 
     // Initialized data
     size_t  ret = 0;
-    FILE   *f   = fopen(path, "r");
+    FILE   *f   = fopen(path, (binary) ? "rb" : "r");
 
     // Check if file is valid
     if (f == NULL)
@@ -128,7 +132,7 @@ size_t        ui_load_file       ( const char        *path,   void* buffer)
     }
 }
 
-int           ui_print_error     ( const char *const  format, ...)
+int           ui_print_error         ( const char *const  format, ...)
 {
     // We use the varadic argument list in vprintf
     va_list aList;
@@ -146,7 +150,7 @@ int           ui_print_error     ( const char *const  format, ...)
 
     return 0;
 }
-int           ui_print_warning   ( const char *const  format, ...)
+int           ui_print_warning       ( const char *const  format, ...)
 {
     // We use the varadic argument list in vprintf
     va_list aList;
@@ -162,7 +166,7 @@ int           ui_print_warning   ( const char *const  format, ...)
 
     return 0;
 }
-int           ui_print_log       ( const char *const  format, ...)
+int           ui_print_log           ( const char *const  format, ...)
 {
     // We use the varadic argument list in vprintf
     va_list aList;
@@ -179,7 +183,12 @@ int           ui_print_log       ( const char *const  format, ...)
     return 0;
 }
 
-int           ui_draw_format_text ( const char *const  format, UIWindow_t * window, int x, int y, int size, ...)
+UIInstance_t* ui_get_active_instance(void)
+{
+    return active_instance;
+}
+
+int           ui_draw_format_text    ( const char *const  format, UIWindow_t *window, int x, int y, int size, ...)
 {
     // We use the varadic argument list in vprintf
     va_list aList;
@@ -200,7 +209,7 @@ int           ui_draw_format_text ( const char *const  format, UIWindow_t * wind
 
     return 0;
 }
-void          UIDrawChar       ( char               c     , UIWindow_t *window, int x, int y, int size)
+void          UIDrawChar             ( char               c     , UIWindow_t *window, int x, int y, int size)
 {
     u64 bmc = font[(u8)c];
     for ( u32 h = ( x + ( 8 * size ) ); h > x; h -= size )
@@ -214,7 +223,7 @@ void          UIDrawChar       ( char               c     , UIWindow_t *window, 
         }
 
 }
-int           ui_draw_text       ( const char *const  text  , UIWindow_t *window, int x, int y, int size)
+int           ui_draw_text           ( const char *const  text  , UIWindow_t *window, int x, int y, int size)
 {  
     size_t len = strlen(text);
     for (size_t i = 0; i < len; i++)
@@ -223,13 +232,46 @@ int           ui_draw_text       ( const char *const  text  , UIWindow_t *window
     return 0;
 }
 
-int           ui_draw_circle(int radius, UIWindow_t* window, int x_center, int y_center)
+int           ui_draw_circle         ( int radius, UIWindow_t* window, int x_center, int y_center)
 {
-    // TODO:
+    const int32_t diameter = (radius * 2);
+
+    i32 x     = (radius - 1),
+        y     = 0,
+        tx    = 1,
+        ty    = 1,
+        error = (tx - diameter);
+
+    while (x >= y)
+    {
+        //  Each of the following renders an octant of the circle
+        SDL_RenderDrawPoint(window->renderer, x_center + x, y_center - y);
+        SDL_RenderDrawPoint(window->renderer, x_center + x, y_center + y);
+        SDL_RenderDrawPoint(window->renderer, x_center - x, y_center - y);
+        SDL_RenderDrawPoint(window->renderer, x_center - x, y_center + y);
+        SDL_RenderDrawPoint(window->renderer, x_center + y, y_center - x);
+        SDL_RenderDrawPoint(window->renderer, x_center + y, y_center + x);
+        SDL_RenderDrawPoint(window->renderer, x_center - y, y_center - x);
+        SDL_RenderDrawPoint(window->renderer, x_center - y, y_center + x);
+
+        if (error <= 0)
+        {
+            ++y;
+            error += ty;
+            ty += 2;
+        }
+
+        if (error > 0)
+        {
+            --x;
+            tx += 2;
+            error += (tx - diameter);
+        }
+    }
     return 0;
 }
-
-int           ui_exit           ( UIInstance_t      *instance )
+ 
+int           ui_exit                ( UIInstance_t      *instance )
 {
     free(instance);
     

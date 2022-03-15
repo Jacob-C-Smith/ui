@@ -1,0 +1,7 @@
+{
+    "type"     : "BUTTON",
+    "name"     : "submit_button",
+    "text"     : "Submit forum",
+    "x"        : 16,
+    "y"        : 32
+}

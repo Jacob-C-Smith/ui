@@ -36,13 +36,9 @@ struct UIDropdown_s
                on_hover_count,
                on_change_count;
     
-    void      *on_click,
-              *on_hover,
-              *on_change;
-
-
-    // Next       
-    void      *next;
+    void     **on_click,
+             **on_hover,
+             **on_change;
 };
 
 UIDropdown_t *create_dropdown              ( void );

@@ -51,7 +51,7 @@ struct UIInstance_s {
 // Initializers
 UIInstance_t *ui_init             ( const char       *path );
 
-// Colored prints
+// ANSI colored prints
 int           ui_print_log        ( const char* const format  , ... );
 int           ui_print_warning    ( const char* const format  , ... );
 int           ui_print_error      ( const char* const format  , ... );
@@ -61,8 +61,11 @@ int           ui_draw_format_text ( const char* const format  , UIWindow_t *wind
 int           ui_draw_text        ( const char* const text    , UIWindow_t *window, int x, int y, int size );
 int           ui_draw_circle      ( int               radius  , UIWindow_t *window, int x, int y );
 
+// Image drawing
+UIInstance_t *ui_get_active_instance( void );
+
 // File I/O
-size_t        ui_load_file        ( const char       *path    , void       *buffer );
+size_t        ui_load_file        ( const char       *path    , void       *buffer, bool binary );
 
 // Exit
 int           ui_exit             ( UIInstance_t     *instance );

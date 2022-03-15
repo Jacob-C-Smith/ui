@@ -18,11 +18,18 @@ struct UILabel_s
              width,
              height;
     bool     hidden;
-    void   **on_click;
-    size_t   on_click_count;
+
+    // Callbacks
+    size_t     on_click_count,
+               on_hover_count,
+               on_change_count;
+    
+    void     **on_click,
+             **on_hover,
+             **on_change;
 };
 
-UILabel_t *create_label              ( );
+UILabel_t *create_label              ( void );
 
 UILabel_t *load_label                ( const char  path[] );
 UILabel_t *load_label_as_json_tokens ( JSONToken_t *tokens, size_t token_count );

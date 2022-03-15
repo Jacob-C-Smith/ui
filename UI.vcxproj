@@ -247,9 +247,10 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>./include;../JSON/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -280,6 +281,9 @@
   <ItemGroup>
     <ClCompile Include="include\UI\UIDropdown.c" />
     <ClCompile Include="include\UI\UIImage.c" />
+    <ClCompile Include="include\UI\UIRadioButton.c" />
+    <ClCompile Include="include\UI\UISlider.c" />
+    <ClCompile Include="include\UI\UITextInput.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="UI.c" />
     <ClCompile Include="UIButton.c" />
@@ -304,12 +308,19 @@
     <ClInclude Include="include\UI\UITextInput.h" />
     <ClInclude Include="include\UI\UItypedef.h" />
     <ClInclude Include="include\UI\UIWindow.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="G UI.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

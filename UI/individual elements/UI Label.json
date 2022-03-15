@@ -1,0 +1,7 @@
+{
+    "type"     : "LABEL",
+    "name"     : "label",
+    "text"     : "Label",
+    "x"        : 16,
+    "y"        : 16
+}

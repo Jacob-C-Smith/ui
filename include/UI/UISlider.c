@@ -1,88 +1,69 @@
-#include <UI/UICheckbox.h>
+#include <UI/UISlider.h>
 
-UICheckbox_t *create_checkbox              ( void )
+UISlider_t* create_slider(void)
 {
-    // Allocate for a checkbox
-    UICheckbox_t* ret = calloc(1, sizeof(UICheckbox_t));
+    // Initialized data
+	UISlider_t *ret = calloc(1, sizeof(UILabel_t));
+	
+	// Check allocated memory, if in debug mode
+	{
+		#ifndef NDEBUG
+		if (ret == (void*)0)
+			goto noMem;
+		#endif
+	}
+	
+	// Return a pointer to the start of the struct
+	return (UISlider_t *) ret;
 
-    // Check memory
-    {
-        if(ret == (void *)0)
-            goto out_of_memory;
-    }
-
-    return ret;
-
-    // Error handling
-    {
-
-        // Standard library errors
-        {
-            out_of_memory:
-                ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCSIG__);
-                return 0;
-        }
-    }
+	// Error handling
+	{
+		// Standard library errors
+		{
+			noMem:
+			#ifndef NDEBUG
+				ui_print_error("[UI] [Slider] Failed to create a slider; Out of memory\n");
+			#endif
+			return (void*)0;
+		}
+	}
 }
 
-UICheckbox_t *load_checkbox                ( const char   *path )
+UISlider_t* load_slider(const char path[])
 {
-    // Argument check
-    {
-        #ifndef NDEBUG
-            if(path == (void *)0)
-                goto no_path;
-        #endif
-    }
+    // Uninitialized data
+    u8         *data;
+	UISlider_t  *ret;
 
     // Initialized data
-    UICheckbox_t *ret        = 0;
-    char         *token_text = 0;
-    size_t        token_len  = 0;
+    size_t      i   = 0;
 
-    // Load up file
-    token_len  = ui_load_file(path, 0, false);
-    token_text = calloc(token_len, sizeof(u8));
+    // Load the file
+    i    = ui_load_file(path, 0, false);
+    data = calloc(i, sizeof(u8));
+    ui_load_file(path, data, false);
 
-    // Check memory
-    {
-        #ifndef NDEBUG
-            if(token_text == (void*)0)
-                goto out_of_memory;
-        #endif
-    }
+	// Parse the JSON object
+	ret = 0;// load_slider_as_json(data);
 
-    ui_load_file(path, token_text, false);
+    // Finish up
+    free(data);
 
-    // Construct the checkbox
-    ret = 0;// load_checkbox_as_json(token_text);
-
-    free(token_text);
-
+	// Return a pointer to the populated label
     return ret;
 
     // Error handling
     {
-
-        // Standard library errors
-        {
-            out_of_memory:
-                ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCSIG__);
-                return 0;
-        }
-
-        // Argument errors
-        {
-            no_path:
-                ui_print_error("[UI] [Checkbox] Null pointer provided for \"path\" in call to function \"%s\"\n", __FUNCSIG__);
-                return 0;
-        }
+        invalidFile:
+            #ifndef NDEBUG
+                ui_print_error("[UI] [Label] Failed to load file %s\n", path);
+            #endif
+			return 0;
     }
 }
 
-UICheckbox_t *load_checkbox_as_json_tokens ( JSONToken_t  *tokens  , size_t        token_count)
+UISlider_t* load_slider_as_json_tokens(JSONToken_t* tokens, size_t token_count)
 {
-
     // Argument check
     {
         #ifndef NDEBUG
@@ -272,82 +253,28 @@ UICheckbox_t *load_checkbox_as_json_tokens ( JSONToken_t  *tokens  , size_t     
             return 0;
         }
     }
-   
 }
 
-int           hover_checkbox               ( UICheckbox_t *checkbox, mouse_state_t mouse_state)
+int draw_slider(UIWindow_t* window, UISlider_t* slider)
 {
     return 0;
 }
 
-int           click_checkbox               ( UICheckbox_t *checkbox, mouse_state_t mouse_state)
+int hover_slider(UISlider_t* slider, mouse_state_t mouse_state)
 {
-
-    // Toggle checkbox selection
-    {
-        s32 y = mouse_state.y - checkbox->y;
-
-        y /= 15;
-
-        checkbox->checked[y] = (checkbox->checked[y]) ? false : true;
-    }
-
-    // Iterate through callbacks
-    for (size_t i = 0; i < checkbox->on_click_count; i++)
-    {
-        // Define the callback function
-        void (*callback)(UICheckbox_t*, mouse_state_t) = checkbox->on_click[i];
-
-        // Call the callback function
-        (*callback)(checkbox, mouse_state);
-
-    }
-
     return 0;
 }
 
-int           change_checkbox              ( UICheckbox_t *checkbox, mouse_state_t mouse_state )
+int click_slider(UISlider_t* slider, mouse_state_t mouse_state)
 {
-    // Iterate through callbacks
-    for (size_t i = 0; i < checkbox->on_change_count; i++)
-    {
-        // Define the callback function
-        void (*callback)(UICheckbox_t*, mouse_state_t) = checkbox->on_change[i];
-
-        // Call the callback function
-        (*callback)(checkbox, mouse_state);
-
-    }
     return 0;
 }
 
-int           draw_checkbox                ( UIWindow_t   *window  , UICheckbox_t *checkbox )
+int release_slider(UISlider_t* slider, mouse_state_t mouse_state)
 {
-
-    SDL_Rect r = { checkbox->x, checkbox->y, 12, 12 };
-    checkbox->width  = 12,
-    checkbox->height = 18*checkbox->label_count;
-
-    for (size_t i = 0; i < checkbox->label_count; i++)
-    {
-    
-        SDL_SetRenderDrawColor(window->renderer, 0x00, 0x00, 0x00, 0xff);
-        SDL_RenderDrawRect(window->renderer, &r);
-
-        if (checkbox->checked[i] == true)
-            ui_draw_text("\200", window, r.x + 2, r.y + 1, 1);
-
-        ui_draw_text(checkbox->labels[i], window, r.x + 14, r.y + 2, 1);
-    
-        r.y += 15;
-
-    }
     return 0;
-
 }
 
-int           destroy_checkbox             ( UICheckbox_t *checkbox )
+void destroy_slider(UISlider_t* slider)
 {
-    free(checkbox);
-    return 0;
 }

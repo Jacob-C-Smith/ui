@@ -90,7 +90,8 @@ UILabel_t* load_label_as_json_tokens (JSONToken_t* tokens, size_t token_count)
 
 			strncpy(ret->text, label_text, label_text_len);
         }
-
+		else if ( strcmp("name", tokens[j].key) == 0)
+			continue;
 		else if ( strcmp("x", tokens[j].key) == 0 )
 		{
 			if ( tokens[j].type == JSONprimative )

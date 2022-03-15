@@ -4,8 +4,14 @@
 
 struct UIChart_s
 {
-    // ID
-    char* ID;
-    // Next
-    void* next;
+    // TODO
+    
+    // Callbacks
+    size_t     on_click_count,
+               on_hover_count,
+               on_change_count;
+    
+    void     **on_click,
+             **on_hover,
+             **on_change;
 };

@@ -12,25 +12,32 @@
 
 struct UICheckbox_s
 {
-    // ID
-    char* label,
-          group;
+    
+    char  *name,
+         **labels;
+
+    size_t label_count,
+           longest_label;
 
     // Renderer
-    u32   x,
-          y,
-          width,
-          height;
-    bool  hidden;
+    u32    x,
+           y,
+           width,
+           height;
+
+    bool   hidden;
 
     // Value
-    bool  checked;
-
-
+    bool  *checked;
 
     // Callbacks
-    void** on_click;
-    size_t on_click_count;
+    size_t on_click_count, on_click_max,
+           on_hover_count, on_hover_max,
+           on_change_count, on_change_max;
+    
+    void     **on_click,
+             **on_hover,
+             **on_change;
 };
 
 // Allocators
@@ -42,7 +49,7 @@ UICheckbox_t *load_checkbox_as_json_tokens ( JSONToken_t  *tokens    , size_t   
 // Callbacks
 int           hover_checkbox               ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
 int           click_checkbox               ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
-int           release_checkbox             ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
+int           change_checkbox              ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
 
 // Drawing
 int           draw_checkbox                ( UIWindow_t   *window    , UICheckbox_t *checkbox );
