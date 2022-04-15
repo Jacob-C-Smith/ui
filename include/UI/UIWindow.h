@@ -20,6 +20,8 @@
 struct UIWindow_s {
 	bool               is_open;
 	char              *name;
+	size_t             width,
+		               height;
 	UIElement_t       *elements;
 	UIElement_t       *last;
 	SDL_Window        *window;
@@ -33,10 +35,13 @@ UIWindow_t  *create_window            ( void );
 // Constructors
 UIWindow_t  *load_window              ( const char *path );
 UIWindow_t  *load_window_as_json      ( char       *token );
+UIWindow_t  *construct_window         ( char       *title, size_t width, size_t height );
 
 // Element operations
 int          append_element_to_window ( UIWindow_t *window, UIElement_t   *element );
 UIElement_t *find_element             ( UIWindow_t *window, char *name );
+
+int          resize_window            ( UIWindow_t *window );
 
 // User interaction
 int          process_window_input     ( UIWindow_t *window );

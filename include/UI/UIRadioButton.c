@@ -335,10 +335,12 @@ int           draw_radio_button                ( UIWindow_t   *window  , UIRadio
     radio_button->width  = 12,
     radio_button->height = 18 * radio_button->label_count;
 
+    UIInstance_t *instance = ui_get_active_instance();
+
     for (size_t i = 0; i < radio_button->label_count; i++)
     {
     
-        SDL_SetRenderDrawColor(window->renderer, 0x00, 0x00, 0x00, 0xff);
+        SDL_SetRenderDrawColor(window->renderer,     (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
         ui_draw_circle(5, window, r.x + 6, r.y + 6 );
 
         if (radio_button->checked_index == i)

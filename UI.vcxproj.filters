@@ -22,6 +22,9 @@
     <Filter Include="Header Files\UI\window\element">
       <UniqueIdentifier>{bac6a7c8-bf1a-4d6b-aae0-f2aa796850f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI extras">
+      <UniqueIdentifier>{bd44b714-9670-4588-9636-e7b6d2a57f74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -60,13 +63,13 @@
     <ClCompile Include="include\UI\UIRadioButton.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UIDialog.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\UI\UItypedef.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\UIContainer.h">
-      <Filter>Header Files\UI\window\element</Filter>
     </ClInclude>
     <ClInclude Include="include\UI\UIElement.h">
       <Filter>Header Files\UI\window</Filter>
@@ -77,14 +80,8 @@
     <ClInclude Include="include\UI\UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\UIRadioButton.h">
-      <Filter>Header Files\UI\window\element</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\UICheckbox.h">
-      <Filter>Header Files\UI\window\element</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\UIDropdown.h">
-      <Filter>Header Files\UI\window\element</Filter>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\UI\UIButton.h">
       <Filter>Header Files\UI\window\element</Filter>
@@ -92,13 +89,13 @@
     <ClInclude Include="include\UI\UICanvas.h">
       <Filter>Header Files\UI\window\element</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\UIChart.h">
+    <ClInclude Include="include\UI\UICheckbox.h">
       <Filter>Header Files\UI\window\element</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\UITextInput.h">
+    <ClInclude Include="include\UI\UIContainer.h">
       <Filter>Header Files\UI\window\element</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\UISlider.h">
+    <ClInclude Include="include\UI\UIDropdown.h">
       <Filter>Header Files\UI\window\element</Filter>
     </ClInclude>
     <ClInclude Include="include\UI\UIImage.h">
@@ -107,8 +104,20 @@
     <ClInclude Include="include\UI\UILabel.h">
       <Filter>Header Files\UI\window\element</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\UI\UIRadioButton.h">
+      <Filter>Header Files\UI\window\element</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\UISlider.h">
+      <Filter>Header Files\UI\window\element</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\UITextInput.h">
+      <Filter>Header Files\UI\window\element</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\UIDialog.h">
+      <Filter>Header Files\UI extras</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\UIChart.h">
+      <Filter>Header Files\UI extras</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

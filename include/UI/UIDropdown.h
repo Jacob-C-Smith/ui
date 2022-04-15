@@ -14,8 +14,7 @@
 
 struct UIDropdown_s
 {
-    // ID
-    char      *ID;
+    char      *name;
 
     // Renderer
     bool       collapsed,

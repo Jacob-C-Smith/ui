@@ -75,14 +75,16 @@ UISlider_t* load_slider_as_json_tokens(JSONToken_t* tokens, size_t token_count)
     }
 
     // Initialized data
-    UICheckbox_t *ret           = create_checkbox();
+    UISlider_t   *ret           = create_slider();
     size_t        j             = 0,
                   label_count   = 0,
                   longest_label = 0;
-    char        **labels        = 0,
-                 *x             = 0,
+    char         *x             = 0,
                  *y             = 0,
-                **checked       = 0;
+                 *width         = 0,
+                 *min           = 0,
+                 *max           = 0,
+                 *step          = 0;
     bool          hidden        = false;
 
     // Search through values and pull out relevent information
@@ -91,21 +93,12 @@ UISlider_t* load_slider_as_json_tokens(JSONToken_t* tokens, size_t token_count)
         if (strcmp("type", tokens[j].key) == 0)
         {
             if (tokens[j].type == JSONstring)
-                if (strcmp(tokens[j].value.n_where, "CHECKBOX") != 0)
+                if (strcmp(tokens[j].value.n_where, "SLIDER") != 0)
                     goto notACheckbox;
         }
         else if (strcmp("name", tokens[j].key) == 0)
             continue;
-        if (strcmp("labels", tokens[j].key) == 0)
-        {
-            if (tokens[j].type == JSONarray)
-                labels = tokens[j].value.a_where;
-            else
-                goto checkbox_labels_type_error;
-
-            continue;
-        }
-        if (strcmp("x", tokens[j].key) == 0)
+        else if (strcmp("x", tokens[j].key) == 0)
         {
             if (tokens[j].type == JSONprimative)
                 x = tokens[j].value.n_where;
@@ -114,65 +107,55 @@ UISlider_t* load_slider_as_json_tokens(JSONToken_t* tokens, size_t token_count)
 
             continue;
         }
-        if (strcmp("y", tokens[j].key) == 0)
+        else if (strcmp("y", tokens[j].key) == 0)
         {
             if (tokens[j].type == JSONprimative)
                 y = tokens[j].value.n_where;
             else
                 goto checkbox_y_type_error;
         }
-        if (strcmp("hidden", tokens[j].key) == 0)
+        else if (strcmp("width", tokens[j].key) == 0)
         {
             if (tokens[j].type == JSONprimative)
-                hidden = tokens[j].value.n_where;
+                width = tokens[j].value.n_where;
             else
-                goto checkbox_hidden_type_error;
+                // TODO:
+                ;//goto checkbox_width_type_error;
+                
         }
-
-        if (strcmp("checked", tokens[j].key) == 0)
+        else if (strcmp("min", tokens[j].key) == 0)
         {
-            if (tokens[j].type == JSONarray)
-                checked = tokens[j].value.a_where;
+            if (tokens[j].type == JSONprimative)
+                min = tokens[j].value.n_where;
             else
-                goto checkbox_checked_type_error;
-        }
+                // TODO:
+                ;//goto checkbox_min_type_error;
 
+        }
+        else if (strcmp("max", tokens[j].key) == 0)
+        {
+            if (tokens[j].type == JSONprimative)
+                max = tokens[j].value.n_where;
+            else
+                // TODO:
+                ;//goto checkbox_max_type_error;
+
+        }
+        else if (strcmp("step", tokens[j].key) == 0)
+        {
+            if (tokens[j].type == JSONprimative)
+                step = tokens[j].value.n_where;
+            else
+                // TODO:
+                ;//goto checkbox_step_type_error;
+
+        }
     }
 
     // Construct the checkbox
     {
         
-        // Count the number of checkboxes
-        for (; labels[label_count]; label_count++);
-
-        // Set the label count
-        ret->label_count = label_count;
-
-        // Allocate for the list of labels
-        ret->labels  = calloc(label_count, sizeof(char*));
-        ret->checked = calloc(label_count, sizeof(bool));
-        // Allocate for and copy labels, check states
-        for (size_t i = 0; i < label_count; i++)
-        {
-            char   *l = labels[i];
-            size_t  l_len = strlen(l);
-
-            // Keep track of the longest element
-            if (longest_label < l_len)
-                longest_label = l_len;
-
-
-            // Allocate for i'th label
-            ret->labels[i]  = calloc(l_len + 1, sizeof(u8));
-            
-            // Copy string
-            strncpy(ret->labels[i], l, l_len);
-
-            // Set the checked parameter
-            ret->checked[i] = checked[i];
-        }
-
-        ret->longest_label = longest_label;
+    
 
         // Set x
         ret->x = atoi(x);
@@ -180,8 +163,15 @@ UISlider_t* load_slider_as_json_tokens(JSONToken_t* tokens, size_t token_count)
         // Set y
         ret->y = atoi(y);
 
-        // Set hidden
-        ret->hidden = hidden;
+        // Set width
+        ret->width = atoi(width);
+
+        ret->min   = atof(min),
+        ret->value = ret->min;
+        ret->max   = atof(max);
+        ret->step  = atof(step);
+
+        ret->real_step =  ret->width / (ret->step * ret->max);
 
     }
 
@@ -191,6 +181,8 @@ UISlider_t* load_slider_as_json_tokens(JSONToken_t* tokens, size_t token_count)
 
     // Error handling
     {
+
+
         notACheckbox:
             ui_print_error("[UI] [Checkbox] NOT A CHECKBOX\n");
 
@@ -198,6 +190,8 @@ UISlider_t* load_slider_as_json_tokens(JSONToken_t* tokens, size_t token_count)
 
         // Standard library errors
         {
+
+        // *alloc function failed
         out_of_memory:
             ui_print_error("[Standard library] Out of memory in call to function \"%s\"\n");
             return 0;
@@ -216,21 +210,33 @@ UISlider_t* load_slider_as_json_tokens(JSONToken_t* tokens, size_t token_count)
 
         // JSON type errors
         {
+
+        // The "type" value was of the wrong type
         chechbox_type_type_error:
             ui_print_error("[UI] [Checkbox] \"type\" token is of type \"%s\", but should be \"%s\" in call to function \"%s\"\n", token_types[tokens[j].type], token_types[JSONstring], __FUNCSIG__);
             return 0;
+
+        // The "labels" value was of the wrong type
         checkbox_labels_type_error:
             ui_print_error("[UI] [Checkbox] \"labels\" token is of type \"%s\", but should be \"%s\" in call to function \"%s\"\n", token_types[tokens[j].type], token_types[JSONarray], __FUNCSIG__);
             return 0;
+
+        // The "x" value was of the wrong type
         checkbox_x_type_error:
             ui_print_error("[UI] [Checkbox] \"x\" token is of type \"%s\", but should be \"%s\" in call to function \"%s\"\n", token_types[tokens[j].type], token_types[JSONprimative], __FUNCSIG__);
             return 0;
+
+        // The "y" value was of the wrong type
         checkbox_y_type_error:
             ui_print_error("[UI] [Checkbox] \"y\" token is of type \"%s\", but should be \"%s\" in call to function \"%s\"\n", token_types[tokens[j].type], token_types[JSONprimative], __FUNCSIG__);
             return 0;
+
+        // The "hidden" value was of the wrong type
         checkbox_hidden_type_error:
             ui_print_error("[UI] [Checkbox] \"hidden\" token is of type \"%s\", but should be \"%s\" in call to function \"%s\"\n", token_types[tokens[j].type], token_types[JSONprimative], __FUNCSIG__);
             return 0;
+        
+        // The "checked" value was of the wrong type
         checkbox_checked_type_error:
             ui_print_error("[UI] [Checkbox] \"checked\" token is of type \"%s\", but should be \"%s\" in call to function \"%s\"\n", token_types[tokens[j].type], token_types[JSONarray], __FUNCSIG__);
             return 0;
@@ -257,24 +263,82 @@ UISlider_t* load_slider_as_json_tokens(JSONToken_t* tokens, size_t token_count)
 
 int draw_slider(UIWindow_t* window, UISlider_t* slider)
 {
+    UIInstance_t *instance = ui_get_active_instance();
+
+    SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
+    SDL_RenderDrawLine(window->renderer, slider->x, slider->y + 10+12, slider->x + slider->width-4, slider->y + 10+12);
+    ui_draw_format_text("\204", window, slider->x + (slider->value * slider->real_step)-8, slider->y+12, 1);
+
+    if (slider->grab)
+    {
+        if (slider->value > slider->max)
+            slider->value = slider->max;
+        if (slider->value < slider->min)
+            slider->value = slider->min;
+
+
+
+    }
+    char* s = calloc(32, sizeof(u8));
+
+    sprintf(s, "%g", slider->value);
+    ui_draw_format_text(s, window, slider->x + (slider->value * slider->real_step)-8, slider->y, 1);
+    free(s);
     return 0;
 }
 
 int hover_slider(UISlider_t* slider, mouse_state_t mouse_state)
 {
+    static i32 lastx = -1,
+               lasty = -1;
+
+    // Is the slider being grabbed?
+    if (slider->grab)
+    {
+
+        // First frame of grab?
+        if (lastx == -1 && lasty == -1)
+            goto set_last;
+
+        // Change value
+        i32 dx = mouse_state.x - lastx;
+        
+        slider->value += (dx/ slider->real_step);
+
+        // Set last to mouse state
+        set_last:
+        lastx = mouse_state.x,
+        lasty = mouse_state.y;
+        
+        return 0;
+    }
+    else {
+        lastx = -1,
+        lasty = -1;
+
+    }
+
     return 0;
 }
 
 int click_slider(UISlider_t* slider, mouse_state_t mouse_state)
 {
+    slider->grab = true;
     return 0;
 }
 
 int release_slider(UISlider_t* slider, mouse_state_t mouse_state)
 {
+    slider->grab = false;
+    float l = slider->value - fmodf(slider->value, slider->step),
+          h = slider->value + fmodf(slider->value, slider->step);
+
+    slider->value = (h - slider->value > l - slider->value) ? l : h;
+
     return 0;
 }
 
 void destroy_slider(UISlider_t* slider)
 {
+
 }

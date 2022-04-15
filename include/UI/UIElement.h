@@ -32,6 +32,7 @@ UIElement_t *create_element       ( void );
 // Constructors
 UIElement_t *load_element         ( const char   path[] );
 UIElement_t *load_element_as_json ( char        *token_text );
+UIElement_t *construct_element    ( char        *name      , void          *element_data, u16 type_short );
 
 // Callbacks
 int          click_element        ( UIElement_t *element   , mouse_state_t  mouse_state ); 

@@ -22,7 +22,7 @@
 		
 		✔ RadioButton
 		
-		✕ Slider
+		✔ Slider
 		
 		✔ TextInput
 		

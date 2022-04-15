@@ -96,20 +96,29 @@ UIElement_t* load_element_as_json(char* token_text)
     
     // Argument check
     {
-        if(token_text == (void *)0)
-            goto no_token_text;
+        #ifndef NDEBUG
+            if(token_text == (void *)0)
+                goto no_token_text;
+        #endif  
     }
 
     // Initialized data
-    UIElement_t *ret         = create_element();
-    size_t       len         = strlen(token_text),
-                 token_count = parse_json(token_text, len, 0, (void*)0);
-    JSONToken_t *tokens      = calloc(token_count, sizeof(JSONToken_t));
+    UIElement_t *ret          = 0;
+    size_t       len          = strlen(token_text),
+                 token_count  = parse_json(token_text, len, 0, (void*)0);
+    JSONToken_t *tokens       = calloc(token_count, sizeof(JSONToken_t));
+
+    char        *type         = 0,
+                *name         = 0;
+    u16          type_short   = 0;
+    void        *element_data = 0;
 
     // Error check
     {
-        if (tokens == (void*)0)
-            goto out_of_memory;
+        #ifndef NDEBUG
+            if (tokens == (void*)0)
+                goto out_of_memory;
+        #endif
     }
 
     // Parse the JSON
@@ -124,83 +133,85 @@ UIElement_t* load_element_as_json(char* token_text)
 
             // Make sure the type of the type token is a string
             if (tokens[j].type == JSONstring)
-            {
-                if      (strcmp(tokens[j].value.n_where, "BUTTON")       == 0)
-                {
-                    ret->type           = UI_BUTTON;
-                    ret->element.button = load_button_as_json_tokens(tokens, token_count);
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "CANVAS")       == 0)
-                {
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "CHART")        == 0)
-                {
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "CHECKBOX")     == 0)
-                {
-                    ret->type = UI_CHECKBOX;
-                    ret->element.checkbox = load_checkbox_as_json_tokens(tokens, token_count);
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "CONTAINER")    == 0)
-                {
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "DROPDOWN")     == 0)
-                {
-                    ret->type = UI_DROPDOWN;
-                    ret->element.dropdown = load_dropdown_as_json_tokens(tokens, token_count);
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "IMAGE")        == 0)
-                {
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "LABEL")        == 0)
-                {
-                    ret->type          = UI_LABEL;
-                    ret->element.label = load_label_as_json_tokens(tokens, token_count);
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "RADIOBUTTON") == 0)
-                {
-                    ret->type = UI_RADIOBUTTON;
-                    ret->element.radio_button = load_radio_button_as_json_tokens(tokens, token_count);
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "SLIDER")       == 0)
-                {
-                    continue;
-                }
-                else if (strcmp(tokens[j].value.n_where, "TEXT INPUT")   == 0)
-                {
-                    continue;
-                }
-                else
-                    goto badType;
-            }
+                type = tokens[j].value.n_where;
             else
-            {
-
-            }
+                ;
         }
         else if (strcmp("name",tokens[j].key) == 0)
         {
             if (tokens[j].type == JSONstring)
-            {
-                size_t len = strlen(tokens[j].value.n_where);
-                ret->name  = calloc(len + 1, sizeof(char));
-                
-                strncpy(ret->name, tokens[j].value.n_where, len);
-
-            }
+                name = tokens[j].value.n_where;
         }
 
-        if (ret->type && ret->name)
-            break;
+    }
+
+    // Construct the element
+    {
+
+        // Set the type
+        // TODO: A hash table may be nice here.
+        {
+            if      ( strcmp(type, "BUTTON")      == 0 )
+                type_short = UI_BUTTON;
+            else if ( strcmp(type, "CANVAS")      == 0 )
+                type_short = UI_CANVAS;
+            else if ( strcmp(type, "CHECKBOX")    == 0 )
+                type_short = UI_CHECKBOX;
+            else if ( strcmp(type, "DROPDOWN")    == 0 )
+                type_short = UI_DROPDOWN;
+            else if ( strcmp(type, "IMAGE")       == 0 )
+                type_short = UI_IMAGE;
+            else if ( strcmp(type, "LABEL")       == 0 )
+                type_short = UI_LABEL;
+            else if ( strcmp(type, "RADIOBUTTON") == 0 )
+                type_short = UI_RADIOBUTTON;
+            else if ( strcmp(type, "SLIDER")      == 0 )
+                type_short = UI_SLIDER;
+            else if ( strcmp(type, "TEXT INPUT")  == 0 )
+                type_short = UI_TEXTINPUT;
+            else
+                goto badType;
+        }
+
+        // Load the element
+        {
+            switch (type_short)
+            {
+                case UI_BUTTON:
+                    element_data = load_button_as_json_tokens(tokens, token_count);
+                    break;
+                case UI_CANVAS:
+                    // TODO: 
+                    // load_canvas_as_json_tokens(tokens, token_count);
+                    break;
+                case UI_CHECKBOX:
+                    element_data = load_checkbox_as_json_tokens(tokens, token_count);
+                    break;
+                case UI_DROPDOWN:
+                    element_data = load_dropdown_as_json_tokens(tokens, token_count);
+                    break;
+                case UI_IMAGE:
+                    element_data = load_image_as_json_tokens(tokens, token_count);
+                    break;
+                case UI_LABEL:
+                    element_data = load_label_as_json_tokens(tokens, token_count);
+                    break;
+                case UI_RADIOBUTTON:
+                    element_data = load_radio_button_as_json_tokens(tokens, token_count);
+                    break;
+                case UI_SLIDER:
+                    element_data = load_slider_as_json_tokens(tokens, token_count);
+                    break;
+                case UI_TEXTINPUT:
+                    element_data = load_text_input_as_json_tokens(tokens, token_count);
+                    break;
+            }
+
+        }
+
+        // Construct the element
+        ret = construct_element(name, element_data, type_short);
+
     }
 
     free(tokens);
@@ -227,6 +238,94 @@ UIElement_t* load_element_as_json(char* token_text)
         badType:
             ui_print_error("[UI] [Element] Unknown element type encountered.\n");
             return 0;
+    }
+}
+
+UIElement_t* construct_element(char *name, void* element_data, u16 type_short)
+{
+    // Argument check
+    {
+        #ifndef NDEBUG
+            if(element_data == (void *)0)
+                goto no_element_data;
+            if(type_short == 0)
+                goto invalid_type;
+        #endif
+    }
+
+    // Initialized data
+    UIElement_t *ret = create_element();
+    
+    // Construct the element
+    {
+        // Set the type
+        ret->type           = type_short;
+
+        // Set the element pointer. 
+        switch (type_short)
+        {
+            case UI_BUTTON:
+                ret->element.label = (UIButton_t*)element_data;
+                break;
+            case UI_CANVAS:
+                ret->element.canvas = (UICanvas_t*)element_data;
+                break;
+            case UI_CHART:
+                ret->element.chart = (UIChart_t *)element_data;
+                break;
+            case UI_CHECKBOX:
+                ret->element.checkbox = (UICheckbox_t*)element_data;
+                break;
+            case UI_DROPDOWN:
+                ret->element.dropdown = (UIDropdown_t*)element_data;
+                break;
+            case UI_IMAGE:
+                ret->element.image = (UIImage_t*)element_data;
+                break;
+            case UI_LABEL:
+                ret->element.label = (UILabel_t *)element_data;
+                break;
+            case UI_RADIOBUTTON:
+                ret->element.radio_button = (UIRadioButton_t*)element_data;
+                break;
+            case UI_SLIDER:
+                ret->element.slider = (UISlider_t*)element_data;
+                break;
+            case UI_TEXTINPUT:
+                ret->element.text_input = (UITextInput_t*)element_data;
+                break;
+        }
+        
+     
+        // Set the name
+        {
+            size_t len = strlen(name);
+            ret->name = calloc(len + 1, sizeof(u8));
+
+            // Error handling
+            {
+                #ifndef NDEBUG
+                    if(ret->name == (void *)0)
+                        goto no_mem;
+                #endif
+            }
+
+            strncpy(ret->name, name, len);
+        }
+    }
+
+    return ret;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_element_data:
+            invalid_type:
+            no_mem:
+                return 0;
+        }
     }
 }
 
@@ -263,11 +362,10 @@ int click_element(UIElement_t* element, mouse_state_t mouse_state)
         click_radio_button(element->element.radio_button, mouse_state);
         break;
     case UI_SLIDER:
-        // TODO:
+        click_slider(element->element.slider, mouse_state);
         break;
     case UI_TEXTINPUT:
-        
-
+        click_text_input(element->element.text_input, mouse_state);
         break;
     }
 
@@ -306,7 +404,7 @@ int hover_element(UIElement_t* element, mouse_state_t mouse_state)
         // TODO:
         break;
     case UI_SLIDER:
-        // TODO:
+        hover_slider(element->element.slider, mouse_state);
         break;
     case UI_TEXTINPUT:
         // TODO:
@@ -349,7 +447,7 @@ int release_element(UIElement_t* element, mouse_state_t mouse_state)
         // TODO:
         break;
     case UI_SLIDER:
-        // TODO:
+        release_slider(element->element.slider, mouse_state);
         break;
     case UI_TEXTINPUT:
         // TODO:
@@ -417,10 +515,16 @@ bool in_bounds(UIElement_t* element, mouse_state_t mouse_state)
         h = element->element.radio_button->height;
         break;
     case UI_SLIDER:
-        // TODO:
+        x = element->element.slider->x,
+        y = element->element.slider->y+12,
+        w = element->element.slider->width,
+        h = 10+12;
         break;
     case UI_TEXTINPUT:
-        // TODO:
+        x = element->element.text_input->x,
+        y = element->element.text_input->y,
+        w = (element->element.text_input->width/8 > element->element.text_input->max_chars) ? element->element.text_input->max_chars*8 : element->element.text_input->width,
+        h = 12;
 
         break;
     }
@@ -468,10 +572,10 @@ int draw_element( UIWindow_t *window, UIElement_t* element)
             draw_radio_button(window, element->element.radio_button);
             break;
         case UI_SLIDER:
-            // TODO:
+            draw_slider(window, element->element.slider);
             break;
         case UI_TEXTINPUT:
-            // TODO:
+            draw_text_input(window, element->element.text_input);
             
             break;
     }

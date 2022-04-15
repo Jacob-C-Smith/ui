@@ -2,11 +2,28 @@
 
 UIDropdown_t *create_dropdown              ( void )
 {
+
+	// Initialized data
 	UIDropdown_t *ret = calloc(1, sizeof(UIDropdown_t));
-	// TODO: Check memory
+	
+	// Check memory
+	{
+		#ifndef NDEBUG
+			if ( ret == (void *)0 )
+				goto no_mem;
+		#endif
+	}
 
 	return ret;
-	// TODO: Error handling
+	
+	// Error handling
+	{
+		#ifndef NDEBUG
+			no_mem:
+				ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
+				return (void *)0;
+		#endif
+	}
 }
  
 int           hover_dropdown               ( UIDropdown_t* dropdown, mouse_state_t mouse_state)
@@ -45,6 +62,11 @@ int           hover_dropdown               ( UIDropdown_t* dropdown, mouse_state
 
 int           click_dropdown               ( UIDropdown_t *dropdown, mouse_state_t mouse_state )
 {
+	// Initialized data
+	UIInstance_t *instance = ui_get_active_instance();
+
+	instance->windows->last = find_element(instance->windows, dropdown->name);
+	
 	// Toggle dropdown
 	dropdown->collapsed = (dropdown->collapsed ) ? false : true;
 
@@ -166,6 +188,8 @@ int           draw_dropdown                ( UIWindow_t* window, UIDropdown_t* d
 
 	SDL_Rect r                  = { 0, 0, 0, 0 };
 
+	UIInstance_t *instance = ui_get_active_instance();
+
 	// Determine which dropdown option is the longest
 	for ( size_t i = 0; i < dropdown->options_len; i++ )
 
@@ -186,7 +210,10 @@ int           draw_dropdown                ( UIWindow_t* window, UIDropdown_t* d
 	dropdown->width  = r.w,
 	dropdown->height = r.h;
 
-	SDL_SetRenderDrawColor(window->renderer, 0x00, 0x00, 0x00, 0xff);
+	SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_1, (u8)(instance->accent_1 >> 8), (u8)(instance->accent_1 >> 16), 0xff);
+
+	SDL_RenderFillRect(window->renderer, &r);
+	SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
 
 	SDL_RenderDrawRect(window->renderer, &r);
 
@@ -195,20 +222,26 @@ int           draw_dropdown                ( UIWindow_t* window, UIDropdown_t* d
 
 	if ( dropdown->collapsed == false )
 	{
-		SDL_SetRenderDrawColor(window->renderer, 0x00, 0x00, 0x00, 0xff);
+		SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
 		ui_draw_text("\203", window, r.x + r.w - 10, r.y + 1, 1);
 		for(size_t i = 0; i < dropdown->options_len; i++ )
 		{
 			if (i == dropdown->hover_index)
 			{
 				SDL_Rect s = { r.x + 2, 1 + r.y + (11 * (i + 1)), r.w - 2, 11 };
-				SDL_SetRenderDrawColor(window->renderer, 0x00, 0x80, 0xff, 0xff);
+				SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_3, (u8)(instance->accent_3 >> 8), (u8)(instance->accent_3 >> 16), 0xff);
+				SDL_RenderFillRect(window->renderer, &s);
+			}
+			else
+			{
+				SDL_Rect s = { r.x + 2, 1 + r.y + (11 * (i + 1)), r.w - 2, 11 };
+				SDL_SetRenderDrawColor(window->renderer, (u8)instance->background, (u8)(instance->background >> 8), (u8)(instance->background >> 16), 0xff);
 				SDL_RenderFillRect(window->renderer, &s);
 			}
 
-			SDL_SetRenderDrawColor(window->renderer, 0x00, 0x00, 0x00, 0xff);
+			SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
 			ui_draw_text(dropdown->options[i], window, r.x + 5, 1 + r.y + (11 * (i + 1)),1);
-			SDL_SetRenderDrawColor(window->renderer, 0x80, 0x80, 0x80, 0xff);
+			SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_3, (u8)(instance->accent_3 >> 8), (u8)(instance->accent_3 >> 16), 0xff);
 			SDL_RenderDrawLine(window->renderer, r.x + 1, r.y + (11 * (i + 2)), r.x + r.w, r.y + (11 * (i + 2)));
 			dropdown->height += 12;
 		}

@@ -66,7 +66,11 @@ UILabel_t* load_label_as_json_tokens (JSONToken_t* tokens, size_t token_count)
 {
 	// TODO: Argument check
 
-	UILabel_t *ret = create_label();
+	UILabel_t *ret  = create_label();
+
+	char      *text = 0,
+		      *x    = 0,
+		      *y    = 0;
 
     // Search through values and pull out relevent information
     for (size_t j = 0; j < token_count; j++)
@@ -79,50 +83,113 @@ UILabel_t* load_label_as_json_tokens (JSONToken_t* tokens, size_t token_count)
 				if (strcmp(tokens[j].value.n_where, "LABEL") != 0)
 					goto notALabel;
 		}
-        else if (strcmp("text", tokens[j].key) == 0)
-        {
-			char   *label_text     = tokens[j].value.n_where;
-			size_t  label_text_len = strlen(label_text);
+		else if (strcmp("text", tokens[j].key) == 0)
+		{
+			if (tokens[j].type == JSONstring)
+				text = tokens[j].value.n_where;
 
-			ret->text              = calloc(label_text_len+1, sizeof(u8));
-
-			// TODO: Check allocated memory
-
-			strncpy(ret->text, label_text, label_text_len);
-        }
-		else if ( strcmp("name", tokens[j].key) == 0)
-			continue;
+		}
 		else if ( strcmp("x", tokens[j].key) == 0 )
 		{
-			if ( tokens[j].type == JSONprimative )
-				ret->x = atoi(tokens[j].value.n_where);
+			if (tokens[j].type == JSONprimative)
+				x = tokens[j].value.n_where;
+			else
+				goto x_type_error;
 		}
 		else if (strcmp("y", tokens[j].key) == 0)
 		{
-			if ( tokens[j].type == JSONprimative )
-				ret->y = atoi(tokens[j].value.n_where);
+			if (tokens[j].type == JSONprimative)
+				y = tokens[j].value.n_where;
+			else
+				goto y_type_error;
 		}
+		else if (strcmp("name", tokens[j].key) == 0)
+			continue;
 		else if (strcmp("hidden", tokens[j].key) == 0)
-			;// TODO
+			continue;// TODO
 		else
 			ui_print_warning("[UI] [Label] Unknown token encountered when parsing label, token %d/%d\n", j+1, token_count);
     }
+
+	ret = construct_label(text, atoi(x), atoi(y));
 
 	return ret;
 
 	// TODO: Error handling
 	notALabel:
 		ui_print_error("[UI] [Label] NOT A LABEL!\n");
+		no_mem:
+		x_type_error:
+		y_type_error:
 		return 0;
+}
+
+UILabel_t* construct_label(char* text, i32 x, i32 y)
+{
+	// Argument check
+	{
+		#ifndef NDEBUG
+			if(text == (void *)0)
+				goto no_text;
+		#endif
+	}
+
+	UILabel_t *ret = create_label();
+
+	// Construct the label
+	{
+		// Set the name
+		{
+			size_t len = strlen(text);
+			ret->text  = calloc(len+1, sizeof(u8));
+
+			// Error checking
+			{
+				#ifndef NDEBUG
+					if(ret->text == (void *)0)
+						goto no_mem;
+				#endif
+			}
+			
+			// Copy the string
+			strncpy(ret->text, text, len);
+		}
+
+		// Set the position
+		ret->x = x,
+		ret->y = y;
+	}
+
+	return ret;
+
+	// Error handling
+	{
+		
+		// Argument errors
+		{
+			no_text:
+				return 0;
+		}
+
+		// Standard library
+		{
+			no_mem:
+				return 0;
+		}
+	}
 }
 
 int        draw_label       ( UIWindow_t *window, UILabel_t* label )
 {
-	// TODO: Argument checks
-	if(label->hidden == false) 
-		SDL_SetRenderDrawColor(window->renderer, 0x00, 0x00, 0x00, 0xff);
-		ui_draw_text(label->text, window, label->x, label->y, 1);
 
+	// TODO: Argument checks
+	UIInstance_t *instance = ui_get_active_instance();
+
+	if (label->hidden == false)
+	{
+		SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
+		ui_draw_text(label->text, window, label->x, label->y, 1);
+	}
 	label->width  = strlen(label->text) * 8;
 	label->height = 8;
 
@@ -131,7 +198,7 @@ int        draw_label       ( UIWindow_t *window, UILabel_t* label )
 	// TODO: Error handling
 }
 
-int click_label(UILabel_t* label, mouse_state_t mouse_state)
+int        click_label      ( UILabel_t* label, mouse_state_t mouse_state)
 {
 
 	// Iterate through callbacks

@@ -29,13 +29,19 @@ struct UILabel_s
              **on_change;
 };
 
+// Allocators
 UILabel_t *create_label              ( void );
 
+// Constructors
 UILabel_t *load_label                ( const char  path[] );
 UILabel_t *load_label_as_json_tokens ( JSONToken_t *tokens, size_t token_count );
+UILabel_t *construct_label           ( char *text, i32 x, i32 y );
 
+// Draw er
 int        draw_label                ( UIWindow_t *window, UILabel_t  *label );
 
+// Callbacks
 int        click_label               ( UILabel_t  *label , mouse_state_t mouse_state );
 
+// Deallocators
 void       destroy_label             ( UILabel_t  *label );

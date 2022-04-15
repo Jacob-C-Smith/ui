@@ -20,11 +20,6 @@ struct UIButton_s
             height,
             x,
             y;
-    int     text_color,
-            back_color,
-            border_color,
-            border_width;
-    u8      text_align;
     bool    hidden,
             depressed;
 
@@ -44,6 +39,7 @@ UIButton_t  *create_button               ( void );
 
 // Constructors
 UIButton_t  *load_button_as_json_tokens  ( JSONToken_t *tokens, size_t          token_count );                          //
+UIButton_t  *construct_button            ( char *text, i32 x, i32 y );
 
 // Callbacks
 int         hover_button                 ( UIButton_t  *button, mouse_state_t   mouse_state );                          //

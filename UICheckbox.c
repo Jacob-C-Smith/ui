@@ -323,7 +323,7 @@ int           change_checkbox              ( UICheckbox_t *checkbox, mouse_state
 
 int           draw_checkbox                ( UIWindow_t   *window  , UICheckbox_t *checkbox )
 {
-
+    UIInstance_t* instance = ui_get_active_instance();
     SDL_Rect r = { checkbox->x, checkbox->y, 12, 12 };
     checkbox->width  = 12,
     checkbox->height = 18*checkbox->label_count;
@@ -331,7 +331,7 @@ int           draw_checkbox                ( UIWindow_t   *window  , UICheckbox_
     for (size_t i = 0; i < checkbox->label_count; i++)
     {
     
-        SDL_SetRenderDrawColor(window->renderer, 0x00, 0x00, 0x00, 0xff);
+        SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
         SDL_RenderDrawRect(window->renderer, &r);
 
         if (checkbox->checked[i] == true)

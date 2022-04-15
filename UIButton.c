@@ -39,7 +39,7 @@ UIButton_t  *load_button_as_json_tokens ( JSONToken_t *tokens, size_t token_coun
     }
 
     // Initialized data
-    UIButton_t *ret = create_button();
+    UIButton_t *ret = 0;
     size_t      j   = 0;
 
     // JSON data
@@ -66,7 +66,7 @@ UIButton_t  *load_button_as_json_tokens ( JSONToken_t *tokens, size_t token_coun
                 goto button_type_type_error;
         }
         
-        // label
+        // button label
         else if (strcmp("text", tokens[j].key) == 0)
         {
 
@@ -84,9 +84,7 @@ UIButton_t  *load_button_as_json_tokens ( JSONToken_t *tokens, size_t token_coun
 
             // Type check
             if (tokens[j].type == JSONprimative)
-            {
                 button_x = tokens[j].value.n_where;
-            }
             else
                 goto button_x_type_error;
 
@@ -124,31 +122,7 @@ UIButton_t  *load_button_as_json_tokens ( JSONToken_t *tokens, size_t token_coun
     }
 
     // Construct the button
-    {
-
-        // Set the label
-        {
-            size_t len = strlen(button_text);
-
-            ret->text = calloc(len + 1, sizeof(char));
-
-            // Error checking
-            {
-                #ifndef NDEBUG
-                    if ( ret->text == (void *) 0 )
-                        goto out_of_memory;
-                #endif
-            }
-
-            strncpy(ret->text, button_text, len);
-        }
-
-        // Set the x location
-        ret->x = atoi(button_x);
-
-        // Set the y location
-        ret->y = atoi(button_y);
-    }
+    ret = construct_button(button_text, atoi(button_x), atoi(button_y));
 
     return ret;
 
@@ -205,6 +179,66 @@ UIButton_t  *load_button_as_json_tokens ( JSONToken_t *tokens, size_t token_coun
                 return 0;
             no_button_y:
                 ui_print_error("[UI] [Button] No \"y\" in \"token\" in call to function \"%s\"\n", __FUNCSIG__);
+                return 0;
+        }
+    }
+}
+
+UIButton_t* construct_button ( char* text, i32 x, i32 y )
+{
+    // Argument check
+    {
+        #ifndef NDEBUG
+            if(text == (void *)0)
+                goto no_text;
+        #endif
+    }
+
+    UIButton_t *ret = create_button();
+
+    // Construct the button
+    {
+
+        // Set the button name
+        {
+            size_t len = strlen(text);
+
+            ret->text  = calloc(len + 1, sizeof(char));
+
+            // Error checking
+            {
+                #ifndef NDEBUG
+                    if ( ret->text == (void *) 0 )
+                        goto no_mem;
+                #endif
+            }
+
+            strncpy(ret->text, text, len);
+        }
+
+        // Set the x location
+        ret->x = x;
+
+        // Set the y location
+        ret->y = y;
+    }
+
+    return ret;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_text:
+                ui_print_error("[UI] [Button] Null pointer provided for \"text\" in call to function \"%s\"\n", __FUNCSIG__);
+                return 0;
+        }
+
+        // Standard library errors
+        {
+            no_mem:
+                ui_print_error("[Standard library] Out of memory in call to function \"%s\"\n", __FUNCSIG__);
                 return 0;
         }
     }
@@ -342,22 +376,23 @@ int          draw_button                ( UIWindow_t* window, UIButton_t* button
     if (button->hidden == true)
         return 0;
 
-    size_t   l = strlen(button->text);
-
-    SDL_Rect r = { button->x+1, button->y+1, (l * 8) + 5, 12 };
+    size_t        l        = strlen(button->text);
+    UIInstance_t *instance = ui_get_active_instance();
+    SDL_Rect      r        = { button->x+1, button->y+1, (l * 8) + 5, 12 };
     
     button->width  = r.w,
     button->height = r.h;
 
     if (button->depressed==false)
     {
-        SDL_SetRenderDrawColor(window->renderer, 0x80, 0x80, 0x80, 0xff);
+        SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_2, (u8)(instance->accent_2 >> 8), (u8)(instance->accent_2 >> 16), 0xff);
         SDL_RenderDrawLine(window->renderer, r.x + r.w - 1, r.y, r.x + r.w - 1, r.y + r.h - 1);
         SDL_RenderDrawLine(window->renderer, r.x, r.y + r.h - 1, r.x + r.w - 1, r.y + r.h - 1);
         r.x--, r.y--;
     }
-
-    SDL_SetRenderDrawColor(window->renderer, 0x00, 0x00, 0x00, 0xff);
+    SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_1, (u8)(instance->accent_1 >> 8), (u8)(instance->accent_1 >> 16), 0xff);
+    SDL_RenderFillRect(window->renderer, &r);
+    SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
     SDL_RenderDrawRect(window->renderer, &r);
     
     ui_draw_text(button->text, window, r.x + 3, r.y + 1, 1);
