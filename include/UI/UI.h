@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include <SDL2/SDL.h>
 
@@ -40,38 +41,40 @@ struct mouse_state_s {
 
 
 struct UIInstance_s {
-    UIWindow_t   *windows;
-    color         primary,
-                  background, 
-                  accent_1,
-                  accent_2,
-                  accent_3;
+    dict       *windows;
+    UIWindow_t *active_window;
+    color       primary,
+                background, 
+                accent_1,
+                accent_2,
+                accent_3;
+    bool        running;
 };
 
 // Initializers
-UIInstance_t *ui_init             ( const char       *path );
+DLLEXPORT int           ui_init             ( UIInstance_t    **instance, const char *path );
 
 // ANSI colored prints
-int           ui_print_log        ( const char* const format  , ... );
-int           ui_print_warning    ( const char* const format  , ... );
-int           ui_print_error      ( const char* const format  , ... );
+DLLEXPORT int           ui_print_log        ( const char* const format  , ... );
+DLLEXPORT int           ui_print_warning    ( const char* const format  , ... );
+DLLEXPORT int           ui_print_error      ( const char* const format  , ... );
 
 // Text drawing
-int           ui_draw_format_text ( const char* const format  , UIWindow_t *window, int x, int y, int size, ... );
-int           ui_draw_text        ( const char* const text    , UIWindow_t *window, int x, int y, int size );
-int           ui_draw_circle      ( int               radius  , UIWindow_t *window, int x, int y );
+DLLEXPORT int           ui_draw_format_text ( const char* const format  , UIWindow_t *window, int x, int y, int size, ... );
+DLLEXPORT int           ui_draw_text        ( const char* const text    , UIWindow_t *window, int x, int y, int size );
+DLLEXPORT int           ui_draw_circle      ( int               radius  , UIWindow_t *window, int x, int y );
 
 // Window operations
-int           ui_append_window    ( UIInstance_t     *instance, UIWindow_t *window );
-UIWindow_t   *ui_remove_window    ( UIInstance_t     *instance, const char *name );
-int           ui_process_input    ( UIInstance_t     *instance );
-int           ui_draw             ( UIInstance_t     *instance );
+DLLEXPORT int           ui_append_window    ( UIInstance_t     *instance, UIWindow_t *window );
+DLLEXPORT UIWindow_t   *ui_remove_window    ( UIInstance_t     *instance, const char *name );
+DLLEXPORT int           ui_process_input    ( UIInstance_t     *instance );
+DLLEXPORT int           ui_draw             ( UIInstance_t     *instance );
 
 // Image drawing
-UIInstance_t *ui_get_active_instance ( void );
+DLLEXPORT UIInstance_t *ui_get_active_instance ( void );
 
 // File I/O
-size_t        ui_load_file        ( const char       *path    , void       *buffer, bool binary );
+DLLEXPORT size_t        ui_load_file        ( const char       *path    , void       *buffer, bool binary );
 
 // Exit
-int           ui_exit             ( UIInstance_t     *instance );
+DLLEXPORT int           ui_exit             ( UIInstance_t     *instance );

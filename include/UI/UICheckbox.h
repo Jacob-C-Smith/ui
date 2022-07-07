@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include <dict/dict.h>
 #include <JSON/JSON.h>
 
 #include <UI/UItypedef.h>
@@ -12,12 +13,8 @@
 
 struct UICheckbox_s
 {
-    
-    char  *name,
-         **labels;
-
-    size_t label_count,
-           longest_label;
+    dict   *labels;
+    size_t  longest_label;
 
     // Renderer
     u32    x,
@@ -27,32 +24,38 @@ struct UICheckbox_s
 
     bool   hidden;
 
-    // Value
-    bool  *checked;
-
     // Callbacks
-    size_t on_click_count, on_click_max,
-           on_hover_count, on_hover_max,
-           on_change_count, on_change_max;
+    size_t on_click_count,   on_click_max,
+           on_hover_count,   on_hover_max,
+           on_release_count, on_release_max;
     
     void     **on_click,
              **on_hover,
-             **on_change;
+             **on_release;
 };
 
 // Allocators
-UICheckbox_t *create_checkbox              ( void );
+DLLEXPORT int           create_checkbox               ( UICheckbox_t **checkbox );
 
 // Constructors
-UICheckbox_t *load_checkbox_as_json_tokens ( JSONToken_t  *tokens    , size_t       token_count );
+DLLEXPORT int           load_checkbox_as_dict  ( UICheckbox_t **checkbox, dict *dictionary );
+DLLEXPORT int           construct_checkbox     (UICheckbox_t **checkbox, char **labels, bool *checked, i32 x, i32 y );
 
 // Callbacks
-int           hover_checkbox               ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
-int           click_checkbox               ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
-int           change_checkbox              ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
+DLLEXPORT int           hover_checkbox                ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
+DLLEXPORT int           click_checkbox                ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
+DLLEXPORT int           release_checkbox               ( UICheckbox_t *checkbox  , mouse_state_t mouse_state );
+
+// Add callbacks
+DLLEXPORT int           add_click_callback_checkbox   ( UICheckbox_t  *checkbox, void          (*callback)(UICheckbox_t*, mouse_state_t));
+DLLEXPORT int           add_hover_callback_checkbox   ( UICheckbox_t  *checkbox, void          (*callback)(UICheckbox_t*, mouse_state_t));
+DLLEXPORT int           add_release_callback_checkbox ( UICheckbox_t  *checkbox, void          (*callback)(UICheckbox_t*, mouse_state_t));
 
 // Drawing
-int           draw_checkbox                ( UIWindow_t   *window    , UICheckbox_t *checkbox );
+DLLEXPORT int           draw_checkbox                  ( UIWindow_t   *window    , UICheckbox_t *checkbox );
+
+DLLEXPORT bool          checkbox_in_bounds             ( UICheckbox_t  *checkbox , mouse_state_t mouse_state);
+
 
 // Deallocators
-int           destroy_checkbox             ( UICheckbox_t *checkbox );
+DLLEXPORT int           destroy_checkbox               ( UICheckbox_t *checkbox );

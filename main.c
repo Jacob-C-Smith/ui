@@ -1,36 +1,38 @@
-#include <UI/UItypedef.h>
+#include <stdio.h>
+
 #include <UI/UI.h>
-#include <UI/UIDialog.h>
 
-// This will remove the console window on release versions. 
-#ifdef NDEBUG
-	#define main WinMain
-#endif
-
-int main ( int argc, const char *argv[] )
+int main(int argc, const char** argv)
 {
-	// Blank instance
-	UIInstance_t *instance = ui_init(0);
+    // Initialized data
+    UIInstance_t *ui_instance = 0;
+    UIWindow_t   *ui_window   = 0;
 
-	UIWindow_t   *window   = load_window("UI/UI-Window.json");
+    // Initialize the UI library
+    ui_init(&ui_instance, "");
 
-	// Load a window
-	ui_append_window(instance, window);
+    // Load a window from the filesystem
+    load_window(&ui_window, "window.json");
 
-	instance->windows->is_open = true;
+    // Add the window to the instance
+    ui_append_window(ui_instance, ui_window);
 
-	// Window loop
-	while (instance->windows)
-	{
+    // Start running
+    ui_instance->running = true;
+
+    // Loop
+    while (ui_instance->running)
+    {
+
         // Process input
-		ui_process_input(instance);
+        ui_process_input(ui_instance);
 
-        // Draw the windows
-		ui_draw(instance);
-	}
-	
-	// Close everything
-	ui_exit(instance);
+        // Draw windows
+        ui_draw(ui_instance);
+    }
 
-    return 0;
+    // Exit the UI library
+    ui_exit(ui_instance);
+
+    return 1;
 }

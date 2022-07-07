@@ -1,6 +1,8 @@
 #pragma once
 #include <UI/UItypedef.h>
 
+#define DLLEXPORT extern __declspec(dllexport)
+
 // Useful typedefs 
 typedef unsigned char        u8;
 typedef signed   char        s8;
@@ -26,50 +28,36 @@ typedef struct { s32 x, y; } ivec2;
 typedef u32 color;
 
 // UI Structures
-struct mouse_state_s;
-typedef struct mouse_state_s mouse_state_t;
-
-struct UIInstance_s;
-typedef struct UIInstance_s UIInstance_t;
-
 struct UILabel_s;
-typedef struct UILabel_s UILabel_t;
-
 struct UIButton_s;
-typedef struct UIButton_s UIButton_t;
-
+struct mouse_state_s;
 struct UICanvas_s;
-typedef struct UICanvas_s UICanvas_t;
-
 struct UIChart_s;
-typedef struct UIChart_s UIChart_t;
-
 struct UICheckbox_s;
-typedef struct UICheckbox_s UICheckbox_t;
-
 struct UIContainer_s;
-typedef struct UIContainer_s UIContainer_t;
-
 struct UIDropdown_s;
-typedef struct UIDropdown_s UIDropdown_t;
-
 struct UIImage_s;
-typedef struct UIImage_s UIImage_t;
-
 struct UILabel_s;
-typedef struct UILabel_s UILabel_t;
-
 struct UIRadioButton_s;
-typedef struct UIRadioButton_s UIRadioButton_t;
-
 struct UISlider_s;
-typedef struct UISlider_s UISlider_t;
-
 struct UITextInput_s;
-typedef struct UITextInput_s UITextInput_t;
-
-struct UIWindow_s;
-typedef struct UIWindow_s UIWindow_t;
-
 struct UIElement_s;
-typedef struct UIElement_s UIElement_t;
+struct UIWindow_s;
+struct UIInstance_s;
+
+typedef struct mouse_state_s   mouse_state_t;
+typedef struct UILabel_s	   UILabel_t;
+typedef struct UIButton_s	   UIButton_t;
+typedef struct UICanvas_s	   UICanvas_t;
+typedef struct UIChart_s	   UIChart_t;
+typedef struct UICheckbox_s    UICheckbox_t;
+typedef struct UIContainer_s   UIContainer_t;
+typedef struct UIDropdown_s	   UIDropdown_t;
+typedef struct UIImage_s       UIImage_t;
+typedef struct UILabel_s       UILabel_t;
+typedef struct UIRadioButton_s UIRadioButton_t;
+typedef struct UISlider_s      UISlider_t;
+typedef struct UITextInput_s   UITextInput_t;
+typedef struct UIElement_s     UIElement_t;
+typedef struct UIWindow_s      UIWindow_t;
+typedef struct UIInstance_s    UIInstance_t;

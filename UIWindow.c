@@ -1,134 +1,144 @@
 #include <UI/UIWindow.h>
 
-UIWindow_t  *create_window            ( void )
+int          create_window            ( UIWindow_t **window )
 {
+	// Argument check
+	{
+		#ifndef NDEBUG
+			if(window == (void *)0)
+				goto no_window;
+		#endif
+	}
+
 	// Initialized data
-	UIWindow_t *ret = calloc(1, sizeof(UIWindow_t));
+	UIWindow_t *i_window = calloc(1, sizeof(UIWindow_t));
 
 	// Check memory
 	{
 		#ifndef NDEBUG
-			if(ret==(void*)0)
-				goto noMem;
+			if(i_window ==(void*)0)
+				goto no_mem;
 		#endif
 	}
 
-	return ret;
+	*window = i_window;
 
-	// Argument check
+	return 1;
+
+	// Error handling
 	{
-		noMem:
-		#ifndef NDEBUG
-			ui_print_error("[UI] [Window] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
-		#endif
-		return 0;
+
+		// Argument errors
+		{
+			no_window:
+			#ifndef NDEBUG
+				ui_print_error("[UI] [Window] Null pointer provided for \"window\" in call to function \"%s\"\n", __FUNCSIG__);
+			#endif
+			return 0;
+		}
+
+		// Standard library errors
+		{
+			no_mem:
+			#ifndef NDEBUG
+				ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
+			#endif
+			return 0;
+		}
+
+
 	}
 }
 
-UIWindow_t  *load_window              ( const char *path )
+int          load_window              ( UIWindow_t **window, const char *path )
 {
 	// Argument check
 	{
 		#ifndef NDEBUG
 			if(path==(void*)0)
 				goto noPath;
+			if(window == (void *)0)
+				goto no_window;
 		#endif
 	}
 
 	// Uninitialized data
 	u8         *data;
-	UIButton_t *ret;
 
 	// Initialized data
 	size_t      i   = 0;
 
 	// Load up the file
-	i    = ui_load_file(path, 0, false);
-	data = calloc(i, sizeof(u8));
-	ui_load_file(path, data, false);
-
-	ret = load_window_as_json(data);
-
-	// Finish up
-	free(data);
-
-	return ret;
+	{
+		i    = ui_load_file(path, 0, false);
+		data = calloc(i, sizeof(u8));
+		ui_load_file(path, data, false);
+	}
+	
+	load_window_as_json(window, data);
+	
+	return 1;
 
 	// Error handling
 	{
-	noPath:
-		#ifndef NDEBUG
-			ui_print_error("[UI] [Window] Null pointer provided for \"path\"\n");
-		#endif
-		return 0;
-	invalidFile:
-		#ifndef NDEBUG
-			ui_print_error("[UI] [Window] Failed to load file %s\n", path);
-		#endif
-		return 0;
+
+		// Argument errors
+		{
+			no_window:
+			#ifndef NDEBUG
+				ui_print_error("[UI] [Window] Null pointer provided for \"window\" in call to function \"%s\"\n", __FUNCSIG__);
+			#endif
+			return 0;
+			noPath:
+			#ifndef NDEBUG
+				ui_print_error("[UI] [Window] Null pointer provided for \"path\"\n");
+			#endif
+			return 0;
+		}
+
+		// File error
+		{
+			invalidFile:
+			#ifndef NDEBUG
+				ui_print_error("[UI] [Window] Failed to load file %s\n", path);
+			#endif
+			return 0;
+		}
 	}
 }
 
-UIWindow_t  *load_window_as_json      ( char       *token )
+int          load_window_as_json      ( UIWindow_t **window, char       *token_text )
 {
 	// TODO: Argument check
 
 	// Initialized data
 	UIWindow_t  *ret         = 0;
-	size_t       len         = strlen(token),
-                 token_count = parse_json(token, len, 0, (void*)0);
-    JSONToken_t *tokens      = calloc(token_count, sizeof(JSONToken_t));
+	size_t       len         = strlen(token_text);
+    JSONToken_t *token       = 0;
 
+	dict        *window_json = 0;
 	char        *width       = 0,
 		        *height      = 0,
 		        *name        = 0,
 		       **elements    = 0;
 
     // Parse the JSON
-    parse_json(token, len, token_count, tokens);
+    parse_json(token_text, len, &window_json);
 
-    // Search through values and pull out relevent information
-    for (size_t j = 0; j < token_count; j++)
-    {
-		if (strcmp("name"    , tokens[j].key) == 0)
-		{
-			if (tokens[j].type == JSONstring)
-				name = tokens[j].value.n_where;
-			else
-				goto name_type_error;
+    // Get window info
+	{
+		token    = dict_get(window_json, "name");
+		name     = JSON_VALUE(token, JSONstring);
 
-			continue;
-		}
-		if (strcmp("width"   , tokens[j].key) == 0)
-		{
-			if (tokens[j].type == JSONprimative)
-				width = tokens[j].value.n_where;
-			else
-				goto width_type_error;
+		token    = dict_get(window_json, "width");
+		width    = JSON_VALUE(token, JSONprimative);
 
-			continue;
-		}
-		if (strcmp("height"  , tokens[j].key) == 0)
-		{
-			if (tokens[j].type == JSONprimative)
-				height = tokens[j].value.n_where;
-			else
-				goto height_type_error;
+		token    = dict_get(window_json, "height");
+		height   = JSON_VALUE(token, JSONprimative);
 
-			continue;
-
-		}
-		if (strcmp("elements", tokens[j].key) == 0)
-		{
-			if (tokens[j].type == JSONarray)
-				elements = tokens[j].value.a_where;
-			else
-				goto element_type_error;
-
-			continue;
-
-		}
-    }
+		token    = dict_get(window_json, "elements");
+		elements = JSON_VALUE(token, JSONarray);
+	}
 
 	// Error checking
 	{
@@ -140,9 +150,14 @@ UIWindow_t  *load_window_as_json      ( char       *token )
 		#endif
 	}
 
+	size_t element_count = 0;
+	while (elements[++element_count]);
+
 	// Make a blank window
-	ret = construct_window(name, atoi(width), atoi(height));
+	construct_window(window, name, (width) ? atoi(width) : 640, (height) ? atoi(height) : 480, element_count);
 	
+	ret = *window;
+
 	// Error checking
 	{
 		#ifndef NDEBUG
@@ -155,13 +170,14 @@ UIWindow_t  *load_window_as_json      ( char       *token )
 
 	// Append all the elements
 	{
-		
+
 		// Iterate over elements
 		for (size_t k = 0; elements[k]; k++)
 		{
 			
 			// Load the element as an object or a path
-			UIElement_t* element = (*(char *)elements[k] == '{') ? load_element_as_json(elements[k]) : load_element(elements[k]);
+			UIElement_t* element = 0;
+			(*(char*)elements[k] == '{') ? load_element_as_json(&element, elements[k]) : load_element(&element, elements[k]);
 			
 			// Error checking
 			{
@@ -192,11 +208,16 @@ UIWindow_t  *load_window_as_json      ( char       *token )
 		// JSON type errors
 		{
 			#ifndef NDEBUG
+				// TODO: Print an error for each branch
 				name_type_error:
+				return 0;
 				width_type_error:
+					return 0;
 				height_type_error:
+					return 0;
 				element_type_error:
 					return 0;
+				return 0;
 			#endif
 		}
 
@@ -211,6 +232,7 @@ UIWindow_t  *load_window_as_json      ( char       *token )
 		// Missing data
 		{
 			#ifndef NDEBUG
+			// TODO: Print an error for each branch
 				no_elements:
 				no_name:
 				empty_name:
@@ -220,7 +242,7 @@ UIWindow_t  *load_window_as_json      ( char       *token )
 	}
 }
 
-UIWindow_t  *construct_window         ( char       *title, size_t         width      , size_t height )
+int          construct_window         ( UIWindow_t **window, char       *title, size_t         width      , size_t height, size_t element_count )
 {
 
 	// Argument check
@@ -232,37 +254,43 @@ UIWindow_t  *construct_window         ( char       *title, size_t         width 
 	}
 
 	// Initialized data
-	UIWindow_t *ret       = create_window();
+	UIWindow_t *i_window  = 0;
 	size_t      title_len = strlen(title);
 
+	create_window(&i_window);
+
 	// Set the window width and height
-	ret->width  = width;
-	ret->height = height;
+	i_window->width  = width;
+	i_window->height = height;
 	
 	// Error handling
 	{
-		if (ret->width == 0)
-			ret->width = 640;
-		if (ret->height == 0)
-			ret->height = 480;
+		if (i_window->width == 0)
+			i_window->width = 640;
+		if (i_window->height == 0)
+			i_window->height = 480;
 	}
 
 	// Set up the window
 	{
-		ret->window   = SDL_CreateWindow(ret->name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_BORDERLESS);
+		i_window->window   = SDL_CreateWindow(i_window->name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_BORDERLESS);
 		SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
-		ret->renderer = SDL_CreateRenderer(ret->window, -1, SDL_RENDERER_ACCELERATED);
-		SDL_ShowWindow(ret->window);
-		ret->is_open  = true;
+		i_window->renderer = SDL_CreateRenderer(i_window->window, -1, SDL_RENDERER_ACCELERATED);
+		SDL_ShowWindow(i_window->window);
+		i_window->is_open  = true;
 	}
 
 	// Set the window name
 	{
-		ret->name = calloc(title_len + 1, sizeof(u8));
-		strncpy(ret->name, title, title_len);
+		i_window->name = calloc(title_len + 1, sizeof(u8));
+		strncpy(i_window->name, title, title_len);
 	}
 
-	return ret;
+	dict_construct(&i_window->elements, element_count);
+
+	*window = i_window;
+
+	return 1;
 
 	// Error handling
 	{
@@ -280,22 +308,7 @@ int          append_element_to_window ( UIWindow_t *window, UIElement_t  *elemen
 
 	// TODO: Argument check	
 
-	// Initialized data
-	UIElement_t* i = window->elements;
-
-	// If there is no element, write the element pointer to the window struct
-	if (i == 0)
-	{
-		window->elements = element;
-		return 0;
-	}
-
-	// Walk to the end of the list
-	while (i->next)
-		i = i->next;
-
-	// Attach the element
-	i->next = element;
+	dict_add(window->elements, element->name, element);
 
 	return 0;
 	// TODO: Error handling
@@ -303,16 +316,16 @@ int          append_element_to_window ( UIWindow_t *window, UIElement_t  *elemen
 
 UIElement_t *find_element             ( UIWindow_t *window, char         *name )
 {
-	UIElement_t *i = window->elements;
+	//UIElement_t *i = window->elements;
 
-	while (i)
-	{
- 		if (strcmp(i->name, name) == 0)
-			return i;
-		i = i->next;
-	}
+	//while (i)
+	//{
+ //		if (strcmp(i->name, name) == 0)
+	//		return i;
+	//	i = i->next;
+	//}
 
-	return 0;
+	//return 0;
 }
 
 int          resize_window            ( UIWindow_t *window )
@@ -330,6 +343,8 @@ int          draw_window              ( UIWindow_t *window )
 		#ifndef NDEBUG
 			if (window == (void *)0)
 				goto no_window;
+			if (window->drag)
+				return 0;
 		#endif
 	}
 
@@ -345,7 +360,9 @@ int          draw_window              ( UIWindow_t *window )
 	size_t       len       = strlen(window->name),
 		         g_len     = len*8;
 
-	UIElement_t  *element  = window->elements;
+	dict        *elements  = window->elements;
+
+	//UIElement_t  *element  = window->elements;
 	UIInstance_t *instance = ui_get_active_instance();
 
 	// Clear the window
@@ -354,62 +371,82 @@ int          draw_window              ( UIWindow_t *window )
 		SDL_RenderClear(window->renderer);
 	}
 	
-	// Draw window borders
+	// Draw the window
 	{
-		SDL_GetWindowSize(window->window, &w, &h);
+		// Draw window borders
+		{
+			SDL_GetWindowSize(window->window, &w, &h);
 
-		t_1 = (((w - 48) / 2) - (g_len / 2)),
-		t_2 = (((w - 48) / 2) + (g_len / 2));
+			t_1 = (((w - 48) / 2) - (g_len / 2)),
+			t_2 = (((w - 48) / 2) + (g_len / 2));
 
-		r.x = w - 48, r.y = 0, r.w = 29, r.h = 11;
+			r.x = w - 48, r.y = 0, r.w = 29, r.h = 11;
 
-		SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0);
-		SDL_RenderDrawLine(window->renderer, 0, 5, 0, h - 1);
-		SDL_RenderDrawLine(window->renderer, w - 1, 5, w - 1, h - 1);
-		SDL_RenderDrawLine(window->renderer, 0, h - 1, w - 1, h - 1);
-	}
+			SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0);
+			SDL_RenderDrawLine(window->renderer, 0, 5, 0, h - 1);
+			SDL_RenderDrawLine(window->renderer, w - 1, 5, w - 1, h - 1);
+			SDL_RenderDrawLine(window->renderer, 0, h - 1, w - 1, h - 1);
+		}
 
-	// Draw the window name
-	ui_draw_text(window->name, window, t_1 + 1, 0, 1);
+		// Draw the top window border
+		{
+			SDL_RenderDrawLine(window->renderer, 0, 5, t_1 - 2, 5);
+			SDL_RenderDrawLine(window->renderer, t_1 - 2, 0, t_1 - 2, 10);
 
-	// Draw the top window border
-	{
-		SDL_RenderDrawLine(window->renderer, 0, 5, t_1 - 2, 5);
-		SDL_RenderDrawLine(window->renderer, t_1 - 2, 0, t_1 - 2, 10);
+			SDL_RenderDrawLine(window->renderer, w - 1, 5, t_2 + 1, 5);
+			SDL_RenderDrawLine(window->renderer, t_2 + 1, 0, t_2 + 1, 10);
 
-		SDL_RenderDrawLine(window->renderer, w - 1, 5, t_2 + 1, 5);
-		SDL_RenderDrawLine(window->renderer, t_2 + 1, 0, t_2 + 1, 10);
+			SDL_RenderFillRect(window->renderer, &r);
+		}
 
-		SDL_RenderFillRect(window->renderer, &r);
-	}
+		// Draw the window name
+		ui_draw_text(window->name, window, t_1 + 1, 0, 1);
 
-	// Draw the red box in the top right of the window
-	{
-		r.x++, r.y++, r.w -= 2, r.h -= 2;
+		// Draw the red box in the top right of the window
+		{
+			r.x++, r.y++, r.w -= 2, r.h -= 2;
 
-		SDL_SetRenderDrawColor(window->renderer, 0xff, 0, 0, 0);
-		SDL_RenderFillRect(window->renderer, &r);
+			SDL_SetRenderDrawColor(window->renderer, 0xff, 0, 0, 0);
+			SDL_RenderFillRect(window->renderer, &r);
+		}
+
 	}
 
 	// Draw UI elements
-	while (element)
 	{
-		if(element != window->last)
-			draw_element(window, element);
-		element = element->next;
-	}
 
-	// TODO: Draw last element. Its overdraw. Its okay. I don't care enough to change it at the moment
-	if(window->last)
-		draw_element(window, window->last);
+		// Allocate for a list of element pointers
+		void** values = calloc(elements->n_entries, sizeof(void*));
+
+		// Error check
+		{
+			#ifndef NDEBUG
+				if(values == (void*)0)
+					goto no_mem;
+			#endif
+		}
+
+		// Populate element pointer list
+		dict_values(elements, values);
+
+		// Iterate over element pointer list
+		for (size_t i = 0; i < elements->n_entries; i++)
+
+			// Draw each element
+			draw_element(window, values[i]);
+
+		// Free element list
+		free(values);
+	}
 
 	// Present the window
 	SDL_RenderPresent(window->renderer);
 
 	return 0;
 
-	// Error handling
+	// TODO: Error handling
 	{
+		no_mem:
 		no_window:
 			return 0;
 	}
@@ -431,7 +468,7 @@ int          process_window_input     ( UIWindow_t *window )
 
 		case SDL_KEYDOWN:
 		{
-			const  u8* keyboardState = SDL_GetKeyboardState(NULL);
+			/*const  u8* keyboardState = SDL_GetKeyboardState(NULL);
 
 			if (keyboardState[SDL_SCANCODE_F2])
 			{
@@ -455,7 +492,7 @@ int          process_window_input     ( UIWindow_t *window )
 					}
 			}
 			else if (keyboardState[SDL_SCANCODE_ESCAPE])
-				window->is_open = 0;
+				window->is_open = 0;*/
 
 		}
 		break;
@@ -464,23 +501,27 @@ int          process_window_input     ( UIWindow_t *window )
 		{
 			mouse_state_t mouse_state = { 0,0,0 };
 
-			if (e.button.button == SDL_BUTTON_LEFT)
-				mouse_state.button |= UI_M1;
-			if (e.button.button == SDL_BUTTON_MIDDLE)
-				mouse_state.button |= UI_M3;
-			if (e.button.button == SDL_BUTTON_RIGHT)
-				mouse_state.button |= UI_M2;
-			if (e.wheel.y > 0)
+			// Create the mouse_state struct
 			{
-				mouse_state.button |= UI_SWUP;
+				if (e.button.button == SDL_BUTTON_LEFT)
+					mouse_state.button |= UI_M1;
+				if (e.button.button == SDL_BUTTON_MIDDLE)
+					mouse_state.button |= UI_M3;
+				if (e.button.button == SDL_BUTTON_RIGHT)
+					mouse_state.button |= UI_M2;
+				if (e.wheel.y > 0)
+				{
+					mouse_state.button |= UI_SWUP;
+				}
+				if (e.wheel.y < 0)
+				{
+					mouse_state.button |= UI_SWDOWN;
+				}
+				mouse_state.x = e.button.x;
+				mouse_state.y = e.button.y;
 			}
-			if (e.wheel.y < 0)
-			{
-				mouse_state.button |= UI_SWDOWN;
-			}
-			mouse_state.x = e.button.x;
-			mouse_state.y = e.button.y;
-			release_window(instance->windows, mouse_state);
+			
+			release_window(instance->active_window, mouse_state);
 
 		}
 		break;
@@ -505,45 +546,66 @@ int          process_window_input     ( UIWindow_t *window )
 				mouse_state.y = e.button.y;
 			}
 
-			click_window(instance->windows, mouse_state);
+			click_window(instance->active_window, mouse_state);
 		}
 		break;
 
 		case SDL_MOUSEMOTION:
 		{
-			mouse_state_t mouse_state = { 0,0,0 };
 
-			if (e.button.button == SDL_BUTTON_LEFT)
-				mouse_state.button |= UI_M1;
-			if (e.button.button == SDL_BUTTON_RIGHT)
-				mouse_state.button |= UI_M2;
-			if (e.button.button == SDL_BUTTON_MIDDLE)
-				mouse_state.button |= UI_M3;
-
-			if (e.type == SDL_MOUSEWHEEL)
+			// Is the window being dragged?
+			// TODO: Fix mouse cursor snapping to top left corner of window
+			if (window->drag)
 			{
-				if (e.wheel.y > 0)
-					mouse_state.button |= UI_SWUP;
-				else if (e.wheel.y < 0)
-					mouse_state.button |= UI_SWDOWN;
-				else;
+				window->rx += e.motion.xrel,
+				window->ry += e.motion.yrel;
 			}
 
-			mouse_state.x = e.button.x;
-			mouse_state.y = e.button.y;
+			// This is used for the oncoming callbacks
+			mouse_state_t mouse_state = { 0,0,0 };
 
-			hover_window(instance->windows, mouse_state);
+			// Set the button state
+			{
+
+				// Left mouse click?
+				if (e.button.button == SDL_BUTTON_LEFT)
+					mouse_state.button |= UI_M1;
+
+				// Right mouse click?
+				if (e.button.button == SDL_BUTTON_RIGHT)
+					mouse_state.button |= UI_M2;
+
+				// Middle mouse click?
+				if (e.button.button == SDL_BUTTON_MIDDLE)
+					mouse_state.button |= UI_M3;
+
+				// Scroll wheel?
+				if (e.type == SDL_MOUSEWHEEL)
+				{
+					if (e.wheel.y > 0)
+						mouse_state.button |= UI_SWUP;
+					else if (e.wheel.y < 0)
+						mouse_state.button |= UI_SWDOWN;
+					else;
+				}
+
+				// Set the mouse location
+				mouse_state.x = e.button.x;
+				mouse_state.y = e.button.y;
+			}
+
+			hover_window(instance->active_window, mouse_state);
 		}
 		break;
 
 		case SDL_TEXTINPUT:
 			if(window->last)
-				if (window->last->type == UI_TEXTINPUT)
-				{
-					UITextInput_t* text_input = window->last->element.text_input;
-					strcat(text_input->text, e.text.text);
-					text_input->width = 8 + (8 * strlen(text_input->text));
-				}
+				//if (window->last->type == UI_TEXTINPUT)
+				//{
+				//	UITextInput_t* text_input = window->last->element.text_input;
+				//	strcat(text_input->text, e.text.text);
+				//	text_input->width = 8 + (8 * strlen(text_input->text));
+				//}
 			break;
 		case SDL_WINDOWEVENT:
 			break;
@@ -551,40 +613,40 @@ int          process_window_input     ( UIWindow_t *window )
 			break;
 		}
 	}
+	//if (window->drag)
+	//{
+	//	int x = 0, y = 0;
 
+	//	SDL_GetGlobalMouseState(&x, &y);
+	//	SDL_SetWindowPosition(window->window, x, y);
+	//}
 	return 0;
 }
 
 int          click_window             ( UIWindow_t *window, mouse_state_t mouse_state )
 {
-	UIElement_t *i = window->elements;
-	
-	UIInstance_t *instance = ui_get_active_instance();
-
-	ui_append_window(instance, ui_remove_window(instance, window->name));
+	dict          *elements = window->elements;
+	void         **values   = 0;
+	UIInstance_t  *instance = ui_get_active_instance();
 
 	// Iterate over elements
-	while (i)
-	{
+	values = calloc(elements->n_entries, sizeof(void*));
+	dict_values(elements, values);
 
-		// Did the user click on the element on the iterator?
-		if (in_bounds(i, mouse_state))
-		{
-			window->last = i;
-			click_element(i, mouse_state);
-		}
-
-		i = i->next;
-	}
+	// Did the user click on the element on the iterator?
+	for (size_t i = 0; i < elements->n_entries; i++)
+		if (in_bounds(values[i], mouse_state))
+			click_element(values[i], mouse_state);
 
 	// Close window?
 	{
 		int w, h;
 
 		SDL_GetWindowSize(window->window, &w, &h);
-
+		
 		if (mouse_state.x >= w - 48 && mouse_state.y >= 0 && mouse_state.x <= w - 20 && mouse_state.y <= 11)
 		{
+
 			// Left clicks minimize the window
 			if (mouse_state.button & UI_M2)
 				SDL_MinimizeWindow(window->window); 
@@ -597,7 +659,20 @@ int          click_window             ( UIWindow_t *window, mouse_state_t mouse_
 	
 	// Drag window?
 	{
-		// TODO
+		int w, h;
+
+		SDL_GetWindowSize(window->window, &w, &h);
+
+		if (mouse_state.x >= 0 && mouse_state.y >= 0 && mouse_state.x <= w - 48 && mouse_state.y <= 11)
+		{
+			// Drag the window
+			if (mouse_state.button & UI_M1)
+			{
+				window->drag = true;
+				window->rx = mouse_state.x,
+				window->ry = mouse_state.y;
+			}
+		}
 	}
 
 	return 0;
@@ -605,30 +680,38 @@ int          click_window             ( UIWindow_t *window, mouse_state_t mouse_
 
 int          hover_window             ( UIWindow_t *window, mouse_state_t mouse_state )
 {
-	UIElement_t* i = window->elements;
+	dict* elements = window->elements;
+	void** values = 0;
+	UIInstance_t* instance = ui_get_active_instance();
 
-	while (i)
-	{
-		if (in_bounds(i, mouse_state))
-			hover_element(i, mouse_state);
-		i = i->next;
-	}
+	// Iterate over elements
+	values = calloc(elements->n_entries, sizeof(void*));
+	dict_values(elements, values);
+
+	// Did the user click on the element on the iterator?
+	for (size_t i = 0; i < elements->n_entries; i++)
+		if (in_bounds(values[i], mouse_state))
+			hover_element(values[i], mouse_state);
+
 
 	return 0;
 }
 
 int          release_window           ( UIWindow_t *window, mouse_state_t mouse_state )
 {
-	UIElement_t* i = window->elements;
+	dict* elements = window->elements;
+	void** values = 0;
+	UIInstance_t* instance = ui_get_active_instance();
 
-	while (i)
-	{
-		if (in_bounds(i, mouse_state))
-			release_element(i, mouse_state);
-		i = i->next;
-	}
+	// Iterate over elements
+	values = calloc(elements->n_entries, sizeof(void*));
+	dict_values(elements, values);
 
-	return 0;
+	// Did the user click on the element on the iterator?
+	for (size_t i = 0; i < elements->n_entries; i++)
+		if (in_bounds(values[i], mouse_state))
+			release_element(values[i], mouse_state);
+
 	return 0;
 }
 

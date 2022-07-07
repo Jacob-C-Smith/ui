@@ -20,28 +20,38 @@ struct UILabel_s
     bool     hidden;
 
     // Callbacks
-    size_t     on_click_count,
-               on_hover_count,
-               on_change_count;
+    size_t     on_click_count,   on_click_max,
+               on_hover_count,   on_hover_max,
+               on_release_count, on_release_max;
     
-    void     **on_click,
-             **on_hover,
-             **on_change;
+    void      **on_click,
+              **on_hover,
+              **on_release;
 };
 
 // Allocators
-UILabel_t *create_label              ( void );
+DLLEXPORT int  create_label              ( UILabel_t **label );
 
 // Constructors
-UILabel_t *load_label                ( const char  path[] );
-UILabel_t *load_label_as_json_tokens ( JSONToken_t *tokens, size_t token_count );
-UILabel_t *construct_label           ( char *text, i32 x, i32 y );
+DLLEXPORT int  load_label                 ( UILabel_t **label, const char  path[] );
+DLLEXPORT int  load_label_as_dict         ( UILabel_t **label, dict *dictionary );
+DLLEXPORT int  construct_label            ( UILabel_t **label, char *text, i32 x, i32 y );
 
 // Draw er
-int        draw_label                ( UIWindow_t *window, UILabel_t  *label );
+DLLEXPORT int  draw_label                 ( UIWindow_t *window, UILabel_t  *label );
 
 // Callbacks
-int        click_label               ( UILabel_t  *label , mouse_state_t mouse_state );
+DLLEXPORT int  click_label                ( UILabel_t  *label, mouse_state_t mouse_state );
+DLLEXPORT int  hover_label                ( UILabel_t  *label, mouse_state_t mouse_state);
+DLLEXPORT int  release_label              ( UILabel_t  *label, mouse_state_t mouse_state);
+
+// Add callbacks
+DLLEXPORT int  add_click_callback_label   ( UILabel_t *label, void          (*callback)(UILabel_t*, mouse_state_t));
+DLLEXPORT int  add_hover_callback_label   ( UILabel_t *label, void          (*callback)(UILabel_t*, mouse_state_t));
+DLLEXPORT int  add_release_callback_label ( UILabel_t *label, void          (*callback)(UILabel_t*, mouse_state_t));
+
+// Bounds
+DLLEXPORT bool label_in_bounds            ( UILabel_t *label, mouse_state_t mouse_state );
 
 // Deallocators
-void       destroy_label             ( UILabel_t  *label );
+DLLEXPORT void destroy_label              ( UILabel_t  *label );

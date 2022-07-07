@@ -13,131 +13,69 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\UI">
-      <UniqueIdentifier>{fd072ff9-1f11-4a1d-83b4-b607aecead82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\UI\window">
-      <UniqueIdentifier>{84c55ca7-12f7-495b-a951-8a5ae73281ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\UI\window\element">
-      <UniqueIdentifier>{bac6a7c8-bf1a-4d6b-aae0-f2aa796850f5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\UI extras">
-      <UniqueIdentifier>{bd44b714-9670-4588-9636-e7b6d2a57f74}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="UI.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UILabel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UIButton.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIWindow.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="include\UI\UIDropdown.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="UICheckbox.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UIDropdown.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UIElement.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\UI\UITextInput.c">
+    <ClCompile Include="UILabel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\UI\UISlider.c">
+    <ClCompile Include="UIRadioButton.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\UI\UIImage.c">
+    <ClCompile Include="UISlider.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="include\UI\UIRadioButton.c">
+    <ClCompile Include="UIWindow.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UIDialog.c">
+    <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\UI\UItypedef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\UIElement.h">
-      <Filter>Header Files\UI\window</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\UIWindow.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="include\UI\UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="include\UI\UIButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\UIButton.h">
-      <Filter>Header Files\UI\window\element</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\UICanvas.h">
-      <Filter>Header Files\UI\window\element</Filter>
-    </ClInclude>
     <ClInclude Include="include\UI\UICheckbox.h">
-      <Filter>Header Files\UI\window\element</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UI\UIContainer.h">
-      <Filter>Header Files\UI\window\element</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\UI\UIDropdown.h">
-      <Filter>Header Files\UI\window\element</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\UIImage.h">
-      <Filter>Header Files\UI\window\element</Filter>
+    <ClInclude Include="include\UI\UIElement.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\UI\UILabel.h">
-      <Filter>Header Files\UI\window\element</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\UI\UIRadioButton.h">
-      <Filter>Header Files\UI\window\element</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\UI\UISlider.h">
-      <Filter>Header Files\UI\window\element</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\UITextInput.h">
-      <Filter>Header Files\UI\window\element</Filter>
+    <ClInclude Include="include\UI\UIWindow.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\UIDialog.h">
-      <Filter>Header Files\UI extras</Filter>
+    <ClInclude Include="include\UI\UItypedef.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UI\UIChart.h">
-      <Filter>Header Files\UI extras</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="TODO.txt">
-      <Filter>Source Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="G UI.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Resource.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

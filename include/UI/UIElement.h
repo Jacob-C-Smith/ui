@@ -3,13 +3,24 @@
 #include <UI/UItypedef.h>
 #include <UI/UI.h>
 
+#include <UI/UIButton.h>
+//#include <UI/UICanvas.h>
+#include <UI/UICheckbox.h>
+//#include <UI/UIChart.h>
+#include <UI/UICheckbox.h>
+#include <UI/UIDropdown.h>
+//#include <UI/UIImage.h>
+#include <UI/UIRadioButton.h>
+#include <UI/UISlider.h>
+#include <UI/UILabel.h>
+//#include <UI/UITextInput.h>
+
 union UIElement_u
 {
     UIButton_t      *button;
     UICanvas_t      *canvas;
     UIChart_t       *chart;
     UICheckbox_t    *checkbox;
-    UIContainer_t   *container;
     UIDropdown_t    *dropdown;
     UIImage_t       *image;
     UILabel_t       *label;
@@ -20,27 +31,34 @@ union UIElement_u
 
 struct UIElement_s
 {
-    u16                 type;
-    char               *name;
+    char               *name,
+                       *type;
     union UIElement_u   element;
-    struct UIElement_s *next;
 };
 
-// Allocators
-UIElement_t *create_element       ( void );
+// Allocators 
+DLLEXPORT int          create_element               ( UIElement_t **element );
 
 // Constructors
-UIElement_t *load_element         ( const char   path[] );
-UIElement_t *load_element_as_json ( char        *token_text );
-UIElement_t *construct_element    ( char        *name      , void          *element_data, u16 type_short );
+DLLEXPORT int          load_element                 ( UIElement_t **element, const char   path[] );
+DLLEXPORT int          load_element_as_json         ( UIElement_t **element, char        *token_text );
+DLLEXPORT int          construct_element            ( UIElement_t **element, char        *name      , char *type, void          *element_data );
 
 // Callbacks
-int          click_element        ( UIElement_t *element   , mouse_state_t  mouse_state ); 
-int          hover_element        ( UIElement_t *element   , mouse_state_t  mouse_state );
-int          release_element      ( UIElement_t *element   , mouse_state_t  mouse_state );
+DLLEXPORT int          click_element                ( UIElement_t *element   , mouse_state_t  mouse_state );
+DLLEXPORT int          hover_element                ( UIElement_t *element   , mouse_state_t  mouse_state );
+DLLEXPORT int          release_element              ( UIElement_t *element   , mouse_state_t  mouse_state );
+
+// Add callbacks
+DLLEXPORT int          add_click_callback_element   ( UIElement_t *element, void          (*callback)(UIElement_t*, mouse_state_t));
+DLLEXPORT int          add_hover_callback_element   ( UIElement_t *element, void          (*callback)(UIElement_t*, mouse_state_t));
+DLLEXPORT int          add_release_callback_element ( UIElement_t *element, void          (*callback)(UIElement_t*, mouse_state_t));
 
 // Bounds detection
-bool         in_bounds            ( UIElement_t *element   , mouse_state_t  mouse_state );
+DLLEXPORT bool         in_bounds                    ( UIElement_t *element   , mouse_state_t  mouse_state );
 
 // Drawing
-int          draw_element         ( UIWindow_t  *window    , UIElement_t   *element );
+DLLEXPORT int          draw_element                 ( UIWindow_t  *window    , UIElement_t   *element );
+
+// Destructor
+DLLEXPORT int          destroy_element              ( UIElement_t *element );

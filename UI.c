@@ -1,5 +1,6 @@
 #include <UI/UI.h>
 
+// Each u64 encodes an 8x8 glyph. ASCII values can be used to index characters. Add whatever you want so long as you keep the length under 255
 u64 font[133] = {
     0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,
     0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,	0x0000000000000000,
@@ -20,11 +21,11 @@ u64 font[133] = {
     0x80C0E070371E1C08, 0x00001c3e3e3e1c00, 0x040C1C3C3C1C0C04, 0x0000ff4224180000, 0x7E7E7E7E7E7E3C18
 };
 
-char *default_config   = "{\n\t\"name\"       : \"Default color theme\",\n\t\"primary\"    : [ 0, 0, 0 ],\n\t\"accent 1\"   : [ 128, 128, 128 ],\n\t\"accent 2\"   : [ 192, 192, 192 ],\n\t\"accent 3\"   : [ 0, 128, 255 ],\n\t\"background\" : [ 255, 255, 255 ]\n}\n";
-char *config_file_name = "\\ui_config.json";
-UIInstance_t *active_instance = 0;
+char         *default_config   = "{\n\t\"name\"       : \"Default color theme\",\n\t\"primary\"    : [ 0, 0, 0 ],\n\t\"accent 1\"   : [ 128, 128, 128 ],\n\t\"accent 2\"   : [ 192, 192, 192 ],\n\t\"accent 3\"   : [ 0, 128, 255 ],\n\t\"background\" : [ 255, 255, 255 ]\n}\n";
+char         *config_file_name = "\\ui_config.json";
+UIInstance_t *active_instance  = 0;
 
-UIInstance_t *ui_init                ( const char       *path )
+int           ui_init                ( UIInstance_t **instance, const char       *path )
 {
     // Uninitialized data
     FILE         *config_file;
@@ -42,66 +43,46 @@ UIInstance_t *ui_init                ( const char       *path )
                 **accent_2         = 0,
                 **accent_3         = 0,
                 **background       = 0;
-
+    dict         *config_file_json = 0;
     size_t        config_file_len  = 0;
+    JSONToken_t  *token            = 0;
 
     if (!appdata)
         goto no_app_data;
 
+    // Search AppData for a config
     strcat(config_path, appdata);
     strcat(config_path, config_file_name);
 
-    // Search AppData for a config
     created_config_file:
     
-    config_file_len  = ui_load_file(config_path, 0, false);
-    config_file_data = calloc(config_file_len, sizeof(u8));
-    ui_load_file(config_path, config_file_data, false);
-    
-    size_t       token_count  = parse_json(config_file_data, config_file_len, 0, (void*)0);
-    JSONToken_t *tokens       = calloc(token_count, sizeof(JSONToken_t));
-
-    parse_json(config_file_data, config_file_len, token_count, tokens);
-
-    for (size_t i = 0; i < token_count; i++)
+    // Load the config file
     {
-        if      ( strcmp(tokens[i].key, "primary")    == 0 )
-        {
-            if (tokens[i].type == JSONarray)
-                primary = tokens[i].value.a_where;
-            else
-                goto primary_type_error;
-        }
-        else if ( strcmp(tokens[i].key, "accent 1")   == 0 )
-        {
-            if (tokens[i].type == JSONarray)
-                accent_1 = tokens[i].value.a_where;
-            else
-                goto accent_1_type_error;
-        }
-        else if ( strcmp(tokens[i].key, "accent 2")   == 0 )
-        {
-            if (tokens[i].type == JSONarray)
-                accent_2 = tokens[i].value.a_where;
-            else
-                goto accent_2_type_error;
-        }
-        else if ( strcmp(tokens[i].key, "accent 3")   == 0 )
-        {
-            if (tokens[i].type == JSONarray)
-                accent_3 = tokens[i].value.a_where;
-            else
-                goto accent_3_type_error;
-        }
-        else if ( strcmp(tokens[i].key, "background") == 0 )
-        {
-            if (tokens[i].type == JSONarray)
-                background = tokens[i].value.a_where;
-            else
-                goto background_type_error;
-        }
+        config_file_len  = ui_load_file(config_path, 0, false);
+        config_file_data = calloc(config_file_len, sizeof(u8));
+        ui_load_file(config_path, config_file_data, false);
     }
 
+    // Parse the config file into a dictionary
+    parse_json(config_file_data, config_file_len, &config_file_json);
+
+    // Get properties from the dictionary
+    {
+        token      = dict_get(config_file_json, "primary");
+        primary    = JSON_VALUE(token, JSONarray);
+
+        token      = dict_get(config_file_json, "accent 1");
+        accent_1   = JSON_VALUE(token, JSONarray);
+
+        token      = dict_get(config_file_json, "accent 2");
+        accent_2   = JSON_VALUE(token, JSONarray);
+
+        token      = dict_get(config_file_json, "accent 3");
+        accent_3   = JSON_VALUE(token, JSONarray);
+
+        token      = dict_get(config_file_json, "background");
+        background = JSON_VALUE(token, JSONarray);
+    }
 
     // Construct the instance
     {
@@ -110,12 +91,19 @@ UIInstance_t *ui_init                ( const char       *path )
         ret->accent_2   = atoi(accent_2[0])   | (atoi(accent_2[1])   << 8) | (atoi(accent_2[2])   << 16) | (0xff << 24);
         ret->accent_3   = atoi(accent_3[0])   | (atoi(accent_3[1])   << 8) | (atoi(accent_3[2])   << 16) | (0xff << 24);
         ret->background = atoi(background[0]) | (atoi(background[1]) << 8) | (atoi(background[2]) << 16) | (0xff << 24);
+
+        dict_construct(&ret->windows, 16);
     }
 
-
-    //printf(default_config);
-
+    // Construct element lookup tables
+    extern int init_element( void );
+    init_element();
+    
     active_instance = ret;
+    *instance = ret;
+
+
+    free(config_path);
 
     return ret;
 
@@ -279,14 +267,12 @@ int           ui_append_window       ( UIInstance_t     *instance, UIWindow_t *w
         #endif
     }
 
-    // Initialized data
-    UIWindow_t *tmp   = instance->windows;
+    // Add the window to the instance
+    dict_add(instance->windows, window->name, window);
 
-    // Insert the window
-    instance->windows = window;
-    window->next      = tmp;
+    instance->active_window = window;
 
-    return 0;
+    return 1;
 
     // Error handling
     {
@@ -311,82 +297,42 @@ UIWindow_t   *ui_remove_window       ( UIInstance_t     *instance, const char *n
                 goto empty_name;
         #endif  
     }
-
-    UIWindow_t *window = instance->windows,
-               *prev   = 0;
     
-    // Iterate over windows
-    while (window)
-    {
-        // Error handling
-        {
-            #ifndef NDEBUG
-                if (window->name == (void*)0)
-                    goto no_window_name;
-                if (strlen(window->name) == 0)
-                    goto empty_window_name;
-            #endif
-        }
+    // Remove the window from the instance
+    UIWindow_t *ret = dict_pop(instance->windows, name);   
 
-        // Compare the parameterized name to the window name
-        if (strcmp(name, window->name) == 0)
-        {
+    instance->active_window = 0;
 
-            // Remove the window from the list
-            if (prev == 0)
-                instance->windows = window->next;
-            else
-                prev->next = window->next;
+    if (instance->windows->n_entries == 0)
+        instance->running = false;
 
-            return window;
-        }
-        
-        // Set previous window to current, current to next.
-        prev   = window;
-        window = window->next;
-    }
-
-    goto not_found;
+    // Return the window (for deallocation)
+    return ret;
 
     // Error handling
     {
         no_instance:
         no_name:
         empty_name:
-        no_window_name:
         empty_window_name:
-        not_found:
             return 0;
     }
 }
 
 int           ui_process_input       ( UIInstance_t     *instance )
 {
-    UIWindow_t   *window      = instance->windows;
+    
+    // Context error checking
+    {
+        if (instance->active_window == (void*)0)
+            return 0;
+    }
 
-	while (window)
-	{
-		
-        if (SDL_GetWindowFlags(window->window) & SDL_WINDOW_INPUT_FOCUS)
-            ui_append_window(instance, ui_remove_window(instance, window->name));
+    // Iterate over windows
+    process_window_input(instance->active_window);
 
-        window = window->next;
-	}
-
-    process_window_input(instance->windows);
-
-    if(instance->windows)
-        
-        // Destroy the window?
-        if (!instance->windows->is_open)
-        {
-            UIWindow_t* t = instance->windows->next;
-
-            destroy_window(instance->windows);
-        
-            instance->windows = t;
-        }
-
+    if (instance->active_window->is_open == false)
+        ui_remove_window(instance, instance->active_window->name);
 
     return 0;
 }
@@ -402,19 +348,8 @@ int           ui_draw                ( UIInstance_t     *instance )
         #endif
     }
 
-    // Initialized data
-    UIWindow_t *window = instance->windows;
-
-    // Iterate over windows
-    while (window)
-    {
-
-        // Draw the window
-        draw_window(window);
-
-        // Iterate
-        window = window->next;
-    }
+    // Draw the window
+    draw_window(instance->active_window);
 
     return 0;
 
@@ -475,21 +410,19 @@ int           ui_draw_text           ( const char *const text    , UIWindow_t *w
         ly = y;
 
     for (size_t i = 0; i < len; i++)
-    {
         UIDrawChar(text[i], window, ly, lx + (i * (8 * size)), size);
-    }
+
     return 0;
 }
 
 int           ui_draw_circle         ( int               radius  , UIWindow_t *window, int  x_center, int y_center )
 {
-    const int32_t diameter = (radius * 2);
-
-    i32 x     = (radius - 1),
-        y     = 0,
-        tx    = 1,
-        ty    = 1,
-        error = (tx - diameter);
+    i32 diameter = (radius * 2),
+        x        = (radius - 1),
+        y        = 0,
+        tx       = 1,
+        ty       = 1,
+        error    = (tx - diameter);
 
     while (x >= y)
     {
@@ -522,6 +455,7 @@ int           ui_draw_circle         ( int               radius  , UIWindow_t *w
  
 int           ui_exit                ( UIInstance_t     *instance )
 {
+    dict_destroy(instance->windows);
     free(instance);
     
     return 0;
