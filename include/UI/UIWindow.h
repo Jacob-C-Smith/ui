@@ -17,7 +17,7 @@
 //#include <UI/UIImage.h>
 #include <UI/UIRadioButton.h>
 #include <UI/UISlider.h>
-//#include <UI/UITextInput.h>
+#include <UI/UITextInput.h>
 
 
 struct UIWindow_s {
@@ -32,7 +32,6 @@ struct UIWindow_s {
 	UIElement_t       *last;
 	SDL_Window        *window;
 	SDL_Renderer      *renderer;
-
 };
 
 // Allocators
@@ -51,9 +50,9 @@ DLLEXPORT int          resize_window            ( UIWindow_t *window );
 
 // User interaction
 DLLEXPORT int          process_window_input     ( UIWindow_t *window );
-DLLEXPORT int          click_window             ( UIWindow_t *window, mouse_state_t  mouse_state );
-DLLEXPORT int          hover_window             ( UIWindow_t *window, mouse_state_t  mouse_state );
-DLLEXPORT int          release_window           ( UIWindow_t *window, mouse_state_t  mouse_state );
+DLLEXPORT int          click_window             ( UIWindow_t *window, ui_mouse_state_t  mouse_state );
+DLLEXPORT int          hover_window             ( UIWindow_t *window, ui_mouse_state_t  mouse_state );
+DLLEXPORT int          release_window           ( UIWindow_t *window, ui_mouse_state_t  mouse_state );
 
 // Drawing 
 DLLEXPORT int          draw_window              ( UIWindow_t *window );

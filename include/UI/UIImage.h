@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,6 +7,7 @@
 #include <stdbool.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include <JSON/JSON.h>
 
@@ -31,14 +33,26 @@ struct UIImage_s
 };
 
 // Allocators
-UIImage_t *create_image              ( void );
+DLLEXPORT int  create_image               ( UIImage_t **pp_image );
 
 // Constructors
-UIImage_t *load_image                ( const char   path[] );
-UIImage_t *load_image_as_json_tokens ( JSONToken_t* tokens, size_t token_count);
+DLLEXPORT int  load_image_as_dict         ( UIImage_t **pp_image, dict            *dictioanry);
+
+// Callbacks
+DLLEXPORT int  hover_image                ( UIImage_t *p_image, ui_mouse_state_t   mouse_state);
+DLLEXPORT int  click_image                ( UIImage_t *p_image, ui_mouse_state_t   mouse_state);
+DLLEXPORT int  release_image              ( UIImage_t *p_image, ui_mouse_state_t   mouse_state);
+
+// Add callbacks
+DLLEXPORT int  add_click_callback_image   ( UIImage_t* p_image, void             (*callback)(UIImage_t*, ui_mouse_state_t));
+DLLEXPORT int  add_hover_callback_image   ( UIImage_t* p_image, void             (*callback)(UIImage_t*, ui_mouse_state_t));
+DLLEXPORT int  add_release_callback_image ( UIImage_t* p_image, void             (*callback)(UIImage_t*, ui_mouse_state_t));
 
 // Drawers
-int        draw_image                ( UIImage_t   *image );
+DLLEXPORT int  draw_image                 ( UIWindow_t* window, UIImage_t         *p_image);
+
+DLLEXPORT bool image_in_bounds            ( UIWindow_t* window, ui_mouse_state_t   mouse_state);
+
 
 // Deallocators
-int        destroy_image             ( UIImage_t   *image );
+DLLEXPORT int  destroy_image              ( UIImage_t  *p_image );

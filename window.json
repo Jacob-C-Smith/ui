@@ -1,15 +1,16 @@
 {
     "$schema"  : "./window-schema.json", 
     "name"     : "Test window",
-    "width"    : 320,
-    "height"   : 120,
+    "width"    : 800,
+    "height"   : 720,
     "elements" : [
         {
             "type"     : "LABEL",
             "name"     : "label",
-            "text"     : "Label",
+            "text"     : "Label", 
             "x"        : 16,
-            "y"        : 16
+            "y"        : 16,
+            "size"     : 1
         },
         {
             "type"      : "CHECKBOX",
@@ -26,6 +27,57 @@
                 false,
                 false
             ]
+        },
+        {
+            "type"  : "BUTTON",
+            "name"  : "button",
+            "label" : "Button",
+            "x"     : 16,
+            "y"     : 96
+        },
+        {
+            "type"      : "DROPDOWN",
+            "name"      : "dropdown",
+            "x"         : 16,
+            "y"         : 80,
+            "options"   : [
+                "Option 1",
+                "Option 2",
+                "Option 3"
+            ],
+            "index"     : -1,
+            "collapsed" : true
+        },
+        {
+            "type"      : "RADIO BUTTON",
+            "name"      : "radiobutton",
+            "x"         : 16,
+            "y"         : 112,
+            "labels"    : [
+                "Radio button 1",
+                "Radio button 2",
+                "Radio button 3"
+            ],
+            "index" : 0
+        },
+        {
+            "type"      : "IMAGE",
+            "name"      : "image",
+            "x"         : 16,
+            "y"         : 176,
+            "width"     : 768,
+            "height"    : 512,
+            "path"      : "image.png"
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "text input",
+            "x"           : 16,
+            "y"           : 160,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "Text Input",
+            "length"      : 255
         }
     ]
 }

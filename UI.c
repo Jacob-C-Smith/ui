@@ -25,8 +25,19 @@ char         *default_config   = "{\n\t\"name\"       : \"Default color theme\",
 char         *config_file_name = "\\ui_config.json";
 UIInstance_t *active_instance  = 0;
 
-int           ui_init                ( UIInstance_t **instance, const char       *path )
+int           ui_init                ( UIInstance_t **pp_instance, const char       *path )
 {
+
+    // Argument check
+    {
+        #ifndef NDEBUG
+            if ( pp_instance == (void *) 0 )
+                goto no_instance;
+            if ( path == (void *) 0 )
+                goto no_path;
+        #endif
+    }
+
     // Uninitialized data
     FILE         *config_file;
 
@@ -45,7 +56,6 @@ int           ui_init                ( UIInstance_t **instance, const char      
                 **background       = 0;
     dict         *config_file_json = 0;
     size_t        config_file_len  = 0;
-    JSONToken_t  *token            = 0;
 
     if (!appdata)
         goto no_app_data;
@@ -59,6 +69,8 @@ int           ui_init                ( UIInstance_t **instance, const char      
     // Load the config file
     {
         config_file_len  = ui_load_file(config_path, 0, false);
+        if (config_file_len == 0)
+            goto no_config_file;
         config_file_data = calloc(config_file_len, sizeof(u8));
         ui_load_file(config_path, config_file_data, false);
     }
@@ -68,6 +80,10 @@ int           ui_init                ( UIInstance_t **instance, const char      
 
     // Get properties from the dictionary
     {
+
+        // Initialized data
+        JSONToken_t* token = 0;
+
         token      = dict_get(config_file_json, "primary");
         primary    = JSON_VALUE(token, JSONarray);
 
@@ -86,22 +102,37 @@ int           ui_init                ( UIInstance_t **instance, const char      
 
     // Construct the instance
     {
-        ret->primary    = atoi(primary[0])    | (atoi(primary[1])    << 8) | (atoi(primary[2])    << 16) | (0xff << 24);
-        ret->accent_1   = atoi(accent_1[0])   | (atoi(accent_1[1])   << 8) | (atoi(accent_1[2])   << 16) | (0xff << 24);
-        ret->accent_2   = atoi(accent_2[0])   | (atoi(accent_2[1])   << 8) | (atoi(accent_2[2])   << 16) | (0xff << 24);
-        ret->accent_3   = atoi(accent_3[0])   | (atoi(accent_3[1])   << 8) | (atoi(accent_3[2])   << 16) | (0xff << 24);
-        ret->background = atoi(background[0]) | (atoi(background[1]) << 8) | (atoi(background[2]) << 16) | (0xff << 24);
 
+        // Set the theme colors
+        {
+            ret->primary    = atoi(primary[0])    | (atoi(primary[1])    << 8) | (atoi(primary[2])    << 16) | (0xff << 24);
+            ret->accent_1   = atoi(accent_1[0])   | (atoi(accent_1[1])   << 8) | (atoi(accent_1[2])   << 16) | (0xff << 24);
+            ret->accent_2   = atoi(accent_2[0])   | (atoi(accent_2[1])   << 8) | (atoi(accent_2[2])   << 16) | (0xff << 24);
+            ret->accent_3   = atoi(accent_3[0])   | (atoi(accent_3[1])   << 8) | (atoi(accent_3[2])   << 16) | (0xff << 24);
+            ret->background = atoi(background[0]) | (atoi(background[1]) << 8) | (atoi(background[2]) << 16) | (0xff << 24);
+        }
+
+        // Construct a hash table
         dict_construct(&ret->windows, 16);
+
+        // Allocate a list of windows
+        ret->windows_list = calloc(16, sizeof(UIWindow_t *));
     }
 
-    // Construct element lookup tables
+    // Start up SDL
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS );
+
+    // Construct element function lookup tables
     extern int init_element( void );
+    
+    // Initialize element function lookup tables
     init_element();
     
+    // Set the active instance
     active_instance = ret;
-    *instance = ret;
-
+    
+    // Return
+    *pp_instance    = ret;
 
     free(config_path);
 
@@ -149,7 +180,9 @@ int           ui_init                ( UIInstance_t **instance, const char      
 
         // Argument errors
         {
-
+            no_instance:
+            no_path:
+            ;
         }
     }
 }
@@ -160,7 +193,7 @@ size_t        ui_load_file           ( const char       *path    ,   void    *bu
     {
         #ifndef NDEBUG
             if (path == 0)
-                goto noPath;
+                goto no_path;
         #endif
     }
 
@@ -170,7 +203,7 @@ size_t        ui_load_file           ( const char       *path    ,   void    *bu
 
     // Check if file is valid
     if (f == NULL)
-        goto invalidFile;
+        goto invalid_file;
 
     // Find file size and prep for read
     fseek(f, 0, SEEK_END);
@@ -188,23 +221,28 @@ size_t        ui_load_file           ( const char       *path    ,   void    *bu
 
     // Error handling
     {
-        noPath:
-            #ifndef NDEBUG
-                ui_print_error("[G10] Null path provided to funciton \"%s\\n", __FUNCSIG__);
-            #endif
-            return 0;
 
-        invalidFile:
-            #ifndef NDEBUG
+        // Argument errors
+        {
+            no_path:
+                #ifndef NDEBUG
+                    ui_print_error("[G10] Null path provided to funciton \"%s\\n", __FUNCSIG__);
+                #endif
+                return 0;
+        }
+        invalid_file:
+        {
+           #ifndef NDEBUG
                 ui_print_error("[G10] Failed to load file \"%s\"\n", path);
-            #endif
+           #endif
            return 0;
+        }
     }
 }
 
 int           ui_print_error         ( const char *const format  , ... )
 {
-    // We use the varadic argument list in vprintf
+    // Varadic argument list for vprintf
     va_list aList;
     va_start(aList, format);
 
@@ -223,7 +261,7 @@ int           ui_print_error         ( const char *const format  , ... )
 
 int           ui_print_warning       ( const char *const format  , ... )
 {
-    // We use the varadic argument list in vprintf
+    // Varadic argument list for vprintf
     va_list aList;
     va_start(aList, format);
 
@@ -240,7 +278,7 @@ int           ui_print_warning       ( const char *const format  , ... )
 
 int           ui_print_log           ( const char *const format  , ... )
 {
-    // We use the varadic argument list in vprintf
+    // Varadic argument list for vprintf
     va_list aList;
     va_start(aList, format);
 
@@ -267,10 +305,18 @@ int           ui_append_window       ( UIInstance_t     *instance, UIWindow_t *w
         #endif
     }
 
-    // Add the window to the instance
+    // Add the window to the list
+    instance->windows_list[dict_values(instance->windows, 0)] = window;
+
+    // Add the window to the dictionary
     dict_add(instance->windows, window->name, window);
 
-    instance->active_window = window;
+    // Update the active window
+    instance->active_window       = window;
+    instance->active_window->last = 0;
+
+    SDL_ShowWindow(instance->active_window->window);
+    SDL_RaiseWindow(instance->active_window->window);
 
     return 1;
 
@@ -297,9 +343,23 @@ UIWindow_t   *ui_remove_window       ( UIInstance_t     *instance, const char *n
                 goto empty_name;
         #endif  
     }
-    
+
+    size_t window_count = dict_values(instance->windows, 0);
+
     // Remove the window from the instance
     UIWindow_t *ret = dict_pop(instance->windows, name);   
+
+    // Iterate over each window in the list
+    for (size_t i = 0; i < window_count; i++)
+
+        // Matching window?
+        if (instance->windows_list[i] == ret)
+        {
+
+            // 
+            instance->windows_list[i]                = instance->windows_list[window_count - 1];
+            instance->windows_list[window_count - 1] = 0;
+        }
 
     instance->active_window = 0;
 
@@ -321,18 +381,37 @@ UIWindow_t   *ui_remove_window       ( UIInstance_t     *instance, const char *n
 
 int           ui_process_input       ( UIInstance_t     *instance )
 {
-    
-    // Context error checking
+    size_t       window_count = dict_values(instance->windows, 0);
+
+    for (size_t i = 0; i < window_count; i++)
     {
-        if (instance->active_window == (void*)0)
-            return 0;
+        if (instance->windows_list[i])
+        {
+            if (instance->windows_list[i]->is_open == false)
+            {
+                UIWindow_t* w = ui_remove_window(instance, instance->windows_list[i]->name);
+                destroy_window(w);
+                if (instance->windows->n_entries)
+                {
+                    instance->active_window = instance->windows_list[instance->windows->n_entries - 1];
+                    SDL_ShowWindow(instance->active_window->window);
+
+                    SDL_RaiseWindow(instance->active_window->window);
+
+                }
+                continue;
+            }
+            if (instance->windows_list[i])
+                if (SDL_GetWindowFlags(instance->windows_list[i]->window) & SDL_WINDOW_INPUT_FOCUS)
+                {
+                    instance->active_window = instance->windows_list[i];
+                }
+            // Iterate over windows
+            process_window_input(instance->active_window);
+        }
     }
+    
 
-    // Iterate over windows
-    process_window_input(instance->active_window);
-
-    if (instance->active_window->is_open == false)
-        ui_remove_window(instance, instance->active_window->name);
 
     return 0;
 }
@@ -348,8 +427,18 @@ int           ui_draw                ( UIInstance_t     *instance )
         #endif
     }
 
-    // Draw the window
-    draw_window(instance->active_window);
+    // Allocate for a list of element pointers
+    size_t window_count = dict_values(instance->windows, 0);
+
+    // Populate element pointer list
+
+    for (size_t i = 0; i < window_count; i++)
+    {
+
+        // Draw the window
+        draw_window(instance->windows_list[i]);
+    }
+
 
     return 0;
 

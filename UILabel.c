@@ -98,7 +98,8 @@ int  load_label_as_dict (UILabel_t** label, dict* dictionary)
 	// Initialized data
 	char      *text    = 0,
 		      *x       = 0,
-		      *y       = 0;
+		      *y       = 0,
+		      *size    = 0;
 
 	
     // Get data for the constructor
@@ -115,6 +116,9 @@ int  load_label_as_dict (UILabel_t** label, dict* dictionary)
 		token  = dict_get(dictionary, "y");
 		y      = JSON_VALUE(token, JSONprimative);
 
+		token = dict_get(dictionary, "size");
+		size = JSON_VALUE(token, JSONprimative);
+
     }
 
 	// Error checking
@@ -129,7 +133,7 @@ int  load_label_as_dict (UILabel_t** label, dict* dictionary)
 		#endif
 	}
 
-	construct_label(label, text, atoi(x), atoi(y));
+	construct_label(label, text, atoi(x), atoi(y), (size) ? atoi(size) : 1);
 
 	return 1;
 
@@ -161,7 +165,7 @@ int  load_label_as_dict (UILabel_t** label, dict* dictionary)
 	}
 }
 
-int  construct_label( UILabel_t **label, char* text, i32 x, i32 y)
+int  construct_label( UILabel_t **label, char* text, i32 x, i32 y, i32 size)
 {
 	// Argument check
 	{
@@ -203,6 +207,7 @@ int  construct_label( UILabel_t **label, char* text, i32 x, i32 y)
 		// Set the position
 		i_label->x = x,
 		i_label->y = y;
+		i_label->size = size;
 	}
 
 	return 1;
@@ -235,24 +240,24 @@ int        draw_label       ( UIWindow_t *window, UILabel_t* label )
 	if (label->hidden == false)
 	{
 		SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
-		ui_draw_text(label->text, window, label->x, label->y, 1);
+		ui_draw_text(label->text, window, label->x, label->y, label->size);
 	}
-	label->width  = strlen(label->text) * 8;
-	label->height = 8;
+	label->width  = strlen(label->text) * 8 * label->size;
+	label->height = 8 * label->size;
 
 	return 0;
 
 	// TODO: Error handling
 }
 
-int        click_label      ( UILabel_t* label, mouse_state_t mouse_state)
+int        click_label      ( UILabel_t* label, ui_mouse_state_t mouse_state)
 {
 
 	// Iterate through callbacks
 	for (size_t i = 0; i < label->on_click_count; i++)
 	{
 		// Define the callback function
-		void (*callback)(UILabel_t*, mouse_state_t) = label->on_click[i];
+		void (*callback)(UILabel_t*, ui_mouse_state_t) = label->on_click[i];
 
 		// Call the callback function
 		(*callback)(label, mouse_state);
@@ -262,15 +267,15 @@ int        click_label      ( UILabel_t* label, mouse_state_t mouse_state)
 	return 0;
 }
 
-int hover_label(UILabel_t* label, mouse_state_t mouse_state)
+int hover_label(UILabel_t* label, ui_mouse_state_t mouse_state)
 {
 
 	// Iterate through callbacks
-	for (size_t i = 0; i < label->on_click_count; i++)
+	for (size_t i = 0; i < label->on_hover_count; i++)
 	{
 
 		// Define the callback function
-		void (*callback)(UILabel_t*, mouse_state_t) = label->on_click[i];
+		void (*callback)(UILabel_t*, ui_mouse_state_t) = label->on_hover[i];
 
 		// Call the callback function
 		if (callback)
@@ -279,14 +284,14 @@ int hover_label(UILabel_t* label, mouse_state_t mouse_state)
 	}
 }
 
-int release_label(UILabel_t* label, mouse_state_t mouse_state)
+int release_label(UILabel_t* label, ui_mouse_state_t mouse_state)
 {
 
 	// Iterate through callbacks
 	for (size_t i = 0; i < label->on_release_count; i++)
 	{
 		// Define the callback function
-		void (*callback)(UILabel_t*, mouse_state_t) = label->on_release[i];
+		void (*callback)(UILabel_t*, ui_mouse_state_t) = label->on_release[i];
 
 
 		// Call the callback function
@@ -297,22 +302,45 @@ int release_label(UILabel_t* label, mouse_state_t mouse_state)
 	return 0;
 }
 
-int add_click_callback_label(UILabel_t* label, void(*callback)(UILabel_t*, mouse_state_t))
+int add_click_callback_label(UILabel_t* label, void(*callback)(UILabel_t*, ui_mouse_state_t))
+{
+    // TODO: Argument check
+
+    // If this is the first callback, set the max to 1 and 
+    if (label->on_click_max == 0)
+    {
+		label->on_click_max = 1;
+		label->on_click = calloc(1, sizeof(void*));
+    }
+
+    // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
+    if (label->on_click_count + 1 > label->on_click_max)
+    {
+        // Double the max
+		label->on_click_max *= 2;
+
+        realloc(label->on_click, label->on_click_max);
+    }
+
+    // Increment the callback counter and install the new callback
+	label->on_click[label->on_click_count++] = callback;
+
+    return 0;
+
+    // TODO: Error handling
+}
+
+int add_hover_callback_label(UILabel_t* label, void(*callback)(UILabel_t*, ui_mouse_state_t))
 {
 	return 0;
 }
 
-int add_hover_callback_label(UILabel_t* label, void(*callback)(UILabel_t*, mouse_state_t))
+int add_release_callback_label(UILabel_t* label, void(*callback)(UILabel_t*, ui_mouse_state_t))
 {
 	return 0;
 }
 
-int add_release_callback_label(UILabel_t* label, void(*callback)(UILabel_t*, mouse_state_t))
-{
-	return 0;
-}
-
-bool       label_in_bounds  ( UILabel_t  *label, mouse_state_t mouse_state)
+bool       label_in_bounds  ( UILabel_t  *label, ui_mouse_state_t mouse_state)
 {
 	// Initialized data
 	i32  x = label->x,

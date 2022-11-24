@@ -1,30 +1,32 @@
+/*
+ * UI.h
+ * 
+ * - Main header file. UI Instance functions
+ * 
+ * Copyright (c) Jacob Smith, 2022
+ */
+
+// Includes
 #pragma once
 
+// Standard Library
 #include <stdio.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdbool.h>
 
+// SDL
 #include <SDL2/SDL.h>
+#undef main
 
+// JSON parser
 #include <JSON/JSON.h>
 
+// UI 
 #include <UI/UItypedef.h>
 #include <UI/UIWindow.h>
 
-#define UI_BUTTON      0x001
-#define UI_CANVAS      0x002
-#define UI_CHART       0x004
-#define UI_CHECKBOX    0x008
-#define UI_DROPDOWN    0x010
-#define UI_IMAGE       0x020
-#define UI_LABEL       0x040
-#define UI_RADIOBUTTON 0x080
-#define UI_SLIDER      0x100
-#define UI_TEXTINPUT   0x200
-
-#undef main
-
+// Preprocessor constants
 #define UI_M1     0x01
 #define UI_M2     0x02
 #define UI_M3     0x04
@@ -33,48 +35,196 @@
 #define UI_SWUP   0x20
 #define UI_SWDOWN 0x40
 
-struct mouse_state_s {
+// Mouse event callback parameter
+struct ui_mouse_state_s {
+
+    // The position of the cursor
     u32 x,
         y;
+    
+    // Bitmask mouse keys and scroll wheel
     u8  button;
 };
 
-
+// UI Instance. Contains a list of windows and an active theme.
 struct UIInstance_s {
-    dict       *windows;
-    UIWindow_t *active_window;
-    color       primary,
-                background, 
-                accent_1,
-                accent_2,
-                accent_3;
-    bool        running;
+    dict        *windows;
+    bool         running;
+    UIWindow_t  *active_window,
+                *load_window,
+               **windows_list;
+    color        primary,
+                 background, 
+                 accent_1,
+                 accent_2,
+                 accent_3;
 };
 
 // Initializers
-DLLEXPORT int           ui_init             ( UIInstance_t    **instance, const char *path );
+/* !
+  *  Initialize UI.
+  *
+  *  @param pp_instance : Pointer to pointer to UI instance
+  *  @param path        : Path to config file or null
+  *
+  *  @sa ui_exit
+  *
+  *  @return 0 on success, -1 on error.
+  */
+DLLEXPORT int           ui_init             ( UIInstance_t    **pp_instance, const char *path );
 
 // ANSI colored prints
+/* !
+  *  printf, but in blue via ANSI
+  *
+  *  @param format : printf format text
+  *  @param ...    : varadic arguments
+  *
+  *  @sa ui_print_warning
+  *  @sa ui_print_error
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_print_log        ( const char* const format  , ... );
+
+/* !
+  *  printf, but in yellow via ANSI
+  *
+  *  @param format : printf format text
+  *  @param ...    : varadic arguments
+  * 
+  *  @sa ui_print_log
+  *  @sa ui_print_error
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_print_warning    ( const char* const format  , ... );
+
+/* !
+  *  printf, but in red via ANSI
+  *
+  *  @param format : printf format text
+  *  @param ...    : varadic arguments
+  * 
+  *  @sa ui_print_log
+  *  @sa ui_print_warning
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_print_error      ( const char* const format  , ... );
 
 // Text drawing
+/* !
+  *  Graphical printf
+  *
+  *  @param format : printf format text
+  *  @param window : The window to print to
+  *  @param x      : The x offset in pixels
+  *  @param y      : The y offset in pixels
+  *  @param size   : 1 is 8px height, 2 is 16px, 3 is 24px, etc
+  *  @param ...    : varadic arguments
+  *
+  *  @sa ui_draw_text
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_draw_format_text ( const char* const format  , UIWindow_t *window, int x, int y, int size, ... );
+
+// Text drawing
+/* !
+  *  Graphical puts
+  *
+  *  @param format : printf format text
+  *  @param window : The window to print to
+  *  @param x      : The x offset in pixels
+  *  @param y      : The y offset in pixels
+  *  @param size   : 1 is 8px height, 2 is 16px, 3 is 24px, etc
+  *
+  *  @sa ui_draw_format_text
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_draw_text        ( const char* const text    , UIWindow_t *window, int x, int y, int size );
+
+/* !
+  *  Draw a circle
+  *
+  *  @param radius : printf format text
+  *  @param window : The window to draw to
+  *  @param x      : The x offset in pixels
+  *  @param y      : The y offset in pixels
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_draw_circle      ( int               radius  , UIWindow_t *window, int x, int y );
 
 // Window operations
+/* !
+  *  Append a window
+  *
+  *  @param instance : Pointer to instance
+  *  @param window   : The window to append
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_append_window    ( UIInstance_t     *instance, UIWindow_t *window );
+
+/* !
+  *  Remove a window
+  *
+  *  @param instance : Pointer to instance
+  *  @param name     : The name of the window
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT UIWindow_t   *ui_remove_window    ( UIInstance_t     *instance, const char *name );
+
+/* !
+  *  Process active window input
+  *
+  *  @param instance : Pointer to instance
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_process_input    ( UIInstance_t     *instance );
+
+/* !
+  *  Draw the active window
+  *
+  *  @param instance : Pointer to instance
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_draw             ( UIInstance_t     *instance );
 
 // Image drawing
+
+/* !
+  *  Get the active instance
+  *
+  *  @return active instance for this process ID
+  */
 DLLEXPORT UIInstance_t *ui_get_active_instance ( void );
 
 // File I/O
+
+/* !
+  *  Load a file
+  *
+  *  @param path   : File path
+  *  @param buffer : Pointer to buffer 
+  *  @param binary : fopen mode is "rb" if true else "r"
+  * 
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT size_t        ui_load_file        ( const char       *path    , void       *buffer, bool binary );
 
 // Exit
+/* !
+  *  Shutdown the UI
+  *
+  *  @param instance : Pointer to instance
+  *
+  *  @return 0 on success, -1 on error.
+  */
 DLLEXPORT int           ui_exit             ( UIInstance_t     *instance );

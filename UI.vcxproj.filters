@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\windows">
+      <UniqueIdentifier>{5bea0820-5258-49c7-a0da-f11fac59e87a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UI.c">
@@ -43,6 +46,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UIImage.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UITextInput.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,5 +86,22 @@
     <ClInclude Include="include\UI\UItypedef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\UI\UIImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UI\UITextInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="window.json">
+      <Filter>Source Files\windows</Filter>
+    </None>
+    <None Include="instance constructor.json">
+      <Filter>Source Files\windows</Filter>
+    </None>
+    <None Include="instance inspector.json">
+      <Filter>Source Files\windows</Filter>
+    </None>
   </ItemGroup>
 </Project>

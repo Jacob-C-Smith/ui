@@ -118,7 +118,6 @@ int load_checkbox_as_dict ( UICheckbox_t **checkbox, dict *dictionary )
         }
 
 
-
         // Missing JSON errors
         {
         no_checkbox_name:
@@ -162,22 +161,37 @@ int construct_checkbox(UICheckbox_t** checkbox, char** labels, bool* checked, i3
         // Count labels
         while (labels[++label_count]);
 
+        i_checkbox->label_count = label_count;
+
         dict_construct(&i_checkbox->labels, label_count);
 
         // Allocate for and copy labels, check states
         for (size_t i = 0; i < label_count; i++)
         {
-            size_t i_length = strlen(labels[i]);
 
-            dict_add(i_checkbox->labels, labels[i], (void*)checked[i]);
+            // Initialized data
+            char   *label   = labels[i],
+                   *i_label = 0;
+            size_t  i_length = strlen(label);
 
-            // Keep track of the longest element
-            if (longest_label < i_length)
-                longest_label = i_length;
+            
+            longest_label = (i_length > longest_label) ? i_length : longest_label;
+
+
+            // Allocate for the option
+            i_label = calloc(i_length + 1, sizeof(char));
+
+            // TOOD: Memory check
+
+            // Copy the option string
+            strncpy(i_label, label, i_length);
+
+            i_checkbox->labels[i] = i_label;
 
         }
 
         i_checkbox->longest_label = longest_label;
+        i_checkbox->checks        = calloc(label_count, sizeof(bool));
 
         // Set x
         i_checkbox->x = x;
@@ -193,43 +207,36 @@ int construct_checkbox(UICheckbox_t** checkbox, char** labels, bool* checked, i3
 
 }
 
-int           hover_checkbox               ( UICheckbox_t *checkbox, mouse_state_t mouse_state)
+int           hover_checkbox               ( UICheckbox_t *checkbox, ui_mouse_state_t mouse_state)
 {
-    // TODO:
+    s32 x = mouse_state.x - checkbox->x,
+        y = mouse_state.y - checkbox->y;
+
+    if (y >= 0)
+    {
+        checkbox->hover_index = (y / 15) ;
+        if (checkbox->hover_index > checkbox->label_count)
+            checkbox->hover_index = checkbox->label_count - 1;
+    }
+    else
+    {
+        checkbox->hover_index = -1;
+    }
+
+    
     return 0;
 }
 
-int           click_checkbox               ( UICheckbox_t *checkbox, mouse_state_t mouse_state)
+int           click_checkbox               ( UICheckbox_t *checkbox, ui_mouse_state_t mouse_state)
 {
-
-    // Toggle checkbox selection
-    {
-         
-        s32 y = mouse_state.y - checkbox->y;
-
-        char **keys   = calloc(checkbox->labels->n_entries, sizeof(void*));
-        void *values = calloc(checkbox->labels->n_entries, sizeof(void*));
-        
-        dict_keys(checkbox->labels, keys);
-        dict_values(checkbox->labels, (void*) values);
-
-        y /= 15;
-
-        dict_add(checkbox->labels, keys[y], (void*) 1);
-
-        free(keys);
-        free(values);
-
-        
-
-        //checkbox->checked[y] = (checkbox->checked[y]) ? false : true;
-    }
+    if(checkbox->hover_index != -1)
+        checkbox->checks[checkbox->hover_index] ^= true;
 
     // Iterate through callbacks
     for (size_t i = 0; i < checkbox->on_click_count; i++)
     {
         // Define the callback function
-        void (*callback)(UICheckbox_t*, mouse_state_t) = checkbox->on_click[i];
+        void (*callback)(UICheckbox_t*, ui_mouse_state_t) = checkbox->on_click[i];
 
         // Call the callback function
         (*callback)(checkbox, mouse_state);
@@ -239,13 +246,13 @@ int           click_checkbox               ( UICheckbox_t *checkbox, mouse_state
     return 0;
 }
 
-int           release_checkbox              ( UICheckbox_t *checkbox, mouse_state_t mouse_state )
+int           release_checkbox              ( UICheckbox_t *checkbox, ui_mouse_state_t mouse_state )
 {
     // Iterate through callbacks
     for (size_t i = 0; i < checkbox->on_release_count; i++)
     {
         // Define the callback function
-        void (*callback)(UICheckbox_t*, mouse_state_t) = checkbox->on_release[i];
+        void (*callback)(UICheckbox_t*, ui_mouse_state_t) = checkbox->on_release[i];
 
 
         // Call the callback function
@@ -257,19 +264,19 @@ int           release_checkbox              ( UICheckbox_t *checkbox, mouse_stat
     return 0;
 }
 
-int add_click_callback_checkbox(UICheckbox_t* checkbox, void(*callback)(UICheckbox_t*, mouse_state_t))
+int add_click_callback_checkbox(UICheckbox_t* checkbox, void(*callback)(UICheckbox_t*, ui_mouse_state_t))
 {
     // TODO:
     return 0;
 }
 
-int add_hover_callback_checkbox(UICheckbox_t* checkbox, void(*callback)(UICheckbox_t*, mouse_state_t))
+int add_hover_callback_checkbox(UICheckbox_t* checkbox, void(*callback)(UICheckbox_t*, ui_mouse_state_t))
 {
     // TODO:
     return 0;
 }
 
-int add_release_callback_checkbox(UICheckbox_t* checkbox, void(*callback)(UICheckbox_t*, mouse_state_t))
+int add_release_callback_checkbox(UICheckbox_t* checkbox, void(*callback)(UICheckbox_t*, ui_mouse_state_t))
 {
     // TODO:
     return 0;
@@ -279,40 +286,31 @@ int           draw_checkbox                ( UIWindow_t   *window  , UICheckbox_
 {
     UIInstance_t* instance = ui_get_active_instance();
     SDL_Rect r = { checkbox->x, checkbox->y, 12, 12 };
-    char **keys   = 0;
-    void  *values = 0;
 
     checkbox->width  = 12,
-    checkbox->height = 18*checkbox->labels->n_entries;
+    checkbox->height = 18*checkbox->label_count;
 
-    keys   = calloc(checkbox->labels->n_entries, sizeof(void *));
-    values = calloc(checkbox->labels->n_entries, sizeof(void *));
-    dict_keys(checkbox->labels, keys);
-       
-    for (size_t i = 0; i < checkbox->labels->n_entries; i++)
+    for (size_t i = 0; i < checkbox->label_count; i++)
     {
         SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
         SDL_RenderDrawRect(window->renderer, &r);
 
-        bool *v = values;
+        bool *v = checkbox->checks;
 
         if (v[i] == true)
             ui_draw_text("\200", window, r.x + 2, r.y + 1, 1);
 
-        ui_draw_text(keys[i], window, r.x + 14, r.y + 2, 1);
+        ui_draw_text(checkbox->labels[i], window, r.x + 14, r.y + 2, 1);
 
         r.y += 15;
     }
-
-
-    free(keys);
 
     return 0;
 
 }
 
 
-bool       checkbox_in_bounds  ( UICheckbox_t  *checkbox, mouse_state_t mouse_state)
+bool       checkbox_in_bounds  ( UICheckbox_t  *checkbox, ui_mouse_state_t mouse_state)
 {
 	// Initialized data
 	i32  x = checkbox->x,

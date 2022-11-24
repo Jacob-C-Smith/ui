@@ -1,0 +1,211 @@
+{
+    "$schema"  : "./window-schema.json", 
+    "name"     : "G10 Instance Constructor",
+    "width"    : 640,
+    "height"   : 480,
+    "elements" : [
+        {
+            "type"     : "IMAGE",
+            "name"     : "logo",
+            "x"        : 16,
+            "y"        : 12,
+            "width"    : 24,
+            "height"   : 24,
+            "path"     : "G10.png"
+        },
+        {
+            "type"     : "LABEL",
+            "name"     : "G10 instance title label",
+            "text"     : "Instance", 
+            "x"        : 48,
+            "y"        : 16,
+            "size"     : 2
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Instance name label",
+            "text"      : "Name",
+            "x"         : 16,
+            "y"         : 44
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "instance name",
+            "x"           : 160,
+            "y"           : 40,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "G10 Instance",
+            "length"      : 255
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Input path label",
+            "text"      : "Input",
+            "x"         : 16,
+            "y"         : 60
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "input name",
+            "x"           : 160,
+            "y"           : 56,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "/path/to/input.json",
+            "length"      : 255
+        },
+        {
+            "type"        : "BUTTON",
+            "name"        : "construct input button",
+            "label"       : "Construct Input",
+            "x"           : 160,
+            "y"           : 73
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Window width label",
+            "text"      : "Window width",
+            "x"         : 16,
+            "y"         : 92
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "window width",
+            "x"           : 160,
+            "y"           : 88,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "1280",
+            "length"      : 255
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Window height label",
+            "text"      : "Window height",
+            "x"         : 16,
+            "y"         : 108
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "window height",
+            "x"           : 160,
+            "y"           : 104,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "720",
+            "length"      : 255
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Window title label",
+            "text"      : "Window title",
+            "x"         : 16,
+            "y"         : 124
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "window title",
+            "x"           : 160,
+            "y"           : 120,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "Video Game",
+            "length"      : 255
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Fullscreen label",
+            "text"      : "Fullscreen",
+            "x"         : 16,
+            "y"         : 140
+        },
+        {
+            "type"        : "CHECKBOX",
+            "name"        : "fullscreen",
+            "x"           : 160,
+            "y"           : 138,
+            "labels"      : [
+                " "
+            ],
+            "checked" : [
+                true
+            ]
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Cached parts label",
+            "text"      : "Cached parts",
+            "x"         : 16,
+            "y"         : 156
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "cached parts",
+            "x"           : 160,
+            "y"           : 152,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "128",
+            "length"      : 255
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Cached materials label",
+            "text"      : "Cached materials",
+            "x"         : 16,
+            "y"         : 172
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "cached materials",
+            "x"           : 160,
+            "y"           : 168,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "128",
+            "length"      : 255
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Cached shaders label",
+            "text"      : "Cached shaders",
+            "x"         : 16,
+            "y"         : 188
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "cached shaders",
+            "x"           : 160,
+            "y"           : 184,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "32",
+            "length"      : 255
+        },
+        {
+            "type"      : "LABEL",
+            "name"      : "Initial scene label",
+            "text"      : "Initial scene",
+            "x"         : 16,
+            "y"         : 204
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "Initial scene",
+            "x"           : 160,
+            "y"           : 200,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "/path/to/scene.json",
+            "length"      : 255
+        },
+        {
+            "type"        : "BUTTON",
+            "name"        : "Save config button",
+            "label"       : "Save As",
+            "x"           : 569,
+            "y"           : 458
+        }
+    ]
+}

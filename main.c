@@ -2,37 +2,47 @@
 
 #include <UI/UI.h>
 
-int main(int argc, const char** argv)
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
+int main ( int argc, const char **argv )
 {
     // Initialized data
-    UIInstance_t *ui_instance = 0;
-    UIWindow_t   *ui_window   = 0;
+    UIInstance_t *p_ui_instance = 0;
+    UIWindow_t   *p_ui_window   = 0;
 
     // Initialize the UI library
-    ui_init(&ui_instance, "");
+    ui_init(&p_ui_instance, "");
 
     // Load a window from the filesystem
-    load_window(&ui_window, "window.json");
+    load_window(&p_ui_window, "window.json");
 
     // Add the window to the instance
-    ui_append_window(ui_instance, ui_window);
+    ui_append_window(p_ui_instance, p_ui_window);
+
+    load_window(&p_ui_window, "instance inspector.json");
+
+    // Add the window to the instance
+    ui_append_window(p_ui_instance, p_ui_window);
+
+    // Add some callbacks
 
     // Start running
-    ui_instance->running = true;
+    p_ui_instance->running = true;
 
     // Loop
-    while (ui_instance->running)
+    while (p_ui_instance->running)
     {
-
+        
         // Process input
-        ui_process_input(ui_instance);
+        ui_process_input(p_ui_instance);
 
         // Draw windows
-        ui_draw(ui_instance);
+        ui_draw(p_ui_instance);
     }
 
     // Exit the UI library
-    ui_exit(ui_instance);
+    ui_exit(p_ui_instance);
 
     return 1;
 }
