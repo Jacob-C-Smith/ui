@@ -306,7 +306,7 @@ int           ui_append_window       ( UIInstance_t     *instance, UIWindow_t *w
     }
 
     // Add the window to the list
-    instance->windows_list[dict_values(instance->windows, 0)] = window;
+    instance->windows_list[ dict_values(instance->windows, 0) ] = window;
 
     // Add the window to the dictionary
     dict_add(instance->windows, window->name, window);

@@ -1,6 +1,8 @@
 #include <UI/UIElement.h>
 
-char* element_names[9] =
+#define ELEMENT_COUNT 9
+
+char* element_names[ELEMENT_COUNT] =
 {
     "BUTTON",
     "CHECKBOX",
@@ -9,10 +11,11 @@ char* element_names[9] =
     "LABEL",
     "RADIO BUTTON",
     "SLIDER",
+    "TABLE",
     "TEXT INPUT"
 };
 
-void* load_callbacks[9] =
+void* load_callbacks[ELEMENT_COUNT] =
 {
     load_button_as_dict,
     load_checkbox_as_dict,
@@ -21,10 +24,11 @@ void* load_callbacks[9] =
     load_label_as_dict,
     load_radio_button_as_dict,
     0,
+    load_table_as_dict,
     load_text_input_as_dict
 };
 
-void* click_callbacks[9] =
+void* click_callbacks[ELEMENT_COUNT] =
 {
     click_button,
     click_checkbox,
@@ -33,10 +37,11 @@ void* click_callbacks[9] =
     click_label,
     click_radio_button,
     0,
+    0,
     click_text_input
 };
 
-void* hover_callbacks[9] =
+void* hover_callbacks[ELEMENT_COUNT] =
 {
     hover_button,
     hover_checkbox,
@@ -45,10 +50,11 @@ void* hover_callbacks[9] =
     hover_label,
     hover_radio_button,
     0,
+    0,
     hover_text_input
 };
 
-void* release_callbacks[9] =
+void* release_callbacks[ELEMENT_COUNT] =
 {
     release_button,
     release_checkbox,
@@ -57,10 +63,11 @@ void* release_callbacks[9] =
     release_label,
     release_radio_button,
     0,
+    0,
     release_text_input
 };
 
-void* add_click_callbacks[9] =
+void* add_click_callbacks[ELEMENT_COUNT] =
 {
     add_click_callback_button,
     add_click_callback_checkbox,
@@ -69,10 +76,11 @@ void* add_click_callbacks[9] =
     add_click_callback_label,
     add_click_callback_radio_button,
     0,
+    0,
     add_click_callback_text_input
 };
 
-void* add_hover_callbacks[9] =
+void* add_hover_callbacks[ELEMENT_COUNT] =
 {
     add_hover_callback_button,
     add_hover_callback_checkbox,
@@ -81,10 +89,11 @@ void* add_hover_callbacks[9] =
     add_hover_callback_label,
     add_hover_callback_radio_button,
     0,
+    0,
     add_hover_callback_text_input
 };
 
-void* add_release_callbacks[9] =
+void* add_release_callbacks[ELEMENT_COUNT] =
 {
     add_release_callback_button,
     add_release_callback_checkbox,
@@ -93,10 +102,11 @@ void* add_release_callbacks[9] =
     add_release_callback_label,
     add_release_callback_radio_button,
     0,
+    0,
     add_release_callback_text_input
 };
 
-void* draw_callback[9] =
+void* draw_callback[ELEMENT_COUNT] =
 {
     draw_button,
     draw_checkbox,
@@ -105,10 +115,11 @@ void* draw_callback[9] =
     draw_label,
     draw_radio_button,
     0,
+    draw_table,
     draw_text_input
 };
 
-void* destructor_callback[9] =
+void* destructor_callback[ELEMENT_COUNT] =
 {
     destroy_button,
     destroy_checkbox,
@@ -117,10 +128,11 @@ void* destructor_callback[9] =
     destroy_label,
     destroy_radio_button,
     0,
+    0,
     destroy_text_input
 };
 
-void* bounds_callback[9] =
+void* bounds_callback[ELEMENT_COUNT] =
 {
     button_in_bounds,
     checkbox_in_bounds,
@@ -129,38 +141,40 @@ void* bounds_callback[9] =
     label_in_bounds,
     radio_button_in_bounds,
     0,
+    0,
     text_input_in_bounds
 };
 
-dict* load_lut = 0;
-dict* click_lut = 0;
-dict* hover_lut = 0;
-dict* release_lut = 0;
-dict* add_click_lut = 0;
-dict* add_hover_lut = 0;
-dict* add_release_lut = 0;
-dict* draw_lut = 0;
-dict* destructor_lut = 0;
-dict* bounds_lut = 0;
+dict *load_lut        = 0;
+dict *click_lut       = 0;
+dict *hover_lut       = 0;
+dict *release_lut     = 0;
+dict *add_click_lut   = 0;
+dict *add_hover_lut   = 0;
+dict *add_release_lut = 0;
+dict *draw_lut        = 0;
+dict *destructor_lut  = 0;
+dict *bounds_lut      = 0;
 
 int init_element ( void )
 {
+
     // Construct a dictionary for each type of callback
     {
-        dict_construct(&load_lut       , 16);
-        dict_construct(&click_lut      , 16);
-        dict_construct(&hover_lut      , 16);
-        dict_construct(&release_lut    , 16);
-        dict_construct(&add_click_lut  , 16);
-        dict_construct(&add_hover_lut  , 16);
-        dict_construct(&add_release_lut, 16);
-        dict_construct(&draw_lut       , 16);
-        dict_construct(&bounds_lut     , 16);
-        dict_construct(&destructor_lut , 16);
+        dict_construct(&load_lut       , ELEMENT_COUNT);
+        dict_construct(&click_lut      , ELEMENT_COUNT);
+        dict_construct(&hover_lut      , ELEMENT_COUNT);
+        dict_construct(&release_lut    , ELEMENT_COUNT);
+        dict_construct(&add_click_lut  , ELEMENT_COUNT);
+        dict_construct(&add_hover_lut  , ELEMENT_COUNT);
+        dict_construct(&add_release_lut, ELEMENT_COUNT);
+        dict_construct(&draw_lut       , ELEMENT_COUNT);
+        dict_construct(&bounds_lut     , ELEMENT_COUNT);
+        dict_construct(&destructor_lut , ELEMENT_COUNT);
     }
 
     // Populate callbacks
-    for (size_t i = 0; i < 8; i++)
+    for (size_t i = 0; i < ELEMENT_COUNT; i++)
     {
         dict_add(load_lut       , element_names[i], load_callbacks[i]);
         dict_add(click_lut      , element_names[i], click_callbacks[i]);

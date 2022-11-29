@@ -61,10 +61,18 @@
             "index" : 0
         },
         {
+            "type"     : "LABEL",
+            "name"     : "label 2",
+            "text"     : "An Image:", 
+            "x"        : 16,
+            "y"        : 180,
+            "size"     : 1
+        },
+        {
             "type"      : "IMAGE",
             "name"      : "image",
             "x"         : 16,
-            "y"         : 176,
+            "y"         : 192,
             "width"     : 768,
             "height"    : 512,
             "path"      : "image.png"
@@ -78,6 +86,22 @@
             "height"      : 14,
             "placeholder" : "Text Input",
             "length"      : 255
+        },
+        {
+            "type"     : "LABEL",
+            "name"     : "label 3",
+            "text"     : "A Table:", 
+            "x"        : 160,
+            "y"        : 16,
+            "size"     : 1
+        },
+        {
+            "type"        : "TABLE",
+            "name"        : "element table",
+            "x"           : 160,
+            "y"           : 32,
+            "max rows"    : 5,
+            "max columns" : 3
         }
     ]
 }

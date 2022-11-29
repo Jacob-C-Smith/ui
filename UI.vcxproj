@@ -213,11 +213,13 @@
     <ClCompile Include="UILabel.c" />
     <ClCompile Include="UIRadioButton.c" />
     <ClCompile Include="UISlider.c" />
+    <ClCompile Include="UITable.c" />
     <ClCompile Include="UITextInput.c" />
     <ClCompile Include="UIWindow.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\UI\UIImage.h" />
+    <ClInclude Include="include\UI\UITable.h" />
     <ClInclude Include="include\UI\UITextInput.h" />
     <ClInclude Include="include\UI\UItypedef.h" />
     <ClInclude Include="include\UI\UI.h" />
@@ -233,6 +235,7 @@
   <ItemGroup>
     <None Include="instance constructor.json" />
     <None Include="instance inspector.json" />
+    <None Include="TODO" />
     <None Include="window.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

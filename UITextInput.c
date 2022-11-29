@@ -164,19 +164,34 @@ int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
 
 	// Draw the text input
 	{
+		if (instance->active_window->last)
+		{
+			if (instance->active_window->last->element.text_input == text_input)
+			{
+				SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_3, (u8)(instance->accent_3 >> 8), (u8)(instance->accent_3 >> 16), 0xff);
+			}
+		}
+		else
+		{
+			SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
+
+		}
+
 		SDL_Rect r = { text_input->x, text_input->y, text_input->width, text_input->height };
-		SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
 		SDL_RenderDrawRect(renderer, &r);
 		++r.x,
 		++r.y,
 		r.w-=2,
 		r.h-=2;
 		SDL_RenderDrawRect(renderer, &r);
+		SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
+
 	}
 
 	// Draw the text
 	{
 		if (text_input)
+		{
 			if (strlen(text_input->text))
 			{
 				ui_draw_text(text_input->text, window, text_input->x + 4, text_input->y + 3, 1);
@@ -192,6 +207,8 @@ int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
 
 				}
 			}
+
+		}
 	}
 
 	return 0;

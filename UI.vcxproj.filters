@@ -54,6 +54,9 @@
     <ClCompile Include="UITextInput.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UITable.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\UI\UI.h">
@@ -92,6 +95,9 @@
     <ClInclude Include="include\UI\UITextInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\UI\UITable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="window.json">
@@ -102,6 +108,9 @@
     </None>
     <None Include="instance inspector.json">
       <Filter>Source Files\windows</Filter>
+    </None>
+    <None Include="TODO">
+      <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
 </Project>

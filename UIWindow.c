@@ -295,6 +295,9 @@ int          construct_window         ( UIWindow_t **window, char       *title, 
 		strncpy(i_window->name, title, title_len);
 	}
 
+	i_window->element_data     = calloc(1, sizeof(void*));
+	i_window->element_data_max = 1;
+
 	dict_construct(&i_window->elements, element_count);
 
 	*window = i_window;
@@ -318,9 +321,22 @@ int          append_element_to_window ( UIWindow_t *window, UIElement_t  *elemen
 	// TODO: Argument check	
 
 	dict_add(window->elements, element->name, element);
+	
+	if (window->element_count >= window->element_data_max)
+		goto resize;
+	resize_done:
+
+	window->element_data[window->element_count] = element;
+
+	window->element_count++;
 
 	return 0;
 	// TODO: Error handling
+
+	resize:
+		window->element_data_max *= 2;
+		window->element_data = realloc(window->element_data, sizeof(void *) * window->element_data_max);
+		goto resize_done;
 }
 
 UIElement_t *find_element             ( UIWindow_t *window, char         *name )
@@ -391,15 +407,18 @@ int          draw_window              ( UIWindow_t *window )
 			SDL_RenderDrawLine(window->renderer, 0, 5, 0, h - 1);
 			SDL_RenderDrawLine(window->renderer, w - 1, 5, w - 1, h - 1);
 			SDL_RenderDrawLine(window->renderer, 0, h - 1, w - 1, h - 1);
+			
 		}
 
 		// Draw the top window border
 		{
+
 			SDL_RenderDrawLine(window->renderer, 0, 5, t_1 - 2, 5);
 			SDL_RenderDrawLine(window->renderer, t_1 - 2, 0, t_1 - 2, 10);
+			SDL_RenderDrawLine(window->renderer, w - 1, 5, t_2 + 2, 5);
 
-			SDL_RenderDrawLine(window->renderer, w - 1, 5, t_2 + 1, 5);
 			SDL_RenderDrawLine(window->renderer, t_2 + 2, 0, t_2 + 2, 10);
+
 
 			SDL_RenderFillRect(window->renderer, &r);
 		}
@@ -414,41 +433,28 @@ int          draw_window              ( UIWindow_t *window )
 			r.x++, r.y++, r.w -= 2, r.h -= 2;
 
 			// Draw the box
-			SDL_SetRenderDrawColor(window->renderer, 0xff, 0, 0, 0);
+			if (instance->active_window == window)
+				SDL_SetRenderDrawColor(window->renderer, 0xff, 0, 0, 0);
+			else
+				SDL_SetRenderDrawColor(window->renderer, 0xc0, 0xc0, 0xc0, 0);
 			SDL_RenderFillRect(window->renderer, &r);
 		}
 
 	}
 
 	// Draw UI elements
-	if(elements->n_entries) {
-
-		// Allocate for a list of element pointers
-		void** values = calloc(elements->n_entries, sizeof(void*));
-
-		// Error check
-		{
-			#ifndef NDEBUG
-				if(values == (void*)0)
-					goto no_mem;
-			#endif
-		}
-
-		// Populate element pointer list
-		dict_values(elements, values);
+	if(window->element_count) {
 
 		// Iterate over element pointer list
-		for (size_t i = 0; i < elements->n_entries; i++)
+		for (size_t i = 0; i < window->element_count; i++)
 
 			// Draw each element
-			draw_element(window, values[i]);
+			draw_element(window, window->element_data[i]);
 
 		// Redraw the last element 
 		if(window->last)
 			draw_element(window, window->last);
 
-		// Free element list
-		free(values);
 	}
 
 	// Present the window
@@ -501,6 +507,25 @@ int          process_window_input     ( UIWindow_t *window )
 
 						text_input->width = 8 + (8 * text_len - 1);
 
+					}
+			}
+			else if (e.key.keysym.sym == SDLK_TAB)
+			{
+				if (window->last)
+					if (strcmp(window->last->type, "TEXT INPUT") == 0)
+					{
+						UITextInput_t *next       = 0;
+						size_t last_i    = 0,
+							   current_i = 0;
+
+						// Find the current window->last index in the element list
+						for (size_t i = 0; i < window->element_count; i++)
+							if (window->element_data[i] == window->last)
+								last_i = i;
+
+						for (size_t i = window->element_count; i > 0; i--)
+							if (strcmp(window->element_data[(last_i + i) % window->element_count]->type, "TEXT INPUT") == 0)
+								window->last = window->element_data[(last_i + i) % window->element_count];
 					}
 			}
 
@@ -641,14 +666,11 @@ int          click_window             ( UIWindow_t *window, ui_mouse_state_t mou
 	void         **values   = 0;
 	UIInstance_t  *instance = ui_get_active_instance();
 
-	// Iterate over elements
-	values = calloc(elements->n_entries, sizeof(void*));
-	dict_values(elements, values);
 
 	// Did the user click on the element on the iterator?
-	for (size_t i = 0; i < elements->n_entries; i++)
-		if (in_bounds(values[i], mouse_state))
-			click_element(values[i], mouse_state);
+	for (size_t i = 0; i < window->element_count; i++)
+		if (in_bounds(window->element_data[i], mouse_state))
+			click_element(window->element_data[i], mouse_state);
 
 	// Close window?
 	{
@@ -694,21 +716,18 @@ int          click_window             ( UIWindow_t *window, ui_mouse_state_t mou
 
 int          hover_window             ( UIWindow_t *window, ui_mouse_state_t mouse_state )
 {
-	dict* elements = window->elements;
-	void** values = 0;
-	UIInstance_t* instance = ui_get_active_instance();
+	dict         *elements = window->elements;
+	UIInstance_t *instance = ui_get_active_instance();
 
 	if (window->drag)
 		SDL_SetWindowPosition(window, window->rx+mouse_state.x, window->ry+mouse_state.y);
 
 	// Iterate over elements
-	values = calloc(elements->n_entries, sizeof(void*));
-	dict_values(elements, values);
 
 	// Did the user click on the element on the iterator?
-	for (size_t i = 0; i < elements->n_entries; i++)
-		if (in_bounds(values[i], mouse_state))
-			hover_element(values[i], mouse_state);
+	for (size_t i = 0; i < window->element_count; i++)
+		if (in_bounds(window->element_data[i], mouse_state))
+			hover_element(window->element_data[i], mouse_state);
 
 	
 
@@ -718,20 +737,17 @@ int          hover_window             ( UIWindow_t *window, ui_mouse_state_t mou
 int          release_window           ( UIWindow_t *window, ui_mouse_state_t mouse_state )
 {
 	dict* elements = window->elements;
-	void** values = 0;
 	UIInstance_t* instance = ui_get_active_instance();
 
 	if (window->drag)
 		window->drag = false;
 
 	// Iterate over elements
-	values = calloc(elements->n_entries, sizeof(void*));
-	dict_values(elements, values);
 
 	// Did the user click on the element on the iterator?
-	for (size_t i = 0; i < elements->n_entries; i++)
-		if (in_bounds(values[i], mouse_state))
-			release_element(values[i], mouse_state);
+	for (size_t i = 0; i < window->element_count; i++)
+		if (in_bounds(window->element_data[i], mouse_state))
+			release_element(window->element_data[i], mouse_state);
 
 	return 0;
 }

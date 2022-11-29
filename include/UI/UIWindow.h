@@ -12,11 +12,11 @@
 //#include <UI/UICanvas.h>
 #include <UI/UICheckbox.h>
 //#include <UI/UIChart.h>
-#include <UI/UICheckbox.h>
 #include <UI/UIDropdown.h>
 //#include <UI/UIImage.h>
 #include <UI/UIRadioButton.h>
 #include <UI/UISlider.h>
+#include <UI/UITable.h>
 #include <UI/UITextInput.h>
 
 
@@ -25,10 +25,13 @@ struct UIWindow_s {
 	                   drag;
 	char              *name;
 	size_t             width,
-		               height;
+		               height,
+		               element_count,
+		               element_data_max;
 	i32                rx,
 		               ry;
 	dict              *elements;
+	UIElement_t      **element_data;
 	UIElement_t       *last;
 	SDL_Window        *window;
 	SDL_Renderer      *renderer;

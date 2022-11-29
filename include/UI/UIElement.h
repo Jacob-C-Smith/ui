@@ -26,6 +26,7 @@ union UIElement_u
     UILabel_t       *label;
     UIRadioButton_t *radio_button;
     UISlider_t      *slider;
+    UITable_t       *table;
     UITextInput_t   *text_input;
 };
 

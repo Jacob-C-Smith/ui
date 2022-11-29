@@ -56,6 +56,9 @@ typedef struct UICanvas_s	    UICanvas_t;
 // UI Chart type
 typedef struct UIChart_s	    UIChart_t;
 
+// UI Table type
+typedef struct UITable_s        UITable_t;
+
 // UI Checkbox type
 typedef struct UICheckbox_s     UICheckbox_t;
 
