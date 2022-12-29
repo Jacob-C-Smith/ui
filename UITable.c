@@ -117,7 +117,6 @@ int           load_table_as_dict         ( UITable_t  **pp_table, dict          
         // Set the tables position
         p_table->x           = atoi(x);
         p_table->y           = atoi(y);
-
     }
 
     if (file)
@@ -132,26 +131,6 @@ int           load_table_as_dict         ( UITable_t  **pp_table, dict          
     
     for (size_t i = 0; i < p_table->max_columns; i++)
         p_table->column_widths[i] = 1;
-
-    set_table_cell(p_table, 0, 0, "Name");
-    set_table_cell(p_table, 1, 0, "Atomic mass");
-    set_table_cell(p_table, 2, 0, "Symbol");
-
-    set_table_cell(p_table, 0, 1, "Hydrogen");
-    set_table_cell(p_table, 1, 1, "1.008");
-    set_table_cell(p_table, 2, 1, "H");
-
-    set_table_cell(p_table, 0, 2, "Helium");
-    set_table_cell(p_table, 1, 2, "4.003");
-    set_table_cell(p_table, 2, 2, "He");
-
-    set_table_cell(p_table, 0, 3, "Lithium");
-    set_table_cell(p_table, 1, 3, "6.941");
-    set_table_cell(p_table, 2, 3, "Li");
-
-    set_table_cell(p_table, 0, 4, "Beryllium");
-    set_table_cell(p_table, 1, 4, "9.012");
-    set_table_cell(p_table, 2, 4, "Be");
 
     return 0;
 
@@ -302,18 +281,44 @@ int           hover_table                ( UITable_t   *p_table , ui_mouse_state
 int           click_table                ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
 {
 
-    // Iterate through callbacks
-    for (size_t i = 0; i < p_table->on_click_count; i++)
+    if (mouse_state.button & ( UI_M1 | UI_M2 ))
     {
-        // Define the callback function
-        void (*callback)(UITable_t*, ui_mouse_state_t) = p_table->on_click[i];
 
-        // Call the callback function
-        if(callback)            
-            (*callback)(p_table, mouse_state);
+        size_t last_x = 0,
+               last_y = 0;
 
+        size_t abs_mY = mouse_state.y - p_table->y,
+               abs_mX = mouse_state.x - p_table->x,
+               a      = 0;
+
+        p_table->last_y = abs_mY / 12;
+
+        for (size_t i = 0; i < p_table->max_columns; i++)
+        {
+            if (a <= abs_mX && abs_mX <= a + (8 * p_table->column_widths[i]) + 7)
+                p_table->last_x = i;
+
+            a += (8 * p_table->column_widths[i] + 7);
+        }
+
+        // Iterate through callbacks
+        for (size_t i = 0; i < p_table->on_click_count; i++)
+        {
+            // Define the callback function
+            void (*callback)(UITable_t*, ui_mouse_state_t) = p_table->on_click[i];
+
+            // Call the callback function
+            if (callback)
+                (*callback)(p_table, mouse_state);
+
+        }
+
+        if (mouse_state.button & UI_M2)
+        {
+            SDL_SetClipboardText(p_table->data[(p_table->last_y * p_table->max_columns + p_table->last_x)]);
+        }
     }
-
+    
     return 0;
 }
 
@@ -333,6 +338,26 @@ int           release_table              ( UITable_t   *p_table, ui_mouse_state_
 
     }
     return 0;
+}
+
+int add_click_callback_table(UITable_t* p_table, void(*callback)(UITable_t*, ui_mouse_state_t))
+{
+    if (p_table->on_click_max == 0)
+    {
+        p_table->on_click_max = 1;
+        p_table->on_click = calloc(1, sizeof(void *));
+    }
+
+    if (p_table->on_click_count + 1 > p_table->on_click_max)
+    {
+
+        p_table->on_click_max *= 2;
+
+        p_table->on_click = realloc(p_table->on_click, p_table->on_click_max);
+    }
+
+    p_table->on_click[p_table->on_click_count++] = callback;
+    return 1;
 }
 
 //
@@ -497,6 +522,12 @@ int           draw_table                 ( UIWindow_t  *window, UITable_t *table
             
             SDL_RenderFillRect(window->renderer, &r);
 
+            if (table->last_x == j && table->last_y == i)
+            {
+                SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_3, (u8) (instance->accent_3 >> 8), (u8)(instance->accent_3 >> 16), 0xff);
+                SDL_RenderFillRect(window->renderer, &r);
+            }
+
             if (table->data[i * table->max_columns + j])
             {
                 SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
@@ -532,17 +563,20 @@ int           draw_table                 ( UIWindow_t  *window, UITable_t *table
     return 0;
 }
 
-bool          table_in_bounds            ( UIButton_t  *button, ui_mouse_state_t mouse_state )
+bool          table_in_bounds            ( UITable_t  *table, ui_mouse_state_t mouse_state )
 {
     // Initialized data
-	//i32  x = button->x,
-	//	 y = button->y,
-	//	 w = button->w,
-	//	 h = button->h;
-	//
-	//// Check for bounds
-	//if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
-	//	return true;
+	i32  x = table->x,
+		 y = table->y,
+		 w = 0,
+		 h = table->max_rows*12;
+	
+	// Check for bounds
+    for (size_t i = 0; i < table->max_columns; i++)
+        w += (table->column_widths[i] * 8) + 7;
+
+	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
+		return true;
 
 	return false;
 

@@ -54,8 +54,6 @@ int load_dropdown_as_dict        ( UIDropdown_t** pp_dropdown, dict* dictionary)
     {
         JSONToken_t *token = 0;
 
-        token     = dict_get(dictionary, "name");
-        name      = JSON_VALUE(token, JSONstring);
 
         token     = dict_get(dictionary, "x");
         x         = JSON_VALUE(token, JSONprimative);
@@ -73,7 +71,36 @@ int load_dropdown_as_dict        ( UIDropdown_t** pp_dropdown, dict* dictionary)
         collapsed = JSON_VALUE(token, JSONprimative);
     }
 
+    construct_dropdown(pp_dropdown, options, atoi(x), atoi(y), atoi(index));
 
+
+
+    return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_dropdown:
+                #ifndef NDEBUG
+                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"pp_dropdown\" in call to function \"%s\"\n", __FUNCSIG__);
+                #endif
+                return 0;
+
+            no_dictionary:
+                #ifndef NDEBUG
+                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                #endif
+                return 0;
+        }
+    }
+}
+
+int construct_dropdown(UIDropdown_t** pp_dropdown, char** options, i32 x, i32 y, i32 index)
+{
+
+    UIDropdown_t *dropdown = 0;
     create_dropdown(pp_dropdown);
 
     dropdown = *pp_dropdown;
@@ -82,21 +109,14 @@ int load_dropdown_as_dict        ( UIDropdown_t** pp_dropdown, dict* dictionary)
     // Construct the dropdown
     {
 
-        // Copy the name
-        {
-            size_t name_len = strlen(name);
-            dropdown->name  = calloc(name_len+1, sizeof(char));
-            strncpy(dropdown->name, name, name_len);
-        }
-
         // Copy position
         {
-            dropdown->x = atoi(x);
-            dropdown->y = atoi(y);
+            dropdown->x = x;
+            dropdown->y = y;
         }
 
         // Copy index 
-        dropdown->index = atoi(index);
+        dropdown->index = index;
 
         // Copy options
         {
@@ -141,33 +161,15 @@ int load_dropdown_as_dict        ( UIDropdown_t** pp_dropdown, dict* dictionary)
         }
 
         // Set collapsed status
-        dropdown->collapsed = collapsed;
+        dropdown->collapsed = true;
     }
 
     // Error detection
     if (dropdown->index >= dropdown->options_len || dropdown->index < 0)
         dropdown->index = 0;
 
-    return 0;
 
-    // Error handling
-    {
-
-        // Argument errors
-        {
-            no_dropdown:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"pp_dropdown\" in call to function \"%s\"\n", __FUNCSIG__);
-                #endif
-                return 0;
-
-            no_dictionary:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
-                #endif
-                return 0;
-        }
-    }
+    return 1;
 }
  
 int hover_dropdown               ( UIDropdown_t* dropdown, ui_mouse_state_t mouse_state)
@@ -207,11 +209,43 @@ int hover_dropdown               ( UIDropdown_t* dropdown, ui_mouse_state_t mous
 
 int release_dropdown(UIDropdown_t* p_dropdown, ui_mouse_state_t mouse_state)
 {
+    // Iterate through callbacks
+    for (size_t i = 0; i < p_dropdown->on_release_count; i++)
+    {
+        // Define the callback function
+        void (*callback)(UIDropdown_t*, ui_mouse_state_t) = p_dropdown->on_release[i];
+
+        // Call the callback function
+        (*callback)(p_dropdown, mouse_state);
+
+    }
+
     return 0;
 }
 
 int add_click_callback_dropdown(UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t))
 {
+    // TODO: Argument check
+
+    // If this is the first callback, set the max to 1 and 
+    if (p_dropdown->on_click_max == 0)
+    {
+        p_dropdown->on_click_max = 1;
+        p_dropdown->on_click = calloc(1, sizeof(void*));
+    }
+
+    // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
+    if (p_dropdown->on_click_count + 1 > p_dropdown->on_click_max)
+    {
+        // Double the max
+        p_dropdown->on_click_max *= 2;
+
+        p_dropdown->on_click = realloc(p_dropdown->on_click, p_dropdown->on_click_max);
+    }
+
+    // Increment the callback counter and install the new callback
+    p_dropdown->on_click[p_dropdown->on_click_count++] = callback;
+
     return 0;
 }
 
@@ -222,6 +256,27 @@ int add_hover_callback_dropdown(UIDropdown_t* p_dropdown, void(*callback)(UIDrop
 
 int add_release_callback_dropdown(UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t))
 {
+    // TODO: Argument check
+
+    // If this is the first callback, set the max to 1 and 
+    if (p_dropdown->on_release_max == 0)
+    {
+        p_dropdown->on_release_max = 1;
+        p_dropdown->on_release = calloc(1, sizeof(void*));
+    }
+
+    // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
+    if (p_dropdown->on_release_count + 1 > p_dropdown->on_release_max)
+    {
+        // Double the max
+        p_dropdown->on_release_max *= 2;
+
+        p_dropdown->on_release = realloc(p_dropdown->on_release, p_dropdown->on_release_max);
+    }
+
+    // Increment the callback counter and install the new callback
+    p_dropdown->on_release[p_dropdown->on_release_count++] = callback;
+
     return 0;
 }
 
@@ -252,12 +307,13 @@ int click_dropdown               ( UIDropdown_t *dropdown, ui_mouse_state_t mous
     for (size_t i = 0; i < dropdown->on_click_count; i++)
     {
         // Define the callback function
-        void (*callback)(UIDropdown_t *, ui_mouse_state_t) = dropdown->on_click;
+        void (*callback)(UIDropdown_t *, ui_mouse_state_t) = dropdown->on_click[i];
 
         // Call the callback function
         (*callback)(dropdown, mouse_state);
 
     }
+
     return 0;
 }
 

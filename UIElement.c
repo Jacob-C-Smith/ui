@@ -37,7 +37,7 @@ void* click_callbacks[ELEMENT_COUNT] =
     click_label,
     click_radio_button,
     0,
-    0,
+    click_table,
     click_text_input
 };
 
@@ -50,7 +50,7 @@ void* hover_callbacks[ELEMENT_COUNT] =
     hover_label,
     hover_radio_button,
     0,
-    0,
+    hover_table,
     hover_text_input
 };
 
@@ -63,7 +63,7 @@ void* release_callbacks[ELEMENT_COUNT] =
     release_label,
     release_radio_button,
     0,
-    0,
+    release_table,
     release_text_input
 };
 
@@ -141,7 +141,7 @@ void* bounds_callback[ELEMENT_COUNT] =
     label_in_bounds,
     radio_button_in_bounds,
     0,
-    0,
+    table_in_bounds,
     text_input_in_bounds
 };
 
@@ -486,9 +486,8 @@ int click_element(UIElement_t* element, ui_mouse_state_t mouse_state)
     // Initialized data
     int (*click)(void*, ui_mouse_state_t) = dict_get(click_lut, element->type);
 
-    // Call the element constructor for the specific type
-    (*click)((void*)element->element.label, mouse_state);
-
+    (*click)((void*)element->element.label, mouse_state); // Call the element constructor for the specific type
+    
     // Set last
     if(instnace->active_window == w)
         instnace->active_window->last = element;

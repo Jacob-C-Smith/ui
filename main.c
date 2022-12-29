@@ -1,9 +1,4 @@
-#include <stdio.h>
-
 #include <UI/UI.h>
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
 int main ( int argc, const char **argv )
 {
@@ -19,13 +14,6 @@ int main ( int argc, const char **argv )
 
     // Add the window to the instance
     ui_append_window(p_ui_instance, p_ui_window);
-
-    load_window(&p_ui_window, "instance inspector.json");
-
-    // Add the window to the instance
-    ui_append_window(p_ui_instance, p_ui_window);
-
-    // Add some callbacks
 
     // Start running
     p_ui_instance->running = true;

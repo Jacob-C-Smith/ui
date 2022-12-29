@@ -498,6 +498,7 @@ int          process_window_input     ( UIWindow_t *window )
 			if (e.key.keysym.sym == SDLK_BACKSPACE)
 			{
 				if (window->last)
+				{
 					if (strcmp(window->last->type, "TEXT INPUT") == 0)
 					{
 						UITextInput_t* text_input = window->last->element.text_input;
@@ -508,6 +509,11 @@ int          process_window_input     ( UIWindow_t *window )
 						text_input->width = 8 + (8 * text_len - 1);
 
 					}
+				}
+				else if (strcmp(window->last->type, "TABLE") == 0)
+				{
+					window->last->element.table->last_x++;
+				}
 			}
 			else if (e.key.keysym.sym == SDLK_TAB)
 			{

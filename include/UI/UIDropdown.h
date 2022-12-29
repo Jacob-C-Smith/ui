@@ -14,7 +14,6 @@
 
 struct UIDropdown_s
 {
-    char      *name;
 
     // Renderer
     bool       collapsed,
@@ -56,6 +55,7 @@ DLLEXPORT int create_dropdown               ( UIDropdown_t **pp_dropdown );
 
 // Constructors
 DLLEXPORT int load_dropdown_as_dict         ( UIDropdown_t **pp_dropdown, dict                  *dictionary );
+DLLEXPORT int construct_dropdown            ( UIDropdown_t **pp_dropdown, char                 **options, i32 x, i32 y, i32 index );
 
 // Drawing
 DLLEXPORT int draw_dropdown                 ( UIWindow_t    *p_window    , UIDropdown_t         *p_dropdown );

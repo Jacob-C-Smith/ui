@@ -18,7 +18,9 @@ struct UITable_s
 		     w,
 		     h,
              max_rows,
-             max_columns;
+             max_columns,
+             last_x,
+             last_y;
 
     char   **data;
     size_t  *column_widths;
