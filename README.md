@@ -1,5 +1,5 @@
 # UI
-##### **This project is still incomplete. This notice will be removed when the project is functional**
+##### **This project is still incomplete. This notice will be removed when the project is polished to my liking**
 ![UI window example](Window.png)
 
 This simple callback driven UI library implements many UI elements, like labels, buttons, and dropdowns to name a few. UI element colors are customizable, and the user configurations are stored nontemporally in AppData. Windows and UI elements are constructed at run time from JSON files.
