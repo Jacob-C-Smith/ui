@@ -32,7 +32,7 @@ int           create_button               ( UIButton_t **pp_button )
         {
             no_button:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] Null pointer provided for \"pp_button\" in call to function \"%s\"\n",__FUNCSIG__);
+                    ui_print_error("[UI] [Button] Null pointer provided for \"pp_button\" in call to function \"%s\"\n",__FUNCTION__);
                 #endif
                 return -1;
         }
@@ -41,7 +41,7 @@ int           create_button               ( UIButton_t **pp_button )
         {
             no_mem:
                 #ifndef NDEBUG
-                    ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCSIG__);
+                    ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
                 #endif
                 return -1;
         }
@@ -143,12 +143,12 @@ int           load_button_as_dict         ( UIButton_t **pp_button, dict* dictio
         {
             no_button:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] Null pointer provided for \"pp_button\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Button] Null pointer provided for \"pp_button\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
             no_dictionary:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Button] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }
@@ -157,17 +157,17 @@ int           load_button_as_dict         ( UIButton_t **pp_button, dict* dictio
         {
             no_label:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] No \"label\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Button] No \"label\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
             no_x:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] No \"x\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Button] No \"x\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
             no_y:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] No \"y\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Button] No \"y\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }
@@ -176,7 +176,7 @@ int           load_button_as_dict         ( UIButton_t **pp_button, dict* dictio
         {
             no_mem:
                 #ifndef NDEBUG
-                    ui_print_error("[Standard Library] Failed to allocate memory in call to funciton \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[Standard Library] Failed to allocate memory in call to funciton \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }
@@ -216,7 +216,7 @@ int           hover_button                ( UIButton_t  *p_button, ui_mouse_stat
         {
             no_button:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] Null pointer provided for \"button\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Button] Null pointer provided for \"button\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
         }
@@ -446,7 +446,7 @@ int           destroy_button              ( UIButton_t  *p_button )
         {
             no_button:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] Null pointer provided for \"p_button\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Button] Null pointer provided for \"p_button\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }

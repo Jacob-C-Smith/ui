@@ -33,7 +33,7 @@ int create_label     ( UILabel_t **label )
 		{
 			no_label:
 				#ifndef NDEBUG
-					ui_print_error("[UI] [Label] Null pointer provided for \"label\" in call to function \"%s\"\n", __FUNCSIG__);
+					ui_print_error("[UI] [Label] Null pointer provided for \"label\" in call to function \"%s\"\n", __FUNCTION__);
 				#endif
 				return 0;
 		}
@@ -144,12 +144,12 @@ int  load_label_as_dict (UILabel_t** label, dict* dictionary)
 		{
 			no_label:
 				#ifndef NDEBUG
-					ui_print_error("[UI] [Label] Null pointer provided for \"label\" in call to function \"%s\"\n", __FUNCSIG__);
+					ui_print_error("[UI] [Label] Null pointer provided for \"label\" in call to function \"%s\"\n", __FUNCTION__);
 				#endif
 				return 0;
 			no_dictionary:
 				#ifndef NDEBUG
-					ui_print_error("[UI] [Label] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+					ui_print_error("[UI] [Label] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
 				#endif
 				return 0;
 		}

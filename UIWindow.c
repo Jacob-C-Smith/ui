@@ -32,7 +32,7 @@ int          create_window            ( UIWindow_t **window )
 		{
 			no_window:
 			#ifndef NDEBUG
-				ui_print_error("[UI] [Window] Null pointer provided for \"window\" in call to function \"%s\"\n", __FUNCSIG__);
+				ui_print_error("[UI] [Window] Null pointer provided for \"window\" in call to function \"%s\"\n", __FUNCTION__);
 			#endif
 			return 0;
 		}
@@ -41,7 +41,7 @@ int          create_window            ( UIWindow_t **window )
 		{
 			no_mem:
 			#ifndef NDEBUG
-				ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
+				ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
 			#endif
 			return 0;
 		}
@@ -86,7 +86,7 @@ int          load_window              ( UIWindow_t **window, const char *path )
 		{
 			no_window:
 			#ifndef NDEBUG
-				ui_print_error("[UI] [Window] Null pointer provided for \"window\" in call to function \"%s\"\n", __FUNCSIG__);
+				ui_print_error("[UI] [Window] Null pointer provided for \"window\" in call to function \"%s\"\n", __FUNCTION__);
 			#endif
 			return 0;
 			noPath:

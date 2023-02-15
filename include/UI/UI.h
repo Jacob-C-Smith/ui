@@ -21,6 +21,7 @@
 
 // JSON parser
 #include <JSON/JSON.h>
+#include <dict/dict.h>
 
 // UI 
 #include <UI/UItypedef.h>

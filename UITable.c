@@ -32,7 +32,7 @@ int           create_table               ( UITable_t  **pp_table )
         {
             no_table:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Table] Null pointer provided for \"pp_table\" in call to function \"%s\"\n",__FUNCSIG__);
+                    ui_print_error("[UI] [Table] Null pointer provided for \"pp_table\" in call to function \"%s\"\n",__FUNCTION__);
                 #endif
                 return -1;
         }
@@ -41,7 +41,7 @@ int           create_table               ( UITable_t  **pp_table )
         {
             no_mem:
                 #ifndef NDEBUG
-                    ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCSIG__);
+                    ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
                 #endif
                 return -1;
         }
@@ -198,12 +198,12 @@ int           load_table_as_dict         ( UITable_t  **pp_table, dict          
         {
             no_table:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Table] Null pointer provided for \"pp_table\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Table] Null pointer provided for \"pp_table\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
             no_dictionary:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Table] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Table] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }
@@ -212,17 +212,17 @@ int           load_table_as_dict         ( UITable_t  **pp_table, dict          
         {
             no_label:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Table] No \"label\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Table] No \"label\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
             no_x:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Table] No \"x\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Table] No \"x\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
             no_y:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Table] No \"y\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Table] No \"y\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }
@@ -231,7 +231,7 @@ int           load_table_as_dict         ( UITable_t  **pp_table, dict          
         {
             no_mem:
                 #ifndef NDEBUG
-                    ui_print_error("[Standard Library] Failed to allocate memory in call to funciton \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[Standard Library] Failed to allocate memory in call to funciton \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }
@@ -271,7 +271,7 @@ int           hover_table                ( UITable_t   *p_table , ui_mouse_state
         {
             no_table:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Table] Null pointer provided for \"table\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Table] Null pointer provided for \"table\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
         }
@@ -582,7 +582,7 @@ bool          table_in_bounds            ( UITable_t  *table, ui_mouse_state_t m
 
 }
 
-int           destroy_table              ( UIButton_t  *p_button )
+int           destroy_table              ( UITable_t  *p_button )
 {
 
     // Argument check
@@ -590,20 +590,7 @@ int           destroy_table              ( UIButton_t  *p_button )
         if (p_button == (void*)0)
             goto no_button;
     }
-        
-    // Free label string
-    free(p_button->label);
-
-    // Free callbacks
-    {
-        free(p_button->on_click);
-        free(p_button->on_hover);
-        free(p_button->on_release);
-    }
-
-    // Free the button memory
-    free(p_button);
-
+    
     return 0;
 
     // Error handling
@@ -613,7 +600,7 @@ int           destroy_table              ( UIButton_t  *p_button )
         {
             no_button:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] Null pointer provided for \"p_button\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Button] Null pointer provided for \"p_button\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }

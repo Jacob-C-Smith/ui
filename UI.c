@@ -22,7 +22,7 @@ u64 font[133] = {
 };
 
 char         *default_config   = "{\n\t\"name\"       : \"Default color theme\",\n\t\"primary\"    : [ 0, 0, 0 ],\n\t\"accent 1\"   : [ 128, 128, 128 ],\n\t\"accent 2\"   : [ 192, 192, 192 ],\n\t\"accent 3\"   : [ 0, 128, 255 ],\n\t\"background\" : [ 255, 255, 255 ]\n}\n";
-char         *config_file_name = "\\ui_config.json";
+char         *config_file_name = "/ui_config.json";
 UIInstance_t *active_instance  = 0;
 
 int           ui_init                ( UIInstance_t **pp_instance, const char       *path )
@@ -44,7 +44,11 @@ int           ui_init                ( UIInstance_t **pp_instance, const char   
     // Initialized data
     UIInstance_t *ret              = calloc(1, sizeof(UIInstance_t));
 
+    #ifdef _WIN64
     char         *appdata          = getenv("APPDATA");
+    #else
+    char         *appdata          = getenv("HOME");
+    #endif
     size_t        appdata_len      = strlen(appdata) + strlen(config_file_name);
 
     char         *config_path      = calloc(appdata_len + 1, sizeof(u8)),
@@ -226,7 +230,7 @@ size_t        ui_load_file           ( const char       *path    ,   void    *bu
         {
             no_path:
                 #ifndef NDEBUG
-                    ui_print_error("[G10] Null path provided to funciton \"%s\\n", __FUNCSIG__);
+                    ui_print_error("[G10] Null path provided to funciton \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
         }
@@ -347,7 +351,8 @@ UIWindow_t   *ui_remove_window       ( UIInstance_t     *instance, const char *n
     size_t window_count = dict_values(instance->windows, 0);
 
     // Remove the window from the instance
-    UIWindow_t *ret = dict_pop(instance->windows, name);   
+    UIWindow_t *ret = 0;
+    dict_pop(instance->windows, name, &ret);   
 
     // Iterate over each window in the list
     for (size_t i = 0; i < window_count; i++)
@@ -363,7 +368,7 @@ UIWindow_t   *ui_remove_window       ( UIInstance_t     *instance, const char *n
 
     instance->active_window = 0;
 
-    if (instance->windows->n_entries == 0)
+    if (dict_values(instance->windows, 0) == 0)
         instance->running = false;
 
     // Return the window (for deallocation)
@@ -391,9 +396,9 @@ int           ui_process_input       ( UIInstance_t     *instance )
             {
                 UIWindow_t* w = ui_remove_window(instance, instance->windows_list[i]->name);
                 destroy_window(w);
-                if (instance->windows->n_entries)
+                if (dict_values(instance->windows,0))
                 {
-                    instance->active_window = instance->windows_list[instance->windows->n_entries - 1];
+                    instance->active_window = instance->windows_list[dict_values(instance->windows, 0) - 1];
                     SDL_ShowWindow(instance->active_window->window);
 
                     SDL_RaiseWindow(instance->active_window->window);

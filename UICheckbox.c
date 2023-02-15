@@ -37,7 +37,7 @@ int create_checkbox              ( UICheckbox_t **checkbox )
         // Standard library errors
         {
             no_mem:
-                ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCSIG__);
+                ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
                 return 0;
         }
     }
@@ -109,11 +109,11 @@ int load_checkbox_as_dict ( UICheckbox_t **checkbox, dict *dictionary )
         // Argument errors
         {
             no_tokens:
-            ui_print_error("[UI] [Checkbox] Null pointer provided for \"tokens\" in call to function \"%s\"\n", __FUNCSIG__);
+            ui_print_error("[UI] [Checkbox] Null pointer provided for \"tokens\" in call to function \"%s\"\n", __FUNCTION__);
             return 0;
 
         no_token_count:
-            ui_print_error("[UI] [Checkbox] \"token_count\" is zero in call to function \"%s\"\n", __FUNCSIG__);
+            ui_print_error("[UI] [Checkbox] \"token_count\" is zero in call to function \"%s\"\n", __FUNCTION__);
             return 0;
         }
 
@@ -121,16 +121,16 @@ int load_checkbox_as_dict ( UICheckbox_t **checkbox, dict *dictionary )
         // Missing JSON errors
         {
         no_checkbox_name:
-            ui_print_error("[UI] [Checkbox] No \"name\" in \"token\" in call to function \"%s\"\n", __FUNCSIG__);
+            ui_print_error("[UI] [Checkbox] No \"name\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
             return 0;
         no_checkbox_text:
-            ui_print_error("[UI] [Checkbox] No \"labels\" in \"token\" in call to function \"%s\"\n", __FUNCSIG__);
+            ui_print_error("[UI] [Checkbox] No \"labels\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
             return 0;
         no_checkbox_x:
-            ui_print_error("[UI] [Checkbox] No \"x\" in \"token\" in call to function \"%s\"\n", __FUNCSIG__);
+            ui_print_error("[UI] [Checkbox] No \"x\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
             return 0;
         no_checkbox_y:
-            ui_print_error("[UI] [Checkbox] No \"y\" in \"token\" in call to function \"%s\"\n", __FUNCSIG__);
+            ui_print_error("[UI] [Checkbox] No \"y\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
             return 0;
         }
     }
