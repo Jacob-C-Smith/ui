@@ -75,7 +75,7 @@
             "y"         : 192,
             "width"     : 768,
             "height"    : 512,
-            "path"      : "image.png"
+            "path"      : "window.png"
         },
         {
             "type"        : "TEXT INPUT",

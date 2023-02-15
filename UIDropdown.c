@@ -22,7 +22,7 @@ int create_dropdown              ( UIDropdown_t **pp_dropdown )
     {
         #ifndef NDEBUG
             no_mem:
-                ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
+                ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 return (void *)-1;
         #endif
     }
@@ -84,13 +84,13 @@ int load_dropdown_as_dict        ( UIDropdown_t** pp_dropdown, dict* dictionary)
         {
             no_dropdown:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"pp_dropdown\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"pp_dropdown\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
 
             no_dictionary:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
         }

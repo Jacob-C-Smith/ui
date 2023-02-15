@@ -17,7 +17,7 @@ int create_image ( UIImage_t **pp_image )
 		{
 			no_mem:
 				#ifndef NDEBUG
-					ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n",__FUNCSIG__);
+					ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
 				#endif
 				return 0;
 		}

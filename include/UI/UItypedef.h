@@ -1,7 +1,12 @@
 #pragma once
 #include <UI/UItypedef.h>
 
+// Platform dependent macros
+#ifdef _WIN64
 #define DLLEXPORT extern __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
 
 // Useful typedefs 
 typedef unsigned char        u8;

@@ -221,7 +221,7 @@ int create_element ( UIElement_t **element )
         {
             no_element:
             #ifndef NDEBUG
-                ui_print_error("[UI] [Element] Null pointer provided for \"element\" in call to function \"%s\"\n",__FUNCSIG__);
+                ui_print_error("[UI] [Element] Null pointer provided for \"element\" in call to function \"%s\"\n",__FUNCTION__);
             #endif
             return 0;
         }
@@ -230,7 +230,7 @@ int create_element ( UIElement_t **element )
         {
             out_of_memory:
                 #ifndef NDEBUG
-                    ui_print_error("[Standard library] Out of memory in call to function \"%s\"\n",__FUNCSIG__);
+                    ui_print_error("[Standard library] Out of memory in call to function \"%s\"\n",__FUNCTION__);
                 #endif
                 return 0;
         }
@@ -290,17 +290,17 @@ int load_element ( UIElement_t **element, const char path[])
                 // Argument errors
                 {
                     no_path:
-                        ui_print_error("[UI] [Element] No path provided to function \"%s\"\n", __FUNCSIG__);
+                        ui_print_error("[UI] [Element] No path provided to function \"%s\"\n", __FUNCTION__);
                         return 0;     
                     no_element:
-                        ui_print_error("[UI] [Element] Null pointer provided for \"element\" in call to function \"%s\"\n",__FUNCSIG__);
+                        ui_print_error("[UI] [Element] Null pointer provided for \"element\" in call to function \"%s\"\n",__FUNCTION__);
                         return 0;
                 }
 
                 // Standard library errors
                 {
                     out_of_memory:
-                        ui_print_error("[Standard library] Out of meory in call to function \"%s\"\n", __FUNCSIG__);
+                        ui_print_error("[Standard library] Out of meory in call to function \"%s\"\n", __FUNCTION__);
                         return 0;
                 }
 
@@ -382,21 +382,21 @@ int load_element_as_json(UIElement_t **element, char* token_text)
         // Argument errors
         {
             no_token_text:
-                ui_print_error("[UI] [Element] Null pointer provided for \"token_text\" in call to function \"%s\"\n", __FUNCSIG__);
+                ui_print_error("[UI] [Element] Null pointer provided for \"token_text\" in call to function \"%s\"\n", __FUNCTION__);
                 return 0;
         }
 
         // Standard library errors
         {
             out_of_memory:
-                ui_print_error("[Standard library] Out of meory in call to function \"%s\"\n", __FUNCSIG__);
+                ui_print_error("[Standard library] Out of meory in call to function \"%s\"\n", __FUNCTION__);
                 return 0;
         }
 
         // Interface errors
         {
             not_implemented:
-                ui_print_error("[UI] [Element] Failed to call constructor for type \"%s\" in call to function \"%s\"\n", type, __FUNCSIG__);
+                ui_print_error("[UI] [Element] Failed to call constructor for type \"%s\" in call to function \"%s\"\n", type, __FUNCTION__);
                 return 0;
         }
 
