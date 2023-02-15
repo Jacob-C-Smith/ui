@@ -6,16 +6,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/JSON)
-find_library(dict NAMES dict HINTS ${CMAKE_CURRENT_SOURCE_DIR}/dict/build/Debug/*)
-find_library(json NAMES json HINTS ${CMAKE_CURRENT_SOURCE_DIR}/dict/build/Debug/*)
+add_subdirectory(${PROJECT_SOURCE_DIR}/JSON)
+find_library(dict NAMES dict HINTS ${PROJECT_SOURCE_DIR}/dict/build/Debug/*)
+
+find_library(json NAMES json HINTS ${PROJECT_SOURCE_DIR}/JSON/build/Debug/*)
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
 
 if(dict)
   message("Found dict")
 else()
-  message("${CMAKE_CURRENT_SOURCE_DIR}/dict/build/Debug/")
+  message("${PROJECT_SOURCE_DIR}/JSON/build/Debug/")
 endif()
 
 # Add source to this project's executable.
