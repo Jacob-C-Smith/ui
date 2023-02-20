@@ -7,7 +7,8 @@ int main ( int argc, const char **argv )
     UIWindow_t   *p_ui_window   = 0;
 
     // Initialize the UI library
-    ui_init(&p_ui_instance, "");
+    if ( ui_init(&p_ui_instance, "") == 0)
+        goto failed_to_init_ui;
 
     // Load a window from the filesystem
     load_window(&p_ui_window, "window.json");
@@ -32,5 +33,16 @@ int main ( int argc, const char **argv )
     // Exit the UI library
     ui_exit(p_ui_instance);
 
-    return 1;
+    // Success
+    return EXIT_SUCCESS;
+
+    // Error handling
+    {
+        
+        // UI Errors
+        {
+            failed_to_init_ui:
+                ui_print_error("[UI] Failed to initialize UI\n");
+        }
+    }
 }

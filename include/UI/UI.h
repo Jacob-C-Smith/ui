@@ -63,29 +63,30 @@ struct UIInstance_s {
 
 // Initializers
 /* !
-  *  Initialize UI.
-  *
-  *  @param pp_instance : Pointer to pointer to UI instance
-  *  @param path        : Path to config file or null
-  *
-  *  @sa ui_exit
-  *
-  *  @return 0 on success, -1 on error.
-  */
+ *  Initialize UI. If path is null, a config file will be loaded from the user's home directory. 
+ *  If no config file exists, a default config file will be generated.
+ *
+ *  @param pp_instance : Pointer to pointer to UI instance
+ *  @param path        : Path to config file or null
+ *
+ *  @sa ui_exit
+ *
+ *  @return 1 on success, 0 on error.
+ */
 DLLEXPORT int           ui_init             ( UIInstance_t    **pp_instance, const char *path );
 
 // ANSI colored prints
 /* !
-  *  printf, but in blue via ANSI
-  *
-  *  @param format : printf format text
-  *  @param ...    : varadic arguments
-  *
-  *  @sa ui_print_warning
-  *  @sa ui_print_error
-  *
-  *  @return 0 on success, -1 on error.
-  */
+ *  printf, but in blue via ANSI
+ *
+ *  @param format : printf format text
+ *  @param ...    : varadic arguments
+ *
+ *  @sa ui_print_warning
+ *  @sa ui_print_error
+ *
+ *  @return 1 on success, 0 on error.
+ */
 DLLEXPORT int           ui_print_log        ( const char* const format  , ... );
 
 /* !
@@ -110,7 +111,7 @@ DLLEXPORT int           ui_print_warning    ( const char* const format  , ... );
   *  @sa ui_print_log
   *  @sa ui_print_warning
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int           ui_print_error      ( const char* const format  , ... );
 
@@ -127,7 +128,7 @@ DLLEXPORT int           ui_print_error      ( const char* const format  , ... );
   *
   *  @sa ui_draw_text
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int           ui_draw_format_text ( const char* const format  , UIWindow_t *window, int x, int y, int size, ... );
 
