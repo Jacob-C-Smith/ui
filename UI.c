@@ -43,15 +43,9 @@ int           ui_init                ( UIInstance_t **pp_instance, const char   
 
     // Initialized data
     UIInstance_t *ret              = calloc(1, sizeof(UIInstance_t));
-
-    #ifdef _WIN64
-    char         *appdata          = getenv("APPDATA");
-    #else
-    char         *appdata          = getenv("HOME");
-    #endif
-    size_t        appdata_len      = strlen(appdata) + strlen(config_file_name);
-
-    char         *config_path      = calloc(appdata_len + 1, sizeof(u8)),
+    char         *appdata          = 0;
+    size_t        appdata_len      = 0;
+    char         *config_path      = 0,
                  *config_file_data = 0,
                 **primary          = 0,
                 **accent_1         = 0,
@@ -61,20 +55,44 @@ int           ui_init                ( UIInstance_t **pp_instance, const char   
     dict         *config_file_json = 0;
     size_t        config_file_len  = 0;
 
-    if (!appdata)
-        goto no_app_data;
+    // Find a directory for the config file
+    {
 
-    // Search AppData for a config
-    strcat(config_path, appdata);
-    strcat(config_path, config_file_name);
+        // Find a directoroy using environment variables
+        #ifdef _WIN64
+            appdata = getenv("APPDATA");
+        #else
+            appdata = getenv("HOME");
+        #endif
+
+        // Compute the length of the path
+        appdata_len = strlen(appdata) + strlen(config_file_name);
+
+        // Allocate memory for the path
+        config_path = calloc(appdata_len + 1, sizeof(u8));
+    }
+
+    // Error checking
+    {
+        if ( appdata == 0 )
+            goto no_app_data;
+    }
+
+    // Construct the path to the config file
+    sprintf(config_path, "%s/%s", appdata, config_file_name);
 
     created_config_file:
     
     // Load the config file
     {
         config_file_len  = ui_load_file(config_path, 0, false);
-        if (config_file_len == 0)
-            goto no_config_file;
+
+        // Error checking
+        {
+            if (config_file_len == 0)
+                goto no_config_file;
+        }
+        
         config_file_data = calloc(config_file_len, sizeof(u8));
         ui_load_file(config_path, config_file_data, false);
     }
@@ -102,6 +120,7 @@ int           ui_init                ( UIInstance_t **pp_instance, const char   
 
         token      = dict_get(config_file_json, "background");
         background = JSON_VALUE(token, JSONarray);
+
     }
 
     // Construct the instance
@@ -109,14 +128,15 @@ int           ui_init                ( UIInstance_t **pp_instance, const char   
 
         // Set the theme colors
         {
-            ret->primary    = atoi(primary[0])    | (atoi(primary[1])    << 8) | (atoi(primary[2])    << 16) | (0xff << 24);
-            ret->accent_1   = atoi(accent_1[0])   | (atoi(accent_1[1])   << 8) | (atoi(accent_1[2])   << 16) | (0xff << 24);
-            ret->accent_2   = atoi(accent_2[0])   | (atoi(accent_2[1])   << 8) | (atoi(accent_2[2])   << 16) | (0xff << 24);
-            ret->accent_3   = atoi(accent_3[0])   | (atoi(accent_3[1])   << 8) | (atoi(accent_3[2])   << 16) | (0xff << 24);
-            ret->background = atoi(background[0]) | (atoi(background[1]) << 8) | (atoi(background[2]) << 16) | (0xff << 24);
+            ret->primary    = (primary)    ? atoi(primary[0])    | (atoi(primary[1])    << 8) | (atoi(primary[2])    << 16) | (0xff << 24) : 0x00000000;
+            ret->accent_1   = (accent_1)   ? atoi(accent_1[0])   | (atoi(accent_1[1])   << 8) | (atoi(accent_1[2])   << 16) | (0xff << 24) : 0x80808080;
+            ret->accent_2   = (accent_2)   ? atoi(accent_2[0])   | (atoi(accent_2[1])   << 8) | (atoi(accent_2[2])   << 16) | (0xff << 24) : 0xC0C0C0C0;
+            ret->accent_3   = (accent_3)   ? atoi(accent_3[0])   | (atoi(accent_3[1])   << 8) | (atoi(accent_3[2])   << 16) | (0xff << 24) : 0x0080c0FF;
+            ret->background = (background) ? atoi(background[0]) | (atoi(background[1]) << 8) | (atoi(background[2]) << 16) | (0xff << 24) : 0xFFFFFFFF;
         }
 
-        // Construct a hash table
+        // TODO: Refactor to remove window_list
+        // Construct a dictionary for windows
         dict_construct(&ret->windows, 16);
 
         // Allocate a list of windows
@@ -126,20 +146,28 @@ int           ui_init                ( UIInstance_t **pp_instance, const char   
     // Start up SDL
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS );
 
-    // Construct element function lookup tables
-    extern int init_element( void );
-    
-    // Initialize element function lookup tables
-    init_element();
-    
+    // Initialize subsystems
+    {
+
+        // Initialize element function lookup tables
+        extern int init_element( void );
+        init_element();
+    }
+
     // Set the active instance
     active_instance = ret;
     
     // Return
     *pp_instance    = ret;
 
-    free(config_path);
+    // Clean up
+    {
+        free(config_path);
+        FREE_JSON_DICT(config_file_json);
+        free(config_file_data);
+    }
 
+    // Success
     return ret;
 
     // Error handling
@@ -169,24 +197,31 @@ int           ui_init                ( UIInstance_t **pp_instance, const char   
         // Standard library errors
         {
             no_app_data:
-                return 0;
-        }
+                #ifndef NDEBUG
+                    ui_print_error("[UI] Failed to find a suitable directory for config file in call to function \"%s\"\n", __FUNCTION__);
+                #endif
 
-        // JSON type errors
-        {
-            primary_type_error:
-            accent_1_type_error:
-            accent_2_type_error:
-            accent_3_type_error:
-            background_type_error:
+                // Error 
                 return 0;
         }
 
         // Argument errors
         {
             no_instance:
+                #ifndef NDEBUG
+                    ui_print_error("[UI] Null pointer provided for \"pp_instance\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
+
             no_path:
-            ;
+                #ifndef NDEBUG
+                    ui_print_error("[UI] Null pointer provided for \"path\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
         }
     }
 }
@@ -395,7 +430,8 @@ int           ui_process_input       ( UIInstance_t     *instance )
             if (instance->windows_list[i]->is_open == false)
             {
                 UIWindow_t* w = ui_remove_window(instance, instance->windows_list[i]->name);
-                destroy_window(w);
+                if(w)
+                    destroy_window(w);
                 if (dict_values(instance->windows,0))
                 {
                     instance->active_window = instance->windows_list[dict_values(instance->windows, 0) - 1];

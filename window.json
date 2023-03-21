@@ -75,7 +75,7 @@
             "y"         : 192,
             "width"     : 768,
             "height"    : 512,
-            "path"      : "window.png"
+            "path"      : "image.png"
         },
         {
             "type"        : "TEXT INPUT",
@@ -88,7 +88,7 @@
             "length"      : 255
         },
         {
-            "type"     : "LABEL",
+            "type"     : "SLIDER",
             "name"     : "label 3",
             "text"     : "A Table:", 
             "x"        : 160,

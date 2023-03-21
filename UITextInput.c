@@ -166,7 +166,7 @@ int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
 	{
 		if (instance->active_window->last)
 		{
-			if (instance->active_window->last->element.text_input == text_input)
+			if (instance->active_window->last->text_input == text_input)
 			{
 				SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_3, (u8)(instance->accent_3 >> 8), (u8)(instance->accent_3 >> 16), 0xff);
 			}

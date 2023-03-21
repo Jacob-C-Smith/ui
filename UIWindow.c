@@ -501,7 +501,7 @@ int          process_window_input     ( UIWindow_t *window )
 				{
 					if (strcmp(window->last->type, "TEXT INPUT") == 0)
 					{
-						UITextInput_t* text_input = window->last->element.text_input;
+						UITextInput_t* text_input = window->last->text_input;
 						size_t text_len = strlen(text_input->text);
 						
 						text_input->text[text_len - 1] = (char)0;
@@ -512,7 +512,7 @@ int          process_window_input     ( UIWindow_t *window )
 				}
 				else if (strcmp(window->last->type, "TABLE") == 0)
 				{
-					window->last->element.table->last_x++;
+					window->last->table->last_x++;
 				}
 			}
 			else if (e.key.keysym.sym == SDLK_TAB)
@@ -644,7 +644,7 @@ int          process_window_input     ( UIWindow_t *window )
 			if(window->last)
 				if (strcmp(window->last->type, "TEXT INPUT") == 0)
 				{//
-					UITextInput_t* text_input = window->last->element.text_input;
+					UITextInput_t* text_input = window->last->text_input;
 					strcat(text_input->text, e.text.text);
 					text_input->width = 8 + (8 * strlen(text_input->text));
 				}
