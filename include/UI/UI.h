@@ -77,7 +77,7 @@ DLLEXPORT int           ui_init             ( UIInstance_t    **pp_instance, con
 
 // ANSI colored prints
 /* !
- *  printf, but in blue via ANSI
+ *  printf in blue via ANSI
  *
  *  @param format : printf format text
  *  @param ...    : varadic arguments
@@ -90,7 +90,7 @@ DLLEXPORT int           ui_init             ( UIInstance_t    **pp_instance, con
 DLLEXPORT int           ui_print_log        ( const char* const format  , ... );
 
 /* !
-  *  printf, but in yellow via ANSI
+  *  printf in yellow via ANSI
   *
   *  @param format : printf format text
   *  @param ...    : varadic arguments
@@ -103,7 +103,7 @@ DLLEXPORT int           ui_print_log        ( const char* const format  , ... );
 DLLEXPORT int           ui_print_warning    ( const char* const format  , ... );
 
 /* !
-  *  printf, but in red via ANSI
+  *  printf in red via ANSI
   *
   *  @param format : printf format text
   *  @param ...    : varadic arguments

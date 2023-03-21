@@ -17,24 +17,26 @@
 
 union UIElement_u
 {
-    UIButton_t      *button;
-    UICanvas_t      *canvas;
-    UIChart_t       *chart;
-    UICheckbox_t    *checkbox;
-    UIDropdown_t    *dropdown;
-    UIImage_t       *image;
-    UILabel_t       *label;
-    UIRadioButton_t *radio_button;
-    UISlider_t      *slider;
-    UITable_t       *table;
-    UITextInput_t   *text_input;
+
 };
 
 struct UIElement_s
 {
-    char               *name,
-                       *type;
-    union UIElement_u   element;
+    char *name,
+         *type;
+    union {
+        UIButton_t      *button;
+        UICanvas_t      *canvas;
+        UIChart_t       *chart;
+        UICheckbox_t    *checkbox;
+        UIDropdown_t    *dropdown;
+        UIImage_t       *image;
+        UILabel_t       *label;
+        UIRadioButton_t *radio_button;
+        UISlider_t      *slider;
+        UITable_t       *table;
+        UITextInput_t   *text_input;
+    };
 };
 
 // Allocators 

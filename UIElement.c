@@ -23,7 +23,7 @@ void* load_callbacks[ELEMENT_COUNT] =
     load_image_as_dict,
     load_label_as_dict,
     load_radio_button_as_dict,
-    0,
+    load_slider_as_dict,
     load_table_as_dict,
     load_text_input_as_dict
 };
@@ -36,7 +36,7 @@ void* click_callbacks[ELEMENT_COUNT] =
     click_image,
     click_label,
     click_radio_button,
-    0,
+    click_slider,
     click_table,
     click_text_input
 };
@@ -49,7 +49,7 @@ void* hover_callbacks[ELEMENT_COUNT] =
     hover_image,
     hover_label,
     hover_radio_button,
-    0,
+    hover_slider,
     hover_table,
     hover_text_input
 };
@@ -62,7 +62,7 @@ void* release_callbacks[ELEMENT_COUNT] =
     release_image,
     release_label,
     release_radio_button,
-    0,
+    release_slider,
     release_table,
     release_text_input
 };
@@ -75,7 +75,7 @@ void* add_click_callbacks[ELEMENT_COUNT] =
     add_click_callback_image,
     add_click_callback_label,
     add_click_callback_radio_button,
-    0,
+    add_click_callback_slider,
     0,
     add_click_callback_text_input
 };
@@ -88,7 +88,7 @@ void* add_hover_callbacks[ELEMENT_COUNT] =
     add_hover_callback_image,
     add_hover_callback_label,
     add_hover_callback_radio_button,
-    0,
+    add_hover_callback_slider,
     0,
     add_hover_callback_text_input
 };
@@ -101,7 +101,7 @@ void* add_release_callbacks[ELEMENT_COUNT] =
     add_release_callback_image,
     add_release_callback_label,
     add_release_callback_radio_button,
-    0,
+    add_release_callback_slider,
     0,
     add_release_callback_text_input
 };
@@ -114,7 +114,7 @@ void* draw_callback[ELEMENT_COUNT] =
     draw_image,
     draw_label,
     draw_radio_button,
-    0,
+    draw_slider,
     draw_table,
     draw_text_input
 };
@@ -127,7 +127,7 @@ void* destructor_callback[ELEMENT_COUNT] =
     destroy_image,
     destroy_label,
     destroy_radio_button,
-    0,
+    destroy_slider,
     0,
     destroy_text_input
 };
@@ -140,7 +140,7 @@ void* bounds_callback[ELEMENT_COUNT] =
     image_in_bounds,
     label_in_bounds,
     radio_button_in_bounds,
-    0,
+    slider_in_bounds,
     table_in_bounds,
     text_input_in_bounds
 };
@@ -427,7 +427,7 @@ int construct_element(UIElement_t **element, char *name, char *type, void* eleme
     // Construct the element
     {
 
-        i_element->element.label = (UIButton_t*)element_data;
+        i_element->label = (UIButton_t*)element_data;
                 
         // Set the name
         {
@@ -486,7 +486,7 @@ int click_element(UIElement_t* element, ui_mouse_state_t mouse_state)
     // Initialized data
     int (*click)(void*, ui_mouse_state_t) = dict_get(click_lut, element->type);
 
-    (*click)((void*)element->element.label, mouse_state); // Call the element constructor for the specific type
+    (*click)((void*)element->label, mouse_state); // Call the element constructor for the specific type
     
     // Set last
     if(instnace->active_window == w)
@@ -501,7 +501,7 @@ int hover_element(UIElement_t* element, ui_mouse_state_t mouse_state)
     int (*hover)(void*, ui_mouse_state_t) = dict_get(hover_lut, element->type);
 
     // Call the element constructor for the specific type
-    (*hover)((void*)element->element.label, mouse_state);
+    (*hover)((void*)element->label, mouse_state);
 
 
     return 0;
@@ -515,7 +515,7 @@ int release_element(UIElement_t* element, ui_mouse_state_t mouse_state)
     bool (*release)(void*, ui_mouse_state_t) = dict_get(release_lut, element->type);
 
     // Call the element constructor for the specific type
-    return (*release)((void*)element->element.label, mouse_state);
+    return (*release)((void*)element->label, mouse_state);
 
 
     return 0;
@@ -529,7 +529,7 @@ int add_click_callback_element(UIElement_t* element, void(*callback)(UIElement_t
     bool (*add_click_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_click_lut, element->type);
 
     // Call the element constructor for the specific type
-    return (*add_click_callback)((void*)element->element.label, callback);
+    return (*add_click_callback)((void*)element->label, callback);
 
 
     return 0;
@@ -543,7 +543,7 @@ int add_hover_callback_element(UIElement_t* element, void(*callback)(UIElement_t
     bool (*add_hover_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_hover_lut, element->type);
 
     // Call the element constructor for the specific type
-    return (*add_hover_callback)((void*)element->element.label, callback);
+    return (*add_hover_callback)((void*)element->label, callback);
 
     return 0;
 }
@@ -597,7 +597,7 @@ bool in_bounds ( UIElement_t* element, ui_mouse_state_t mouse_state )
 
     // Call the element constructor for the specific type
     if(bounds)
-        ret = (*bounds)((void*)element->element.label, mouse_state);
+        ret = (*bounds)((void*)element->label, mouse_state);
 
     return ret;
 
@@ -684,7 +684,7 @@ int draw_element( UIWindow_t *window, UIElement_t* element)
         int (*drawer)(void*, void*) = dict_get(draw_lut, element->type);
 
         // Call the element constructor for the specific type
-        (*drawer)((void*)window, element->element.label);
+        (*drawer)((void*)window, element->label);
 
     }
 
@@ -695,7 +695,7 @@ int draw_element( UIWindow_t *window, UIElement_t* element)
 
 int destroy_element(UIElement_t* element)
 {
-    free(element->element.label);
+    free(element->label);
     free(element->name);
     free(element);
 

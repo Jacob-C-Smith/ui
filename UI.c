@@ -430,7 +430,8 @@ int           ui_process_input       ( UIInstance_t     *instance )
             if (instance->windows_list[i]->is_open == false)
             {
                 UIWindow_t* w = ui_remove_window(instance, instance->windows_list[i]->name);
-                destroy_window(w);
+                if(w)
+                    destroy_window(w);
                 if (dict_values(instance->windows,0))
                 {
                     instance->active_window = instance->windows_list[dict_values(instance->windows, 0) - 1];
