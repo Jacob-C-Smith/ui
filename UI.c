@@ -144,6 +144,11 @@ int           ui_init                ( UIInstance_t **pp_instance, const char   
     }
 
     // Start up SDL
+
+    // Fixes blurry rendering on Mac OS
+    #ifdef __APPLE__
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+    #endif
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS );
 
     // Initialize subsystems
