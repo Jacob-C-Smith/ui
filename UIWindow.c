@@ -50,14 +50,14 @@ int          create_window            ( UIWindow_t **window )
 	}
 }
 
-int          load_window              ( UIWindow_t **window, const char *path )
+int          load_window              ( UIWindow_t **pp_window, const char *path )
 {
 	// Argument check
 	{
 		#ifndef NDEBUG
 			if(path==(void*)0)
 				goto noPath;
-			if(window == (void *)0)
+			if(pp_window == (void *)0)
 				goto no_window;
 		#endif
 	}
@@ -75,7 +75,7 @@ int          load_window              ( UIWindow_t **window, const char *path )
 		ui_load_file(path, data, false);
 	}
 	
-	load_window_as_json(window, data);
+	load_window_as_json(pp_window, data);
 	
 	return 1;
 
@@ -107,40 +107,41 @@ int          load_window              ( UIWindow_t **window, const char *path )
 	}
 }
 
-int          load_window_as_json      ( UIWindow_t **window, char       *token_text )
+int          load_window_as_json      ( UIWindow_t **pp_window, char       *text )
 {
 	// TODO: Argument check
 
 	// Initialized data
-	UIInstance_t *instance      = ui_get_active_instance();
-	UIWindow_t   *ret           = 0;
-	size_t        len           = strlen(token_text),
-		          element_count = 0;
-    JSONToken_t  *token         = 0;
+	UIInstance_t *p_instance    = ui_get_active_instance();
+	UIWindow_t   *p_window      = 0;
+    JSONValue_t  *p_value       = 0;
 
-	dict         *window_json   = 0;
-	char         *width         = 0,
-		         *height        = 0,
-		         *name          = 0,
-		        **elements      = 0;
+	char         *name          = 0,
+	             *title         = 0;
+	signed        width         = 0,
+	              height        = 0;
+	array        *p_elements    = 0;
 
-    // Parse the JSON
-    parse_json(token_text, len, &window_json);
+    // Parse the window file into a dictionary
+    if ( parse_json_value(text, 0, &p_value) == 0 )
+        goto failed_to_parse_json;
 
-    // Get window info
-	{
-		token    = dict_get(window_json, "name");
-		name     = JSON_VALUE(token, JSONstring);
+    // Get properties from the dictionary
+    if (p_value->type == JSONobject) {
 
-		token    = dict_get(window_json, "width");
-		width    = JSON_VALUE(token, JSONprimative);
+        // Initialized data
+        dict *p_dict = p_value->object;
 
-		token    = dict_get(window_json, "height");
-		height   = JSON_VALUE(token, JSONprimative);
+        name       = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "name"))    , JSONstring);
+        title      = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "title"))   , JSONstring);
+        width      = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "width"))   , JSONinteger);
+        height     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "height"))  , JSONinteger);
+        p_elements = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "elements")), JSONarray);
 
-		token    = dict_get(window_json, "elements");
-		elements = JSON_VALUE(token, JSONarray);
-	}
+		if (!(name && title && width && height && p_elements))
+			goto missing_properties;
+
+    }
 
 	// Error checking
 	{
@@ -152,55 +153,96 @@ int          load_window_as_json      ( UIWindow_t **window, char       *token_t
 		#endif
 	}
 
-	while (elements[++element_count]);
-
-	// Make a blank window
-	construct_window(window, name, (width) ? atoi(width) : 640, (height) ? atoi(height) : 480, element_count);
-	
-	ret = *window;
-
-	instance->load_window = ret;
-	
-	// Error checking
-	{
-		#ifndef NDEBUG
-			if (ret == (void *)0)
-				goto window_construction_error;
-			if (elements == (void *)0)
-				goto no_elements;
-		#endif
-	}
-
-	// Append all the elements
+	// Construct the window
 	{
 
-		// Iterate over elements
-		for (size_t k = 0; elements[k]; k++)
+		// Allocate memory for a UI window
+		create_window(&p_window);
+
+		// Set the window width and height
+		p_window->width  = width;
+		p_window->height = height;
+
+		// Error handling
 		{
-			
-			// Load the element as an object or a path
-			UIElement_t* element = 0;
-			(*(char*)elements[k] == '{') ? load_element_as_json(&element, elements[k]) : load_element(&element, elements[k]);
-			
-			// Error checking
+			if (p_window->width == 0)
+				p_window->width = 640;
+			if (p_window->height == 0)
+				p_window->height = 480;
+		}
+
+		// Set the window name
+		{
+			size_t name_len = strlen(name);
+			p_window->name = calloc(name_len + 1, sizeof(u8));
+			strncpy(p_window->name, name, name_len);
+		}
+
+		// Set the window title
+		{
+			size_t title_len = strlen(title);
+			p_window->title = calloc(title_len + 1, sizeof(u8));
+			strncpy(p_window->title, title, title_len);
+		}
+
+		// Set up the window
+		{
+
+			// Create an SDL window
+			p_window->window   = SDL_CreateWindow(p_window->title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_BORDERLESS | SDL_WINDOW_SHOWN);
+			p_window->is_open  = true;
+
+			// These are required for window functionality
+			SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
+			SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
+
+			// Create an SDL renderer
+			p_window->renderer = SDL_CreateRenderer(p_window->window, -1, SDL_RENDERER_ACCELERATED);
+
+		}
+
+		// Load the window elements
+		{
+
+			// Initialized data
+			size_t        element_count = 0;
+			JSONValue_t **pp_elements = 0;
+
+			// Get the contents of the array
 			{
-				#ifndef NDEBUG
-					if(element == (void *)0)
-					{
-						ui_print_warning("[UI] [Window] Erronious token detected at elements index %d. Skipping...\n", k);
-						continue;
-					}
-				#endif
+				array_get(p_elements, 0, &element_count);
+				pp_elements = calloc(element_count+1, sizeof(JSONValue_t *));
+				array_get(p_elements, pp_elements, &element_count);
 			}
 
-			// Append the element to the window
-			append_element_to_window(ret, element);
+			// Iterate over each element
+			for (size_t i = 0; i < element_count; i++)
+			{
+
+				// Initialized data
+				JSONValue_t *p_element           = pp_elements[i];
+				UIElement_t *constructed_element = 0;
+
+				if ( load_element_as_json_value(&constructed_element, p_element) == 0)
+					goto failed_to_load_element;
+
+				append_element_to_window(p_window, constructed_element);
+				
+			}
+			
+
+			// Clean up
+			free(pp_elements);
 		}
+
+		*pp_window = p_window;
 	}
 
-	instance->load_window = 0;
+	// Clear the instance's reference to the loading window
+	p_instance->load_window = 0;
 
-	return ret;
+	// Success
+	return 1;
 	
 	// Error handling
 	{
@@ -216,6 +258,7 @@ int          load_window_as_json      ( UIWindow_t **window, char       *token_t
 		// JSON type errors
 		{
 			#ifndef NDEBUG
+				failed_to_load_element:	
 				// TODO: Print an error for each branch
 				name_type_error:
 				return 0;
@@ -232,7 +275,7 @@ int          load_window_as_json      ( UIWindow_t **window, char       *token_t
 		// Constructor errors
 		{
 			#ifndef NDEBUG
-				window_construction_error:
+				missing_properties:
 					return 0;
 			#endif
 		}
@@ -242,75 +285,11 @@ int          load_window_as_json      ( UIWindow_t **window, char       *token_t
 			#ifndef NDEBUG
 			// TODO: Print an error for each branch
 				no_elements:
+				failed_to_parse_json:
 				no_name:
 				empty_name:
 					return 0;
 			#endif
-		}
-	}
-}
-
-int          construct_window         ( UIWindow_t **window, char       *title, size_t         width      , size_t height, size_t element_count )
-{
-
-	// Argument check
-	{
-		#ifndef NDEBUG
-			if(title == (void *)0)
-				goto no_title;
-		#endif
-	}
-
-	// Initialized data
-	UIWindow_t *i_window  = 0;
-	size_t      title_len = strlen(title);
-
-	create_window(&i_window);
-
-	// Set the window width and height
-	i_window->width  = width;
-	i_window->height = height;
-	
-	// Error handling
-	{
-		if (i_window->width == 0)
-			i_window->width = 640;
-		if (i_window->height == 0)
-			i_window->height = 480;
-	}
-
-	// Set up the window
-	{
-		i_window->window   = SDL_CreateWindow(i_window->name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_BORDERLESS);
-		SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
-		SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
-		i_window->renderer = SDL_CreateRenderer(i_window->window, -1, SDL_RENDERER_ACCELERATED);
-		SDL_ShowWindow(i_window->window);
-		i_window->is_open  = true;
-	}
-
-	// Set the window name
-	{
-		i_window->name = calloc(title_len + 1, sizeof(u8));
-		strncpy(i_window->name, title, title_len);
-	}
-
-	i_window->element_data     = calloc(1, sizeof(void*));
-	i_window->element_data_max = 1;
-
-	dict_construct(&i_window->elements, element_count);
-
-	*window = i_window;
-
-	return 1;
-
-	// Error handling
-	{
-
-		// Argument errors
-		{
-			no_title:
-				return 0;
 		}
 	}
 }
@@ -330,7 +309,8 @@ int          append_element_to_window ( UIWindow_t *window, UIElement_t  *elemen
 
 	window->element_count++;
 
-	return 0;
+	// Success
+	return 1;
 	// TODO: Error handling
 
 	resize:
@@ -375,7 +355,7 @@ int          draw_window              ( UIWindow_t *window )
 	// Initialized data
 	SDL_Rect      r         = { 0,0,0,0 };
 
-	size_t        len       = strlen(window->name),
+	size_t        len       = strlen(window->title),
 		          g_len     = len * 8;
 
 	dict         *elements  = window->elements;
@@ -423,8 +403,8 @@ int          draw_window              ( UIWindow_t *window )
 			SDL_RenderFillRect(window->renderer, &r);
 		}
 
-		// Draw the window name
-		ui_draw_text(window->name, window, t_1 + 1, 0, 1);
+		// Draw the window title
+		ui_draw_text(window->title, window, t_1 + 1, 0, 1);
 
 		// Draw the red box in the top right of the window
 		{
@@ -675,8 +655,8 @@ int          click_window             ( UIWindow_t *window, ui_mouse_state_t mou
 
 	// Did the user click on the element on the iterator?
 	for (size_t i = 0; i < window->element_count; i++)
-		if (in_bounds(window->element_data[i], mouse_state))
-			click_element(window->element_data[i], mouse_state);
+		;//if (in_bounds(window->element_data[i], mouse_state))
+			;//click_element(window->element_data[i], mouse_state);
 
 	// Close window?
 	{
@@ -732,8 +712,8 @@ int          hover_window             ( UIWindow_t *window, ui_mouse_state_t mou
 
 	// Did the user click on the element on the iterator?
 	for (size_t i = 0; i < window->element_count; i++)
-		if (in_bounds(window->element_data[i], mouse_state))
-			hover_element(window->element_data[i], mouse_state);
+		;//if (in_bounds(window->element_data[i], mouse_state))
+			;//hover_element(window->element_data[i], mouse_state);
 
 	
 
@@ -752,16 +732,60 @@ int          release_window           ( UIWindow_t *window, ui_mouse_state_t mou
 
 	// Did the user click on the element on the iterator?
 	for (size_t i = 0; i < window->element_count; i++)
-		if (in_bounds(window->element_data[i], mouse_state))
-			release_element(window->element_data[i], mouse_state);
+		;//if (in_bounds(window->element_data[i], mouse_state))
+			;//release_element(window->element_data[i], mouse_state);
 
 	return 0;
 }
 
-int          destroy_window           ( UIWindow_t *window )
+int destroy_window ( UIWindow_t *p_window )
 {
-	//free(window->name);
-	SDL_DestroyRenderer(window->renderer);
-	SDL_DestroyWindow(window->window);
-	free(window);
+
+	// Argument check
+	{
+		#ifndef NDEBUG
+			if ( p_window == (void *) 0 )
+				goto no_window;
+		#endif
+	}
+
+	// Close the window
+	p_window->is_open = false;
+
+	// Free the window name
+	free(p_window->name);
+
+	// Free the window title
+	free(p_window->title);
+
+	// Free the window elements
+	//dict_free_clear(p_window->elements, destroy_element);
+	free(p_window->element_data);
+
+	// Free the SDL2 renderer
+	SDL_DestroyRenderer(p_window->renderer);
+
+	// Free the SDL2 window
+	SDL_DestroyWindow(p_window->window);
+
+	// Free the UI Window
+	free(p_window);
+
+	// Success
+	return 1;
+
+	// Error handling
+	{
+
+		// Argument errors
+		{
+			no_window:
+				#ifndef NDEBUG
+					printf("[UI] [Window] Null pointer provided for parameter \"p_window\" in call to function \"%s\"\n");
+				#endif
+
+				// Error
+				return 0;
+		}
+	}
 }

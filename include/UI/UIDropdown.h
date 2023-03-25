@@ -5,11 +5,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include <SDL2/SDL.h>
-
 #include <JSON/JSON.h>
 
 #include <UI/UItypedef.h>
+#include <UI/UI.h>
 #include <UI/UIWindow.h>
 
 struct UIDropdown_s

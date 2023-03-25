@@ -5,7 +5,7 @@
 #include <UI/UItypedef.h>
 #include <UI/UI.h>
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 struct UITextInput_s
 {

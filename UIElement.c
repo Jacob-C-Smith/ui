@@ -17,132 +17,132 @@ char* element_names[ELEMENT_COUNT] =
 
 void* load_callbacks[ELEMENT_COUNT] =
 {
-    load_button_as_dict,
-    load_checkbox_as_dict,
-    load_dropdown_as_dict,
-    load_image_as_dict,
-    load_label_as_dict,
-    load_radio_button_as_dict,
-    load_slider_as_dict,
-    load_table_as_dict,
-    load_text_input_as_dict
+    0,//load_button_as_json_value,
+    0,//load_checkbox_as_json_value,
+    0,//load_dropdown_as_json_value,
+    0,//load_image_as_json_value,
+    load_label_as_json_value,
+    0,//load_radio_button_as_json_value,
+    0,//load_slider_as_json_value,
+    0,//load_table_as_json_value,
+    0,//load_text_input_as_djson_value
 };
 
 void* click_callbacks[ELEMENT_COUNT] =
 {
-    click_button,
-    click_checkbox,
-    click_dropdown,
-    click_image,
+    0,//click_button,
+    0,//click_checkbox,
+    0,//click_dropdown,
+    0,//click_image,
     click_label,
-    click_radio_button,
-    click_slider,
-    click_table,
-    click_text_input
+    0,//click_radio_button,
+    0,//click_slider,
+    0,//click_table,
+    0,//click_text_input
 };
 
 void* hover_callbacks[ELEMENT_COUNT] =
 {
-    hover_button,
-    hover_checkbox,
-    hover_dropdown,
-    hover_image,
+    0,//hover_button,
+    0,//hover_checkbox,
+    0,//hover_dropdown,
+    0,//hover_image,
     hover_label,
-    hover_radio_button,
-    hover_slider,
-    hover_table,
-    hover_text_input
+    0,//hover_radio_button,
+    0,//hover_slider,
+    0,//hover_table,
+    0,//hover_text_input
 };
 
 void* release_callbacks[ELEMENT_COUNT] =
 {
-    release_button,
-    release_checkbox,
-    release_dropdown,
-    release_image,
+    0,//release_button,
+    0,//release_checkbox,
+    0,//release_dropdown,
+    0,//release_image,
     release_label,
-    release_radio_button,
-    release_slider,
-    release_table,
-    release_text_input
+    0,//release_radio_button,
+    0,//release_slider,
+    0,//release_table,
+    0,//release_text_input
 };
 
 void* add_click_callbacks[ELEMENT_COUNT] =
 {
-    add_click_callback_button,
-    add_click_callback_checkbox,
-    add_click_callback_dropdown,
-    add_click_callback_image,
+    0,//add_click_callback_button,
+    0,//add_click_callback_checkbox,
+    0,//add_click_callback_dropdown,
+    0,//add_click_callback_image,
     add_click_callback_label,
-    add_click_callback_radio_button,
-    add_click_callback_slider,
-    0,
-    add_click_callback_text_input
+    0,//add_click_callback_radio_button,
+    0,//add_click_callback_slider,
+    0,//0,
+    0,//add_click_callback_text_input
 };
 
 void* add_hover_callbacks[ELEMENT_COUNT] =
 {
-    add_hover_callback_button,
-    add_hover_callback_checkbox,
-    add_hover_callback_dropdown,
-    add_hover_callback_image,
+    0,//add_hover_callback_button,
+    0,//add_hover_callback_checkbox,
+    0,//add_hover_callback_dropdown,
+    0,//add_hover_callback_image,
     add_hover_callback_label,
-    add_hover_callback_radio_button,
-    add_hover_callback_slider,
-    0,
-    add_hover_callback_text_input
+    0,//add_hover_callback_radio_button,
+    0,//add_hover_callback_slider,
+    0,//0,
+    0,//add_hover_callback_text_input
 };
 
 void* add_release_callbacks[ELEMENT_COUNT] =
 {
-    add_release_callback_button,
-    add_release_callback_checkbox,
-    add_release_callback_dropdown,
-    add_release_callback_image,
+    0,//add_release_callback_button,
+    0,//add_release_callback_checkbox,
+    0,//add_release_callback_dropdown,
+    0,//add_release_callback_image,
     add_release_callback_label,
-    add_release_callback_radio_button,
-    add_release_callback_slider,
-    0,
-    add_release_callback_text_input
+    0,//add_release_callback_radio_button,
+    0,//add_release_callback_slider,
+    0,//0,
+    0,//add_release_callback_text_input
 };
 
 void* draw_callback[ELEMENT_COUNT] =
 {
-    draw_button,
-    draw_checkbox,
-    draw_dropdown,
-    draw_image,
+    0,//draw_button,
+    0,//draw_checkbox,
+    0,//draw_dropdown,
+    0,//draw_image,
     draw_label,
-    draw_radio_button,
-    draw_slider,
-    draw_table,
-    draw_text_input
+    0,//draw_radio_button,
+    0,//draw_slider,
+    0,//draw_table,
+    0,//draw_text_input
 };
 
 void* destructor_callback[ELEMENT_COUNT] =
 {
-    destroy_button,
-    destroy_checkbox,
-    destroy_dropdown,
-    destroy_image,
+    0,//destroy_button,
+    0,//destroy_checkbox,
+    0,//destroy_dropdown,
+    0,//destroy_image,
     destroy_label,
-    destroy_radio_button,
-    destroy_slider,
-    0,
-    destroy_text_input
+    0,//destroy_radio_button,
+    0,//destroy_slider,
+    0,//0,
+    0,//destroy_text_input
 };
 
 void* bounds_callback[ELEMENT_COUNT] =
 {
-    button_in_bounds,
-    checkbox_in_bounds,
-    dropdown_in_bounds,
-    image_in_bounds,
+    0,//button_in_bounds,
+    0,//checkbox_in_bounds,
+    0,//dropdown_in_bounds,
+    0,//image_in_bounds,
     label_in_bounds,
-    radio_button_in_bounds,
-    slider_in_bounds,
-    table_in_bounds,
-    text_input_in_bounds
+    0,//radio_button_in_bounds,
+    0,//slider_in_bounds,
+    0,//table_in_bounds,
+    0,//text_input_in_bounds
 };
 
 dict *load_lut        = 0;
@@ -191,39 +191,45 @@ int init_element ( void )
     return 1;
 }
 
-int create_element ( UIElement_t **element )
+int create_element ( UIElement_t **pp_element )
 {
     // Argument check
     {
         #ifndef NDEBUG
-            if (element == (void *)0)
+            if (pp_element == (void *)0)
                 goto no_element;
         #endif
     }
 
-    UIElement_t* i_element = calloc(1, sizeof(UIElement_t));
+    // Initialized data
+    UIElement_t *p_element = calloc(1, sizeof(UIElement_t));
     
     // Check memory
     {
         #ifndef NDEBUG
-            if (i_element == (void*)0)
+            if (p_element == (void*)0)
                 goto out_of_memory;
         #endif
     }
 
-    *element = i_element;
+    // Return
+    *pp_element = p_element;
 
+    // Success
     return 1;
 
     // Error checking
     {
+
         // Argument errors
         {
             no_element:
-            #ifndef NDEBUG
-                ui_print_error("[UI] [Element] Null pointer provided for \"element\" in call to function \"%s\"\n",__FUNCTION__);
-            #endif
-            return 0;
+                #ifndef NDEBUG
+                    ui_print_error("[UI] [Element] Null pointer provided for \"element\" in call to function \"%s\"\n",__FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
         }
 
         // Standard library errors
@@ -232,114 +238,39 @@ int create_element ( UIElement_t **element )
                 #ifndef NDEBUG
                     ui_print_error("[Standard library] Out of memory in call to function \"%s\"\n",__FUNCTION__);
                 #endif
+
+                // Error
                 return 0;
         }
     }
 }
 
-int load_element ( UIElement_t **element, const char path[])
-{
-
-    // Argument check
-    {
-        #ifndef NDEBUG
-            if (path == (void*)0)
-                goto no_path;
-            if (element == (void*)0)
-                goto no_element;
-        #endif
-    }
-
-    // Uninitialized data
-    u8          *data;
-    UIElement_t *i_element;
-
-    // Initialized data
-    size_t      i    = 0;
-
-    // Load up the file
-    i    = ui_load_file(path, 0, false);
-    data = calloc(i+1, sizeof(u8));
-
-    // Error checking
-    {
-        #ifndef NDEBUG
-            if(data == (void *) 0)
-                goto out_of_memory;
-        #endif      
-    }
-
-    ui_load_file(path, data, false);
-
-    // Parse the JSON into a button
-    load_element_as_json(element, data);
-
-    // Free resources
-    free(data);
-
-    return 1;
-
-    // Error handling
-    {
-
-        // Debug only errors
-        {
-
-            #ifndef NDEBUG
-
-                // Argument errors
-                {
-                    no_path:
-                        ui_print_error("[UI] [Element] No path provided to function \"%s\"\n", __FUNCTION__);
-                        return 0;     
-                    no_element:
-                        ui_print_error("[UI] [Element] Null pointer provided for \"element\" in call to function \"%s\"\n",__FUNCTION__);
-                        return 0;
-                }
-
-                // Standard library errors
-                {
-                    out_of_memory:
-                        ui_print_error("[Standard library] Out of meory in call to function \"%s\"\n", __FUNCTION__);
-                        return 0;
-                }
-
-            #endif
-        }
-    }
-}
-
-int load_element_as_json(UIElement_t **element, char* token_text)
+int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
 {
     
     // Argument check
     {
         #ifndef NDEBUG
-            if(token_text == (void *)0)
-                goto no_token_text;
+            if(p_value == (void *)0)
+                goto no_value;
         #endif  
     }
 
     // Initialized data
-    size_t       len          = strlen(token_text);
     dict        *dictionary   = 0;
     
     char        *type         = 0,
                 *name         = 0;
-    void        *element_data = 0;
 
-    // Parse the JSON
-    parse_json(token_text, len, &dictionary);
-
-    // Get data for the element
+    // Get properties from the dictionary
+    if (p_value->type == JSONobject)
     {
-        JSONToken_t *token = 0;
 
-        token = dict_get(dictionary, "type");
-        type  = JSON_VALUE(token, JSONstring);
+        // Initialized data
+        dict *p_dict = p_value->object;
 
-        token = dict_get(dictionary, "name");
-        name  = JSON_VALUE(token, JSONstring);
+        type = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "type")), JSONstring);
+        name = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "name")), JSONstring);
     }
 
     // Error checking
@@ -367,13 +298,14 @@ int load_element_as_json(UIElement_t **element, char* token_text)
         }
 
         // Call the element constructor for the specific type
-        (*constructor)((void*) &element_data, dictionary);
+        (*constructor)((void*) &p_value, p_value);
 
         // Construct the element
-        construct_element(element, name, type, element_data);
+        construct_element(pp_element, name, type, p_value);
 
     }
 
+    // Success
     return 1;
 
     // Error handling
@@ -381,22 +313,34 @@ int load_element_as_json(UIElement_t **element, char* token_text)
 
         // Argument errors
         {
-            no_token_text:
-                ui_print_error("[UI] [Element] Null pointer provided for \"token_text\" in call to function \"%s\"\n", __FUNCTION__);
+            no_value:
+                #ifndef NDEBUG
+                    ui_print_error("[UI] [Element] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
                 return 0;
         }
 
         // Standard library errors
         {
             out_of_memory:
-                ui_print_error("[Standard library] Out of meory in call to function \"%s\"\n", __FUNCTION__);
+                #ifndef NDEBUG
+                    ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
                 return 0;
         }
 
         // Interface errors
         {
             not_implemented:
-                ui_print_error("[UI] [Element] Failed to call constructor for type \"%s\" in call to function \"%s\"\n", type, __FUNCTION__);
+                #ifndef NDEBUG
+                    ui_print_error("[UI] [Element] Failed to call constructor for type \"%s\" in call to function \"%s\"\n", type, __FUNCTION__);
+                #endif
+
+                // Error
                 return 0;
         }
 
@@ -688,16 +632,46 @@ int draw_element( UIWindow_t *window, UIElement_t* element)
 
     }
 
-    return 0;
+    // Success
+    return 1;
 
     // TODO: Error handling
 }
 
-int destroy_element(UIElement_t* element)
+int destroy_element(UIElement_t **pp_element)
 {
-    free(element->label);
-    free(element->name);
-    free(element);
 
-    return 0;
+    // Argument check
+    {
+        #ifndef NDEBUG
+            if ( pp_element == (void *) 0 ) 
+                goto no_element;
+        #endif
+    }
+    
+    // Initialized data
+    UIElement_t *p_element = *pp_element;
+    
+    // Free the element
+    free(p_element->label);
+    free(p_element->name);
+    free(p_element);
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+        
+        // Argument errors
+        {
+            no_element:
+                #ifndef NDEBUG
+                    printf("[UI] [Element] Null pointer provided for \"pp_element\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+    }
 }

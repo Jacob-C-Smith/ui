@@ -23,7 +23,8 @@
 struct UIWindow_s {
 	bool               is_open,
 	                   drag;
-	char              *name;
+	char              *name,
+	                  *title;
 	size_t             width,
 		               height,
 		               element_count,

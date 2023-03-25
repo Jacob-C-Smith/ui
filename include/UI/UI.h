@@ -16,11 +16,11 @@
 #include <stdbool.h>
 
 // SDL
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #undef main
 
 // JSON parser
-#include <JSON/JSON.h>
+#include <json/json.h>
 #include <dict/dict.h>
 
 // UI 
@@ -36,11 +36,13 @@
 #define UI_SWUP   0x20
 #define UI_SWDOWN 0x40
 
+#define MAX_WINDOW_COUNT 16
+
 // Mouse event callback parameter
 struct ui_mouse_state_s {
 
     // The position of the cursor
-    u32 x,
+    s32 x,
         y;
     
     // Bitmask mouse keys and scroll wheel
@@ -77,7 +79,7 @@ DLLEXPORT int           ui_init             ( UIInstance_t    **pp_instance, con
 
 // ANSI colored prints
 /* !
- *  printf in blue via ANSI
+ *  printf in ANSI blue
  *
  *  @param format : printf format text
  *  @param ...    : varadic arguments
@@ -90,7 +92,7 @@ DLLEXPORT int           ui_init             ( UIInstance_t    **pp_instance, con
 DLLEXPORT int           ui_print_log        ( const char* const format  , ... );
 
 /* !
-  *  printf in yellow via ANSI
+  *  printf in ANSI yellow
   *
   *  @param format : printf format text
   *  @param ...    : varadic arguments
@@ -103,7 +105,7 @@ DLLEXPORT int           ui_print_log        ( const char* const format  , ... );
 DLLEXPORT int           ui_print_warning    ( const char* const format  , ... );
 
 /* !
-  *  printf in red via ANSI
+  *  printf in ANSI red
   *
   *  @param format : printf format text
   *  @param ...    : varadic arguments
@@ -130,7 +132,7 @@ DLLEXPORT int           ui_print_error      ( const char* const format  , ... );
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           ui_draw_format_text ( const char* const format  , UIWindow_t *window, int x, int y, int size, ... );
+DLLEXPORT int           ui_draw_format_text ( const char* const format  , UIWindow_t *p_window, int x, int y, int size, ... );
 
 // Text drawing
 /* !
@@ -146,7 +148,7 @@ DLLEXPORT int           ui_draw_format_text ( const char* const format  , UIWind
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_draw_text        ( const char* const text    , UIWindow_t *window, int x, int y, int size );
+DLLEXPORT int           ui_draw_text        ( const char* const text    , UIWindow_t *p_window, int x, int y, int size );
 
 /* !
   *  Draw a circle
@@ -158,7 +160,7 @@ DLLEXPORT int           ui_draw_text        ( const char* const text    , UIWind
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_draw_circle      ( int               radius  , UIWindow_t *window, int x, int y );
+DLLEXPORT int           ui_draw_circle      ( int               radius  , UIWindow_t *p_window, int x, int y );
 
 // Window operations
 /* !
@@ -169,7 +171,7 @@ DLLEXPORT int           ui_draw_circle      ( int               radius  , UIWind
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_append_window    ( UIInstance_t     *instance, UIWindow_t *window );
+DLLEXPORT int           ui_append_window    ( UIInstance_t     *p_instance, UIWindow_t *p_window );
 
 /* !
   *  Remove a window
@@ -179,7 +181,7 @@ DLLEXPORT int           ui_append_window    ( UIInstance_t     *instance, UIWind
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT UIWindow_t   *ui_remove_window    ( UIInstance_t     *instance, const char *name );
+DLLEXPORT UIWindow_t   *ui_remove_window    ( UIInstance_t     *p_instance, const char *name );
 
 /* !
   *  Process active window input
@@ -188,7 +190,7 @@ DLLEXPORT UIWindow_t   *ui_remove_window    ( UIInstance_t     *instance, const 
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_process_input    ( UIInstance_t     *instance );
+DLLEXPORT int           ui_process_input    ( UIInstance_t     *p_instance );
 
 /* !
   *  Draw the active window
@@ -197,7 +199,7 @@ DLLEXPORT int           ui_process_input    ( UIInstance_t     *instance );
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_draw             ( UIInstance_t     *instance );
+DLLEXPORT int           ui_draw             ( UIInstance_t     *p_instance );
 
 // Image drawing
 
@@ -229,4 +231,4 @@ DLLEXPORT size_t        ui_load_file        ( const char       *path    , void  
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_exit             ( UIInstance_t     *instance );
+DLLEXPORT int           ui_exit             ( UIInstance_t     **pp_instance );

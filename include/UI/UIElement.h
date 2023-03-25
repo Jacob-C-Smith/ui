@@ -15,11 +15,6 @@
 #include <UI/UILabel.h>
 //#include <UI/UITextInput.h>
 
-union UIElement_u
-{
-
-};
-
 struct UIElement_s
 {
     char *name,
@@ -50,7 +45,7 @@ struct UIElement_s
   *  
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int          create_element               ( UIElement_t **element );
+DLLEXPORT int          create_element               ( UIElement_t **pp_element );
 
 // Constructors
 
@@ -64,7 +59,7 @@ DLLEXPORT int          create_element               ( UIElement_t **element );
   *  
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int          load_element                 ( UIElement_t **element, const char   path[] );
+DLLEXPORT int          load_element                 ( UIElement_t **pp_element, const char   path[] );
 
  /* !
   *  Load a UI Button from JSON text
@@ -74,8 +69,8 @@ DLLEXPORT int          load_element                 ( UIElement_t **element, con
   * 
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int          load_element_as_json         ( UIElement_t **element, char        *token_text );
-DLLEXPORT int          construct_element            ( UIElement_t **element, char        *name      , char *type, void          *element_data );
+DLLEXPORT int          load_element_as_json_value   ( UIElement_t **pp_element, JSONValue_t *p_value );
+DLLEXPORT int          construct_element            ( UIElement_t **element   , char        *name      , char *type, void          *element_data );
 
 // Callbacks
 DLLEXPORT int          click_element                ( UIElement_t *element   , ui_mouse_state_t  mouse_state );
@@ -94,4 +89,4 @@ DLLEXPORT bool         in_bounds                    ( UIElement_t *element   , u
 DLLEXPORT int          draw_element                 ( UIWindow_t  *window    , UIElement_t   *element );
 
 // Destructor
-DLLEXPORT int          destroy_element              ( UIElement_t *element );
+DLLEXPORT int          destroy_element              ( UIElement_t **pp_element );

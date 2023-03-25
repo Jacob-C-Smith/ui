@@ -1,29 +1,31 @@
 #include <UI/UILabel.h>
 
-int create_label     ( UILabel_t **label )
+int create_label     ( UILabel_t **pp_label )
 {
+
 	// Argument check
 	{
 		#ifndef NDEBUG
-			if(label == (void *)0)
+			if(pp_label == (void *)0)
 				goto no_label;
 		#endif
 	}
 
 	// Initialized data
-	UILabel_t *i_label = calloc(1, sizeof(UILabel_t));
+	UILabel_t *p_label = calloc(1, sizeof(UILabel_t));
 	
 	// Error checking
 	{
 		#ifndef NDEBUG
-		if (i_label == (void*)0)
-			goto noMem;
+			if (p_label == (void*)0)
+				goto no_mem;
 		#endif
 	}
 	
-	*label = i_label;
+	// Return
+	*pp_label = p_label;
 
-	// Return a pointer to the start of the struct
+	// Success
 	return 1;
 
 	// Error handling
@@ -35,106 +37,96 @@ int create_label     ( UILabel_t **label )
 				#ifndef NDEBUG
 					ui_print_error("[UI] [Label] Null pointer provided for \"label\" in call to function \"%s\"\n", __FUNCTION__);
 				#endif
+
+				// Error 
 				return 0;
 		}
 
 		// Standard library errors
 		{
-			noMem:
-			#ifndef NDEBUG
-				ui_print_error("[UI] [Label] Failed to create a label; Out of memory\n");
-			#endif
-			return (void*)0;
+			no_mem:
+				#ifndef NDEBUG
+					ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+
+				// Error 
+				return 0;
 		}
 	}
 }
 
-int load_label       ( UILabel_t **label, const char  path [ ] )
-{
-	// Uninitialized data
-    u8         *data;
-	UILabel_t  *ret;
-
-    // Initialized data
-    size_t      i   = 0;
-
-    // Load the file
-    i    = ui_load_file(path, 0, false);
-    data = calloc(i, sizeof(u8));
-    ui_load_file(path, data, false);
-
-	// Parse the JSON object
-	ret = 0;// load_label_as_json(data);
-
-    // Finish up
-    free(data);
-
-	// Return a pointer to the populated label
-    return ret;
-
-    // Error handling
-    {
-        invalidFile:
-            #ifndef NDEBUG
-                ui_print_error("[UI] [Label] Failed to load file %s\n", path);
-            #endif
-			return 0;
-    }
-}
-
-int  load_label_as_dict (UILabel_t** label, dict* dictionary)
+int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 {
 
 	// Argument check
 	{
 		#ifndef NDEBUG
-			if(label == (void *)0)
+			if(pp_label == (void *)0)
 				goto no_label;
-			if (dictionary == (void*)0)
-				goto no_dictionary;
+			if (p_value == (void*)0)
+				goto no_value;
 		#endif
 	}
 
 	// Initialized data
-	char      *text    = 0,
-		      *x       = 0,
-		      *y       = 0,
-		      *size    = 0;
+	UILabel_t *p_label = 0;
+	char      *text    = 0;
+	signed     x       = 0,
+		       y       = 0,
+		       size    = 0;
 
-	
-    // Get data for the constructor
-	{
-		
-		JSONToken_t* token = 0;
+	// Get properties from the dictionary
+    if (p_value->type == JSONobject)
+    {
 
-		token  = dict_get(dictionary, "text");
-		text   = JSON_VALUE(token, JSONstring);
+        // Initialized data
+        dict *p_dict = p_value->object;
 
-		token  = dict_get(dictionary, "x");
-		x      = JSON_VALUE(token, JSONprimative);
-
-		token  = dict_get(dictionary, "y");
-		y      = JSON_VALUE(token, JSONprimative);
-
-		token = dict_get(dictionary, "size");
-		size = JSON_VALUE(token, JSONprimative);
-
+        text = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "text")), JSONstring);
+        x    = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))   , JSONinteger);
+		y    = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))   , JSONinteger);
+		size = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "size")), JSONinteger);
     }
 
 	// Error checking
 	{
 		#ifndef NDEBUG
-			if(text == (void *)0)
+			if(!(text && x && y && size))
 				goto no_text;
-			if (x == (void*)0)
-				goto no_x;
-			if (y == (void*)0)
-				goto no_y;
 		#endif
 	}
 
-	construct_label(label, text, atoi(x), atoi(y), (size) ? atoi(size) : 1);
+	// Construct the label
+	{
 
+		// Allocate a label
+		if ( create_label(&p_label) == 0)
+			goto failed_to_allocate_label;
+
+		// Copy the label text
+		{
+
+			// Initialized data
+			size_t label_text_len = strlen(text);
+
+			// Allocate memory for the label text
+			p_label->text = calloc(label_text_len+1, sizeof(char));
+
+			// TODO: Check memory
+
+			// Copy the string
+			strncpy(p_label->text, text, label_text_len);
+		}
+
+		// Set the label x, y, and size
+		p_label->x    = x;
+		p_label->y    = y;
+		p_label->size = size;
+	}
+
+	*pp_label = p_label;
+
+	// Success
 	return 1;
 
 	// Error handling
@@ -144,15 +136,22 @@ int  load_label_as_dict (UILabel_t** label, dict* dictionary)
 		{
 			no_label:
 				#ifndef NDEBUG
-					ui_print_error("[UI] [Label] Null pointer provided for \"label\" in call to function \"%s\"\n", __FUNCTION__);
+					ui_print_error("[UI] [Label] Null pointer provided for \"pp_label\" in call to function \"%s\"\n", __FUNCTION__);
 				#endif
+
+				// Error
 				return 0;
-			no_dictionary:
+			no_value:
 				#ifndef NDEBUG
-					ui_print_error("[UI] [Label] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
+					ui_print_error("[UI] [Label] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
 				#endif
+
+				// Error
 				return 0;
 		}
+
+		// TODO:
+		failed_to_allocate_label:
 
 		// Insufficent data error
 		{
@@ -165,188 +164,127 @@ int  load_label_as_dict (UILabel_t** label, dict* dictionary)
 	}
 }
 
-int  construct_label( UILabel_t **label, char* text, i32 x, i32 y, i32 size)
-{
-	// Argument check
-	{
-		#ifndef NDEBUG
-			if(text == (void *)0)
-				goto no_text;
-		#endif
-	}
-
-	// Initialized data
-	UILabel_t *i_label = 0;
-
-	// Allocate memory for a label
-	create_label(label);
-
-	// Get an internal reference to the label
-	i_label = *label;
-
-	// Construct the label
-	{
-
-		// Set the name
-		{
-			size_t len     = strlen(text);
-			i_label->text  = calloc(len+1, sizeof(u8));
-
-			// Error checking
-			{
-				#ifndef NDEBUG
-					if(i_label->text == (void *)0)
-						goto no_mem;
-				#endif
-			}
-			
-			// Copy the string
-			strncpy(i_label->text, text, len);
-		}
-
-		// Set the position
-		i_label->x = x,
-		i_label->y = y;
-		i_label->size = size;
-	}
-
-	return 1;
-
-	// Error handling
-	{
-		
-		// Argument errors
-		{
-			// TODO:
-			no_text:
-				return 0;
-		}
-
-		// Standard library
-		{
-			// TODO:
-			no_mem:
-				return 0;
-		}
-	}
-}
-
-int        draw_label       ( UIWindow_t *window, UILabel_t* label )
+int        draw_label       ( UIWindow_t *p_window, UILabel_t* p_label )
 {
 
 	// TODO: Argument checks
 	UIInstance_t *instance = ui_get_active_instance();
 
-	if (label->hidden == false)
+	if (p_label->hidden == false)
 	{
-		SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
-		ui_draw_text(label->text, window, label->x, label->y, label->size);
+		SDL_SetRenderDrawColor(p_window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
+		ui_draw_text(p_label->text, p_window, p_label->x, p_label->y, p_label->size);
 	}
-	label->width  = strlen(label->text) * 8 * label->size;
-	label->height = 8 * label->size;
+	p_label->width  = strlen(p_label->text) * 8 * p_label->size;
+	p_label->height = 8 * p_label->size;
 
-	return 0;
+	return 1;
 
 	// TODO: Error handling
 }
 
-int        click_label      ( UILabel_t* label, ui_mouse_state_t mouse_state)
+int        click_label      ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
 {
 
 	// Iterate through callbacks
-	for (size_t i = 0; i < label->on_click_count; i++)
+	for (size_t i = 0; i < p_label->on_click_count; i++)
 	{
 		// Define the callback function
-		void (*callback)(UILabel_t*, ui_mouse_state_t) = label->on_click[i];
+		void (*callback)(UILabel_t*, ui_mouse_state_t) = p_label->on_click[i];
 
 		// Call the callback function
-		(*callback)(label, mouse_state);
+		(*callback)(p_label, mouse_state);
 
 	}
 
 	return 0;
 }
 
-int hover_label(UILabel_t* label, ui_mouse_state_t mouse_state)
+int hover_label(UILabel_t* p_label, ui_mouse_state_t mouse_state)
 {
 
 	// Iterate through callbacks
-	for (size_t i = 0; i < label->on_hover_count; i++)
+	for (size_t i = 0; i < p_label->on_hover_count; i++)
 	{
 
 		// Define the callback function
-		void (*callback)(UILabel_t*, ui_mouse_state_t) = label->on_hover[i];
+		void (*callback)(UILabel_t*, ui_mouse_state_t) = p_label->on_hover[i];
 
 		// Call the callback function
 		if (callback)
-			(*callback)(label, mouse_state);
+			(*callback)(p_label, mouse_state);
 
 	}
+
+	return 1;
 }
 
-int release_label(UILabel_t* label, ui_mouse_state_t mouse_state)
+int release_label(UILabel_t* p_label, ui_mouse_state_t mouse_state)
 {
 
 	// Iterate through callbacks
-	for (size_t i = 0; i < label->on_release_count; i++)
+	for (size_t i = 0; i < p_label->on_release_count; i++)
 	{
 		// Define the callback function
-		void (*callback)(UILabel_t*, ui_mouse_state_t) = label->on_release[i];
+		void (*callback)(UILabel_t*, ui_mouse_state_t) = p_label->on_release[i];
 
 
 		// Call the callback function
 		if (callback)
-			(*callback)(label, mouse_state);
+			(*callback)(p_label, mouse_state);
 
 	}
 	return 0;
 }
 
-int add_click_callback_label(UILabel_t* label, void(*callback)(UILabel_t*, ui_mouse_state_t))
+int add_click_callback_label(UILabel_t* p_label, void(*callback)(UILabel_t*, ui_mouse_state_t))
 {
     // TODO: Argument check
 
     // If this is the first callback, set the max to 1 and 
-    if (label->on_click_max == 0)
+    if (p_label->on_click_max == 0)
     {
-		label->on_click_max = 1;
-		label->on_click = calloc(1, sizeof(void*));
+		p_label->on_click_max = 1;
+		p_label->on_click = calloc(1, sizeof(void*));
     }
 
     // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
-    if (label->on_click_count + 1 > label->on_click_max)
+    if (p_label->on_click_count + 1 > p_label->on_click_max)
     {
         // Double the max
-		label->on_click_max *= 2;
+		p_label->on_click_max *= 2;
 
-        realloc(label->on_click, label->on_click_max);
+        realloc(p_label->on_click, p_label->on_click_max);
     }
 
     // Increment the callback counter and install the new callback
-	label->on_click[label->on_click_count++] = callback;
+	p_label->on_click[p_label->on_click_count++] = callback;
 
     return 0;
 
     // TODO: Error handling
 }
 
-int add_hover_callback_label(UILabel_t* label, void(*callback)(UILabel_t*, ui_mouse_state_t))
+int add_hover_callback_label(UILabel_t* p_label, void(*callback)(UILabel_t*, ui_mouse_state_t))
 {
+	// TODO
 	return 0;
 }
 
-int add_release_callback_label(UILabel_t* label, void(*callback)(UILabel_t*, ui_mouse_state_t))
+int add_release_callback_label(UILabel_t* p_label, void(*callback)(UILabel_t*, ui_mouse_state_t))
 {
+	// TODO
 	return 0;
 }
 
-bool       label_in_bounds  ( UILabel_t  *label, ui_mouse_state_t mouse_state)
+bool       label_in_bounds  ( UILabel_t  *p_label, ui_mouse_state_t mouse_state)
 {
+
 	// Initialized data
-	i32  x = label->x,
-		 y = label->y,
-		 w = label->width,
-		 h = label->height;
+	i32  x = p_label->x,
+		 y = p_label->y,
+		 w = p_label->width,
+		 h = p_label->height;
 	
 	// Check for bounds
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
