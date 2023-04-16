@@ -48,7 +48,7 @@ int           create_table               ( UITable_t  **pp_table )
     }
 }
 
-int           load_table_as_dict         ( UITable_t  **pp_table, dict             *dictionary)
+int           load_table_as_json_value         ( UITable_t  **pp_table, JSONValue_t *p_value )
 {
 
     // Argument errors
@@ -56,8 +56,8 @@ int           load_table_as_dict         ( UITable_t  **pp_table, dict          
         #ifndef NDEBUG
             if ( pp_table == (void *) 0 )
                 goto no_table;
-            if ( dictionary == (void *) 0 )
-                goto no_dictionary;
+            if ( p_value == (void *) 0 )
+                goto no_value;
         #endif
     }
 
@@ -69,30 +69,20 @@ int           load_table_as_dict         ( UITable_t  **pp_table, dict          
                *max_columns = 0,
                *file        = 0;
 
-    // Parse the dictionary
+
+
+	// Get properties from the json value
+    if (p_value->type == JSONobject)
     {
 
         // Initialized data
-        JSONToken_t *token = 0;
-        
-        // Parse each property
-        {
-            token       = dict_get(dictionary, "x");
-            x           = JSON_VALUE(token, JSONprimative);
+        dict *p_dict = p_value->object;
 
-            token       = dict_get(dictionary, "y");
-            y           = JSON_VALUE(token, JSONprimative);
-
-            token       = dict_get(dictionary, "max rows");
-            max_rows    = JSON_VALUE(token, JSONprimative);
-
-            token       = dict_get(dictionary, "max columns");
-            max_columns = JSON_VALUE(token, JSONprimative);
-            
-            token       = dict_get(dictionary, "file");
-            file        = JSON_VALUE(token, JSONstring);
-
-        }
+        x           = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))          , JSONinteger);
+        y           = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))          , JSONinteger);
+        max_rows    = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "max rows"))   , JSONinteger);
+		max_columns = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "max columns")), JSONinteger);
+        file        = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "file"))       , JSONstring);
     }
 
     // Is there enough information to construct the table?
@@ -115,15 +105,15 @@ int           load_table_as_dict         ( UITable_t  **pp_table, dict          
     {
 
         // Set the tables position
-        p_table->x           = atoi(x);
-        p_table->y           = atoi(y);
+        p_table->x           = x;
+        p_table->y           = y;
     }
 
     if (file)
         goto csv_parse;
 
-    p_table->max_rows      = atoi(max_rows);
-    p_table->max_columns   = atoi(max_columns);
+    p_table->max_rows      = max_rows;
+    p_table->max_columns   = max_columns;
 
     csv_parse_done:
     p_table->data          = calloc(p_table->max_rows * p_table->max_columns, sizeof(void *) );
@@ -201,9 +191,9 @@ int           load_table_as_dict         ( UITable_t  **pp_table, dict          
                     ui_print_error("[UI] [Table] Null pointer provided for \"pp_table\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
-            no_dictionary:
+            no_value:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Table] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
+                    ui_print_error("[UI] [Table] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }
@@ -340,136 +330,32 @@ int           release_table              ( UITable_t   *p_table, ui_mouse_state_
     return 0;
 }
 
-int add_click_callback_table(UITable_t* p_table, void(*callback)(UITable_t*, ui_mouse_state_t))
+int add_click_callback_table   ( UITable_t  *p_table, void(*callback)(UITable_t*, ui_mouse_state_t))
 {
-    if (p_table->on_click_max == 0)
-    {
-        p_table->on_click_max = 1;
-        p_table->on_click = calloc(1, sizeof(void *));
-    }
+    // TODO: Argument check
 
-    if (p_table->on_click_count + 1 > p_table->on_click_max)
-    {
-
-        p_table->on_click_max *= 2;
-
-        p_table->on_click = realloc(p_table->on_click, p_table->on_click_max);
-    }
-
-    p_table->on_click[p_table->on_click_count++] = callback;
     return 1;
+
+    // TODO: Error handling
 }
 
-//
-//int           add_click_callback_button   ( UIButton_t  *p_button, void(*callback)(UIButton_t*, ui_mouse_state_t))
-//{
-//    // TODO: Argument check
-//
-//    // If this is the first callback, set the max to 1 and 
-//    if (p_button->on_click_max == 0)
-//    {
-//        p_button->on_click_max = 1;
-//        p_button->on_click = calloc(1, sizeof(void*));
-//    }
-//
-//    // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
-//    if (p_button->on_click_count + 1 > p_button->on_click_max)
-//    {
-//        // Double the max
-//        p_button->on_click_max *= 2;
-//
-//        realloc(p_button->on_click, p_button->on_click_max);
-//    }
-//
-//    // Increment the callback counter and install the new callback
-//    p_button->on_click[p_button->on_click_count++] = callback;
-//
-//    return 0;
-//
-//    // TODO: Error handling
-//}
-//
-//int           add_hover_callback_button   ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
-//{
-//    // TODO: Argument check
-//
-//    // If this is the first callback, set the max to 1 and 
-//    if (button->on_hover_max == 0)
-//    {
-//        button->on_hover_max = 1;
-//        button->on_hover     = calloc(1, sizeof(void*));
-//    }
-//
-//
-//    // Simple heuristic that doubles callbacks lists length if there is no space to 
-//    // store the callback pointer
-//    if (button->on_hover_count + 1 > button->on_hover_max)
-//    {
-//        // Double the max
-//        button->on_hover_max *= 2;
-//
-//        // Allocate the maximum number of callbacks
-//        void **callbacks = calloc(button->on_hover_max, sizeof(void*)),
-//              *t         = button->on_hover;
-//
-//        // Copy all the callbacks from the button to the new callback list
-//        memcpy(callbacks, button->on_hover, button->on_hover_count * sizeof(void *));
-//
-//        // Set the hover callback list pointer to the new list
-//        button->on_hover = callbacks;
-//
-//        // Free the old callback list
-//        free(t);
-//    }
-//
-//    // Increment the callback counter and install the new callback
-//    button->on_hover[button->on_hover_count++] = callback;
-//
-//    return 0;
-//
-//    // TODO: Error handling
-//}
-//
-//int           add_release_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
-//{
-//    // TODO: Argument check
-//
-//    // If this is the first callback, set the max to 1 and 
-//    if (button->on_release_max == 0)
-//    {
-//        button->on_release_max = 1;
-//        button->on_release = calloc(1, sizeof(void*));
-//    }
-//
-//
-//    // Simple heuristic that doubles callbacks lists length if there is no space to 
-//    // store the callback pointer
-//    if (button->on_release_count + 1 > button->on_release_max)
-//    {
-//        // Double the max
-//        button->on_release_max *= 2;
-//
-//        // Allocate the maximum number of callbacks
-//        void** callbacks = calloc(button->on_release_max, sizeof(void*)),
-//            * t = button->on_release;
-//
-//        // Copy all the callbacks from the button to the new callback list
-//        memcpy(callbacks, button->on_release, button->on_release_count * sizeof(void*));
-//
-//        // Set the release callback list pointer to the new list
-//        button->on_release = callbacks;
-//
-//        // Free the old callback list
-//        free(t);
-//    }
-//
-//    // Increment the callback counter and install the new callback
-//    button->on_release[button->on_release_count++] = callback;
-//
-//    return 0;
-//
-//    // TODO: Error handling
-//}
+int add_hover_callback_table   ( UITable_t  *p_table, void(*callback)(UITable_t*, ui_mouse_state_t))
+{
+    // TODO: Argument check
+   
+    return 1;
+
+    // TODO: Error handling
+}
+
+int           add_release_callback_table ( UITable_t  *p_table, void(*callback)(UITable_t*, ui_mouse_state_t))
+{
+    // TODO: Argument check
+
+    return 1;
+
+    // TODO: Error handling
+}
 
 char *get_table_cell(UITable_t* p_table, size_t x, size_t y)
 {

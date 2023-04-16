@@ -3,7 +3,7 @@
 
 #include <dict/dict.h>
 
-#include <JSON/JSON.h>
+#include <json/json.h>
 
 #include <UI/UItypedef.h>
 #include <UI/UIElement.h>
@@ -60,7 +60,8 @@ DLLEXPORT int           create_table               ( UITable_t  **pp_table );
   *  
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int           load_table_as_dict         ( UITable_t  **pp_table, dict *dictionary );
+DLLEXPORT int           load_table_as_json_value   ( UITable_t  **pp_table, JSONValue_t *p_value );
+
 
 // Callbacks
 /* !

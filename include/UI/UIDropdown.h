@@ -5,11 +5,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include <SDL2/SDL.h>
-
-#include <JSON/JSON.h>
+#include <json/json.h>
 
 #include <UI/UItypedef.h>
+#include <UI/UI.h>
 #include <UI/UIWindow.h>
 
 struct UIDropdown_s
@@ -26,7 +25,7 @@ struct UIDropdown_s
                height,
                x,
                y;
-    size_t     options_len,
+    size_t     options_count,
                longest_option;
     
 
@@ -54,7 +53,7 @@ struct UIDropdown_s
 DLLEXPORT int create_dropdown               ( UIDropdown_t **pp_dropdown );
 
 // Constructors
-DLLEXPORT int load_dropdown_as_dict         ( UIDropdown_t **pp_dropdown, dict                  *dictionary );
+DLLEXPORT int load_dropdown_as_json_value   ( UIDropdown_t **pp_dropdown, JSONValue_t           *p_value );
 DLLEXPORT int construct_dropdown            ( UIDropdown_t **pp_dropdown, char                 **options, i32 x, i32 y, i32 index );
 
 // Drawing
@@ -70,7 +69,7 @@ DLLEXPORT int add_click_callback_dropdown   ( UIDropdown_t  *p_dropdown  , void 
 DLLEXPORT int add_hover_callback_dropdown   ( UIDropdown_t  *p_dropdown  , void               ( *callback ) ( UIDropdown_t *, ui_mouse_state_t ) );
 DLLEXPORT int add_release_callback_dropdown ( UIDropdown_t  *p_dropdown  , void               ( *callback ) ( UIDropdown_t *, ui_mouse_state_t ) );
 
-DLLEXPORT bool dropdown_in_bounds           ( UIDropdown_t  *p_dropdown  , ui_mouse_state_t      mouse_state);
+DLLEXPORT bool dropdown_in_bounds           ( UIDropdown_t  *p_dropdown  , ui_mouse_state_t      mouse_state );
 
 // Destructors
 DLLEXPORT int destroy_dropdown              ( UIDropdown_t *p_dropdown );

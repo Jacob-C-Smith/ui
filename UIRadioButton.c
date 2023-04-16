@@ -23,6 +23,7 @@ int create_radio_button(UIRadioButton_t** pp_radio_button)
     // Return 
     *pp_radio_button = p_radio_button;
 
+    // Success
     return 1;
 
     // TODO: Error handling
@@ -45,92 +46,135 @@ int create_radio_button(UIRadioButton_t** pp_radio_button)
     }
 }
 
-int load_radio_button_as_dict ( UIRadioButton_t **pp_radio_button, dict *dictionary )
+int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONValue_t *p_value )
 {
-    // TODO: Argument check
+    // Argument check
+	{
+		#ifndef NDEBUG
+			if(pp_radio_button == (void *)0)
+				goto no_radio_button;
+			if (p_value == (void*)0)
+				goto no_value;
+		#endif
+	}
+
+	// Initialized data
+	UIRadioButton_t *p_radio_button = 0;
+	array           *p_labels       = 0,
+                    *p_checked      = 0;
+	signed           x              = 0,
+		             y              = 0,
+                     index          = 0;
+    JSONValue_t    **pp_labels      = 0,
+                   **pp_checked     = 0;
+
+	// Get properties from the dictionary
+    if (p_value->type == JSONobject)
     {
-        #ifndef NDEBUG
-            if(pp_radio_button == (void *)0)
-                ;// TODO
-            if (dictionary == 0)
-                goto no_token_count;
-        #endif
+
+        // Initialized data
+        dict *p_dict = p_value->object;
+
+        p_labels  = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "labels")), JSONarray);
+        x         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))     , JSONinteger);
+		y         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))     , JSONinteger);
+        index     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "index")) , JSONinteger);
     }
 
-    // Initialized data
-    UIRadioButton_t  *ret           = 0;
-    size_t            j             = 0,
-                      label_count   = 0,
-                      longest_label = 0;
-    char            **labels        = 0,
-                     *x             = 0,
-                     *y             = 0,
-                     *index         = 0;
+	// Error checking
+	{
+		// TODO
+	}
 
-    // Get data for the constructor
-    {
-        JSONToken_t *token = 0;
+	// Construct the checkbox
+	{
 
-        token  = dict_get(dictionary, "labels");
-        labels = JSON_VALUE(token, JSONarray);
+		// Allocate a checkbox
+		if ( create_radio_button(&p_radio_button) == 0)
+			goto failed_to_allocate_label;
 
-        token  = dict_get(dictionary, "x");
-        x      = JSON_VALUE(token, JSONprimative);
-
-        token  = dict_get(dictionary, "y");
-        y      = JSON_VALUE(token, JSONprimative);
-
-        token  = dict_get(dictionary, "index");
-        index  = JSON_VALUE(token, JSONprimative);
-    }
-
-    construct_radio_button(pp_radio_button, labels, atoi(index), atoi(x), atoi(y));
-
-    return 1;
-
-    // Error handling
-    {
-        notACheckbox:
-        ui_print_error("[UI] [Radio Button] NOT A RADIO_BUTTON\n"); // TODO: Is this "RADIO_BUTTON" or "RADIOBUTTON"?
-
-            return 0;
-
-        // Standard library errors
+        // Set the labels and checks
         {
-        out_of_memory:
-            ui_print_error("[Standard library] Out of memory in call to function \"%s\"\n");
-            return 0;
+
+            // Initialized data
+            size_t labels_count = 0;
+
+            array_get(p_labels, 0, &labels_count);
+
+            pp_labels  = calloc(labels_count, sizeof(JSONValue_t *));
+
+            p_radio_button->labels = calloc(labels_count, sizeof(char *));
+
+            array_get(p_labels, pp_labels, 0);
+
+            for (size_t i = 0; i < labels_count; i++)
+            {
+
+                // Copy the label
+                {
+
+                    // Initialized data
+                    size_t len = strlen(pp_labels[i]->string);
+
+                    if (len > p_radio_button->longest_label)
+                        p_radio_button->longest_label = len;
+
+                    // Allocate memory for label text
+                    p_radio_button->labels[i] = calloc(len+1, sizeof(char));
+                    
+                    // Copy the string
+                    strncpy(p_radio_button->labels[i], pp_labels[i]->string, len);
+                }
+            }
+            
+            p_radio_button->label_count = labels_count;
         }
 
-        // Argument errors
-        {
-            no_tokens:
-            ui_print_error("[UI] [Checkbox] Null pointer provided for \"tokens\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
+		// Set the label x, y, and index
+		p_radio_button->x     = x;
+		p_radio_button->y     = y;
+        p_radio_button->index = index;
+	}
 
-        no_token_count:
-            ui_print_error("[UI] [Checkbox] \"token_count\" is zero in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        }
+	// Return
+	*pp_radio_button = p_radio_button;
 
+	// Success
+	return 1;
 
+	// Error handling
+	{
 
-        // Missing JSON errors
-        {
-        no_checkbox_name:
-            ui_print_error("[UI] [Checkbox] No \"name\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        no_checkbox_text:
-            ui_print_error("[UI] [Checkbox] No \"labels\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        no_checkbox_x:
-            ui_print_error("[UI] [Checkbox] No \"x\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        no_checkbox_y:
-            ui_print_error("[UI] [Checkbox] No \"y\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        }
-    }
+		// Argument errors
+		{
+			no_radio_button:
+				#ifndef NDEBUG
+					ui_print_error("[UI] [Radio Button] Null pointer provided for \"pp_radio_button\" in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+
+				// Error
+				return 0;
+			no_value:
+				#ifndef NDEBUG
+					ui_print_error("[UI] [Radio Button] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+
+				// Error
+				return 0;
+		}
+
+		// TODO:
+		failed_to_allocate_label:
+
+		// Insufficent data error
+		{
+			// TODO: 
+			no_text:
+			no_x:
+			no_y:
+				return 0;
+		}
+	}
 }
 
 int construct_radio_button(UIRadioButton_t** radio_button, char** labels, size_t index, i32 x, i32 y)
@@ -296,7 +340,8 @@ bool radio_button_in_bounds(UIRadioButton_t* radio_button, ui_mouse_state_t mous
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
 		return true;
 
-	return false;}
+	return false;
+}
 
 int destroy_radio_button(UIRadioButton_t* radio_button)
 {

@@ -1,25 +1,25 @@
 #include <UI/UICheckbox.h>
 
-int create_checkbox              ( UICheckbox_t **checkbox )
+int create_checkbox              ( UICheckbox_t **pp_checkbox )
 {
     // Argument check
     {
         #ifndef NDEBUG
-            if(checkbox == (void *)0)
+            if(pp_checkbox == (void *)0)
                 goto no_checkbox;
         #endif
     }
 
     // Allocate for a checkbox
-    UICheckbox_t* i_checkbox = calloc(1, sizeof(UICheckbox_t));
+    UICheckbox_t* p_checkbox = calloc(1, sizeof(UICheckbox_t));
 
     // Check memory
     {
-        if(i_checkbox == (void *)0)
+        if(p_checkbox == (void *)0)
             goto no_mem;
     }
 
-    *checkbox = i_checkbox;
+    *pp_checkbox = p_checkbox;
 
     return 1;
 
@@ -28,10 +28,10 @@ int create_checkbox              ( UICheckbox_t **checkbox )
         // Argument errors
         {
             no_checkbox:
-            #ifndef NDEBUG
+                #ifndef NDEBUG
 
-            #endif
-            return 0;
+                #endif
+                return 0;
         }
 
         // Standard library errors
@@ -43,98 +43,141 @@ int create_checkbox              ( UICheckbox_t **checkbox )
     }
 }
 
-int load_checkbox_as_dict ( UICheckbox_t **checkbox, dict *dictionary )
+int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, JSONValue_t *p_value )
 {
 
-    // TODO: Argument check
+    // Argument check
+	{
+		#ifndef NDEBUG
+			if(pp_checkbox == (void *)0)
+				goto no_checkbox;
+			if (p_value == (void*)0)
+				goto no_value;
+		#endif
+	}
+
+	// Initialized data
+	UICheckbox_t *p_checkbox = 0;
+	array        *p_labels   = 0,
+                 *p_checked  = 0;
+	signed        x          = 0,
+		          y          = 0;
+    JSONValue_t **pp_labels  = 0,
+                **pp_checked = 0;
+
+	// Get properties from the dictionary
+    if (p_value->type == JSONobject)
     {
-        #ifndef NDEBUG
-            if(checkbox == (void *)0)
-                goto no_tokens;
-            if (dictionary == 0)
-                goto no_token_count;
-        #endif
+
+        // Initialized data
+        dict *p_dict = p_value->object;
+
+        p_labels  = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "labels")), JSONarray);
+        p_checked = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "checked")), JSONarray);
+        x         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))   , JSONinteger);
+		y         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))   , JSONinteger);
     }
 
-    // Initialized data
-    UICheckbox_t *ret           = 0;
-    size_t        j             = 0,
-                  label_count   = 0,
-                  longest_label = 0;
-    char        **labels        = 0,
-                 *x             = 0,
-                 *y             = 0,
-                **checked       = 0;
-    bool          hidden        = false;
+	// Error checking
+	{
+		// TODO
+	}
 
-    // Get data for the constructor
-    {
-        JSONToken_t *token = 0;
+	// Construct the checkbox
+	{
 
-        token   = dict_get(dictionary, "labels");
-        labels  = JSON_VALUE(token, JSONarray);
+		// Allocate a checkbox
+		if ( create_checkbox(&p_checkbox) == 0)
+			goto failed_to_allocate_label;
 
-        token   = dict_get(dictionary, "x");
-        x       = JSON_VALUE(token, JSONprimative);
-
-        token   = dict_get(dictionary, "y");
-        y       = JSON_VALUE(token, JSONprimative);
-
-        token   = dict_get(dictionary, "hidden");
-        hidden  = JSON_VALUE(token, JSONprimative);
-
-        token   = dict_get(dictionary, "checked");
-        checked = JSON_VALUE(token, JSONarray);
-
-    }
-
-    construct_checkbox(checkbox, labels, checked, atoi(x), atoi(y));
-
-    return 1;
-
-    // Error handling
-    {
-        notACheckbox:
-            ui_print_error("[UI] [Checkbox] NOT A CHECKBOX\n");
-
-            return 0;
-
-        // Standard library errors
+        // Set the labels and checks
         {
-        out_of_memory:
-            ui_print_error("[Standard library] Out of memory in call to function \"%s\"\n");
-            return 0;
+
+            // Initialized data
+            size_t labels_count = 0;
+
+            array_get(p_labels, 0, &labels_count);
+
+            pp_labels  = calloc(labels_count, sizeof(JSONValue_t *));
+            pp_checked = calloc(labels_count, sizeof(JSONValue_t *));
+
+            p_checkbox->labels = calloc(labels_count, sizeof(char *));
+            p_checkbox->checks = calloc(labels_count, sizeof(bool));
+
+            array_get(p_labels, pp_labels, 0);
+            array_get(p_labels, pp_checked, 0);
+
+            for (size_t i = 0; i < labels_count; i++)
+            {
+
+                // Copy the label
+                {
+
+                    // Initialized data
+                    size_t len = strlen(pp_labels[i]->string);
+
+                    if (len > p_checkbox->longest_label)
+                        p_checkbox->longest_label = len;
+
+                    // Allocate memory for label text
+                    p_checkbox->labels[i] = calloc(len+1, sizeof(char));
+                    
+                    // Copy the string
+                    strncpy(p_checkbox->labels[i], pp_labels[i]->string, len);
+                }
+
+                p_checkbox->checks[i] = pp_checked[i]->boolean; 
+            }
+            
+            p_checkbox->label_count = labels_count;
         }
 
-        // Argument errors
-        {
-            no_tokens:
-            ui_print_error("[UI] [Checkbox] Null pointer provided for \"tokens\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
+    
 
-        no_token_count:
-            ui_print_error("[UI] [Checkbox] \"token_count\" is zero in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        }
+		// Set the label x, y, and size
+		p_checkbox->x    = x;
+		p_checkbox->y    = y;
+	}
 
+	// Return
+	*pp_checkbox = p_checkbox;
 
-        // Missing JSON errors
-        {
-        no_checkbox_name:
-            ui_print_error("[UI] [Checkbox] No \"name\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        no_checkbox_text:
-            ui_print_error("[UI] [Checkbox] No \"labels\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        no_checkbox_x:
-            ui_print_error("[UI] [Checkbox] No \"x\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        no_checkbox_y:
-            ui_print_error("[UI] [Checkbox] No \"y\" in \"token\" in call to function \"%s\"\n", __FUNCTION__);
-            return 0;
-        }
-    }
-   
+	// Success
+	return 1;
+
+	// Error handling
+	{
+
+		// Argument errors
+		{
+			no_checkbox:
+				#ifndef NDEBUG
+					ui_print_error("[UI] [Checkbox] Null pointer provided for \"pp_checkbox\" in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+
+				// Error
+				return 0;
+			no_value:
+				#ifndef NDEBUG
+					ui_print_error("[UI] [Checkbox] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+
+				// Error
+				return 0;
+		}
+
+		// TODO:
+		failed_to_allocate_label:
+
+		// Insufficent data error
+		{
+			// TODO: 
+			no_text:
+			no_x:
+			no_y:
+				return 0;
+		}
+	}
 }
 
 int construct_checkbox(UICheckbox_t** checkbox, char** labels, bool* checked, i32 x, i32 y)
@@ -243,7 +286,7 @@ int           click_checkbox               ( UICheckbox_t *checkbox, ui_mouse_st
 
     }
 
-    return 0;
+    return 1;
 }
 
 int           release_checkbox              ( UICheckbox_t *checkbox, ui_mouse_state_t mouse_state )
