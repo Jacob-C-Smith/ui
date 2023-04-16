@@ -1,6 +1,7 @@
 {
     "$schema"  : "./window-schema.json", 
     "name"     : "Test window",
+    "title"    : "Window",
     "width"    : 800,
     "height"   : 720,
     "elements" : [
@@ -45,7 +46,6 @@
                 "Option 2",
                 "Option 3"
             ],
-            "index"     : -1,
             "collapsed" : true
         },
         {
