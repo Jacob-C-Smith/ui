@@ -1,6 +1,7 @@
 {
     "$schema"  : "./window-schema.json", 
-    "name"     : "G10 Instance Constructor",
+    "name"     : "G10 Instance Inspector",
+    "title"    : "Instance Inspector",
     "width"    : 640,
     "height"   : 480,
     "elements" : [

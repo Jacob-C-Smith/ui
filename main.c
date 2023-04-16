@@ -25,7 +25,7 @@ int main ( int argc, const char **argv )
     // Add the window to the instance
     ui_append_window(p_ui_instance, p_ui_window);
 
-    add_click_callback_element(find_element(p_ui_window,"label"), &click);
+    //add_click_callback_element(find_element(p_ui_window,"label"), &click);
 
     // UI Loop
     while ( /* Specify your exit condition, for instance */ p_ui_instance->running )

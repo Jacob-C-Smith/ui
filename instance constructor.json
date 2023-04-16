@@ -1,6 +1,7 @@
 {
     "$schema"  : "./window-schema.json", 
     "name"     : "G10 Instance Constructor",
+    "title"    : "Instance Constructor",
     "width"    : 640,
     "height"   : 480,
     "elements" : [
@@ -26,7 +27,8 @@
             "name"      : "Instance name label",
             "text"      : "Name",
             "x"         : 16,
-            "y"         : 44
+            "y"         : 44,
+            "size"      : 1
         },
         {
             "type"        : "TEXT INPUT",
@@ -43,7 +45,8 @@
             "name"      : "Input path label",
             "text"      : "Input",
             "x"         : 16,
-            "y"         : 60
+            "y"         : 60,
+            "size"      : 1
         },
         {
             "type"        : "TEXT INPUT",
@@ -67,7 +70,8 @@
             "name"      : "Window width label",
             "text"      : "Window width",
             "x"         : 16,
-            "y"         : 92
+            "y"         : 92,
+            "size"      : 1
         },
         {
             "type"        : "TEXT INPUT",
@@ -84,7 +88,8 @@
             "name"      : "Window height label",
             "text"      : "Window height",
             "x"         : 16,
-            "y"         : 108
+            "y"         : 108,
+            "size"      : 1
         },
         {
             "type"        : "TEXT INPUT",
@@ -101,7 +106,8 @@
             "name"      : "Window title label",
             "text"      : "Window title",
             "x"         : 16,
-            "y"         : 124
+            "y"         : 124,
+            "size"      : 1
         },
         {
             "type"        : "TEXT INPUT",
@@ -118,7 +124,8 @@
             "name"      : "Fullscreen label",
             "text"      : "Fullscreen",
             "x"         : 16,
-            "y"         : 140
+            "y"         : 140,
+            "size"      : 1
         },
         {
             "type"        : "CHECKBOX",
@@ -137,7 +144,8 @@
             "name"      : "Cached parts label",
             "text"      : "Cached parts",
             "x"         : 16,
-            "y"         : 156
+            "y"         : 156,
+            "size"      : 1
         },
         {
             "type"        : "TEXT INPUT",
@@ -154,7 +162,8 @@
             "name"      : "Cached materials label",
             "text"      : "Cached materials",
             "x"         : 16,
-            "y"         : 172
+            "y"         : 172,
+            "size"      : 1
         },
         {
             "type"        : "TEXT INPUT",
@@ -171,7 +180,8 @@
             "name"      : "Cached shaders label",
             "text"      : "Cached shaders",
             "x"         : 16,
-            "y"         : 188
+            "y"         : 188,
+            "size"      : 1
         },
         {
             "type"        : "TEXT INPUT",
@@ -188,7 +198,8 @@
             "name"      : "Initial scene label",
             "text"      : "Initial scene",
             "x"         : 16,
-            "y"         : 204
+            "y"         : 204,
+            "size"      : 1
         },
         {
             "type"        : "TEXT INPUT",
