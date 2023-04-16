@@ -3,7 +3,7 @@
 
 #include <dict/dict.h>
 
-#include <JSON/JSON.h>
+#include <json/json.h>
 
 #include <UI/UItypedef.h>
 #include <UI/UIElement.h>
@@ -13,13 +13,13 @@ struct UIButton_s
 {
 
     // Button label
-	char    *label;
+	  char  *label;
 
-    // Button location
-	u32      x, 
-		     y, 
-		     w,
-		     h;
+      // Button location
+	  u32    x, 
+		       y, 
+		       w,
+		       h;
     
     // Is the button being pressed?
     bool     depressed;
@@ -59,7 +59,7 @@ DLLEXPORT int           create_button               ( UIButton_t  **pp_button );
   *  
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int           load_button_as_dict         ( UIButton_t  **pp_button, dict *dictionary );
+DLLEXPORT int           load_button_as_json_value         ( UIButton_t  **pp_button, JSONValue_t *p_value );
 
 // Callbacks
 
@@ -154,7 +154,7 @@ DLLEXPORT int           add_release_callback_button ( UIButton_t   *p_button , v
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           draw_button                 ( UIWindow_t   *window   , UIButton_t *p_button );
+DLLEXPORT int           draw_button                 ( UIWindow_t   *p_window   , UIButton_t *p_button );
 
 // Collision
 /* !

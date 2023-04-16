@@ -48,139 +48,111 @@ int           create_button               ( UIButton_t **pp_button )
     }
 }
 
-int           load_button_as_dict         ( UIButton_t **pp_button, dict* dictionary)
+int           load_button_as_json_value         ( UIButton_t **pp_button, JSONValue_t *p_value )
 {
 
-    // Argument errors
-    {
-        #ifndef NDEBUG
-            if ( pp_button == (void *) 0 )
-                goto no_button;
-            if ( dictionary == (void *) 0 )
-                goto no_dictionary;
-        #endif
-    }
+    // Argument check
+	{
+		#ifndef NDEBUG
+			if(pp_button == (void *)0)
+				goto no_button;
+			if (p_value == (void*)0)
+				goto no_value;
+		#endif
+	}
 
-    // Initialized data
-    UIButton_t *p_button = 0;
-    char       *label    = 0,
-               *x        = 0,
-               *y        = 0;
+	// Initialized data
+	UIButton_t *p_button = 0;
+	char       *label    = 0;
+	signed      x        = 0,
+		        y        = 0;
 
-    // Parse the dictionary
+	// Get properties from the dictionary
+    if (p_value->type == JSONobject)
     {
 
         // Initialized data
-        JSONToken_t *token = 0;
-        
-        // Parse each property
-        {
-            token = dict_get(dictionary, "label");
-            label = JSON_VALUE(token, JSONstring);
+        dict *p_dict = p_value->object;
 
-            token = dict_get(dictionary, "x");
-            x     = JSON_VALUE(token, JSONprimative);
-
-            token = dict_get(dictionary, "y");
-            y     = JSON_VALUE(token, JSONprimative);
-        }
+        label = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "label")), JSONstring);
+        x     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))   , JSONinteger);
+		y     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))   , JSONinteger);
     }
 
-    // Is there enough information to construct the button?
-    {
-        #ifndef NDEBUG
-            if ( label == (void *) 0 )
-                goto no_label;
-            if ( x == (void *) 0 )
-                goto no_x;
-            if ( y == (void *) 0 )
-                goto no_y;
-        #endif
-    }
+	// Error checking
+	{
+		#ifndef NDEBUG
+			//if((label && x && y))
+			//	goto no_x;
+		#endif
+	}
 
-    // Allocate the button
-    create_button(pp_button);
+	// Construct the label
+	{
 
-    // Return the button
-    p_button = *pp_button;
+		// Allocate a label
+		if ( create_label(&p_button) == 0)
+			goto failed_to_allocate_label;
 
-    // Construct the button
-    {
+		// Copy the label text
+		{
 
-        // Set the name
-        {
+			// Initialized data
+			size_t label_text_len = strlen(label);
 
-            // Initialized data
-            size_t label_len = strlen(label);
+			// Allocate memory for the label text
+			p_button->label = calloc(label_text_len+1, sizeof(char));
 
-            // Allocate for a label
-            p_button->label = calloc(label_len + 1, sizeof(char));
+			// TODO: Check memory
 
-            // Error check
-            {
-                #ifndef NDEBUG
-                if ( p_button->label == (void *) 0 )
-                    goto no_mem;
-                #endif
-            }
+			// Copy the string
+			strncpy(p_button->label, label, label_text_len);
+		}
 
-            // Copy the label
-            strncpy(p_button->label, label, label_len);
-        }
+		// Set the label x, y, and size
+		p_button->x    = x;
+		p_button->y    = y;
+	}
 
-        // Set the button position
-        p_button->x = atoi(x);
-        p_button->y = atoi(y);
+	// Return
+	*pp_button = p_button;
 
-    }
-    
-    return 0;
+	// Success
+	return 1;
 
-    // Error handling
-    {
+	// Error handling
+	{
 
-        // Argument errors
-        {
-            no_button:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] Null pointer provided for \"pp_button\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-                return -1;
-            no_dictionary:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-                return -1;
-        }
+		// Argument errors
+		{
+			no_button:
+				#ifndef NDEBUG
+					ui_print_error("[UI] [Button] Null pointer provided for \"pp_button\" in call to function \"%s\"\n", __FUNCTION__);
+				#endif
 
-        // Missing required construction parameters
-        {
-            no_label:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] No \"label\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-                return -1;
-            no_x:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] No \"x\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-                return -1;
-            no_y:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Button] No \"y\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-                return -1;
-        }
+				// Error
+				return 0;
+			no_value:
+				#ifndef NDEBUG
+					ui_print_error("[UI] [Button] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
+				#endif
 
-        // Standard library errors
-        {
-            no_mem:
-                #ifndef NDEBUG
-                    ui_print_error("[Standard Library] Failed to allocate memory in call to funciton \"%s\"\n", __FUNCTION__);
-                #endif
-                return -1;
-        }
-    }
+				// Error
+				return 0;
+		}
+
+		// TODO:
+		failed_to_allocate_label:
+
+		// Insufficent data error
+		{
+			// TODO: 
+			no_text:
+			no_x:
+			no_y:
+				return 0;
+		}
+	}
 }
 
 int           hover_button                ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)

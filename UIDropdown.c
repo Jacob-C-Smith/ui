@@ -16,85 +16,147 @@ int create_dropdown              ( UIDropdown_t **pp_dropdown )
 
     *pp_dropdown = p_dropdown;
 
-    return 0;
+    return 1;
     
     // Error handling
     {
         #ifndef NDEBUG
             no_mem:
                 ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
-                return (void *)-1;
+                return 0;
         #endif
     }
 }
 
-int load_dropdown_as_dict        ( UIDropdown_t** pp_dropdown, dict* dictionary)
+int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t *p_value )
 {
 
-    // Argument check 
+    // Argument check
+	{
+		#ifndef NDEBUG
+			if(pp_dropdown == (void *)0)
+				goto no_dropdown;
+			if (p_value == (void*)0)
+				goto no_value;
+		#endif
+	}
+
+	// Initialized data
+	UIDropdown_t *p_dropdown = 0;
+	array        *p_options  = 0;
+	signed        x          = 0,
+		          y          = 0,
+                  index      = 0;
+    JSONValue_t **pp_options = 0;
+
+	// Get properties from the dictionary
+    if (p_value->type == JSONobject)
     {
-        #ifndef NDEBUG
-            if ( pp_dropdown == (void *) 0 )
-                goto no_dropdown;
-            if ( dictionary  == (void *) 0 )
-                goto no_dictionary;
-        #endif
+
+        // Initialized data
+        dict *p_dict = p_value->object;
+
+        p_options = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "options")), JSONarray);
+        x         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))      , JSONinteger);
+		y         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))      , JSONinteger);
+        index     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "index"))  , JSONinteger);
     }
 
-    // Initialized data
-    UIDropdown_t  *dropdown  = 0;
-    char          *name      = 0,
-                  *x         = 0,
-                  *y         = 0,
-                 **options   = 0,
-                  *index     = 0,
-                  *collapsed = 0;
+	// Error checking
+	{
+		// TODO
+	}
 
-    // Parse the dictionary
-    {
-        JSONToken_t *token = 0;
+	// Construct the dropdown
+	{
 
+		// Allocate a dropdown
+		if ( create_dropdown(&p_dropdown) == 0)
+			goto failed_to_allocate_label;
 
-        token     = dict_get(dictionary, "x");
-        x         = JSON_VALUE(token, JSONprimative);
-
-        token     = dict_get(dictionary, "y");
-        y         = JSON_VALUE(token, JSONprimative);
-
-        token     = dict_get(dictionary, "options");
-        options   = JSON_VALUE(token, JSONarray);
-
-        token     = dict_get(dictionary, "index");
-        index     = JSON_VALUE(token, JSONprimative);
-        
-        token     = dict_get(dictionary, "collapsed");
-        collapsed = JSON_VALUE(token, JSONprimative);
-    }
-
-    construct_dropdown(pp_dropdown, options, atoi(x), atoi(y), atoi(index));
-
-
-
-    return 1;
-
-    // Error handling
-    {
-
-        // Argument errors
+        // Set the options
         {
-            no_dropdown:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"pp_dropdown\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-                return 0;
 
-            no_dictionary:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Dropdown] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-                return 0;
+            // Initialized data
+            size_t options_count = 0;
+
+            array_get(p_options, 0, &options_count);
+
+            pp_options  = calloc(options_count, sizeof(JSONValue_t *));
+
+            p_dropdown->options = calloc(options_count, sizeof(char *));
+
+            array_get(p_options, pp_options, 0);
+
+            for (size_t i = 0; i < options_count; i++)
+            {
+
+                // Copy the label
+                {
+
+                    // Initialized data
+                    size_t len = strlen(pp_options[i]->string);
+
+                    if (len > p_dropdown->longest_option)
+                        p_dropdown->longest_option = len;
+
+                    // Allocate memory for label text
+                    p_dropdown->options[i] = calloc(len+1, sizeof(char));
+                    
+                    // Copy the string
+                    strncpy(p_dropdown->options[i], pp_options[i]->string, len);
+                }
+            }
+            
+            p_dropdown->options_count = options_count;
         }
-    }
+
+		// Set the label x, y, and size
+		p_dropdown->x     = x;
+		p_dropdown->y     = y;
+        p_dropdown->index = index;
+        p_dropdown->collapsed = true;
+	}
+
+	// Return
+	*pp_dropdown = p_dropdown;
+
+	// Success
+	return 1;
+
+	// Error handling
+	{
+
+		// Argument errors
+		{
+			no_dropdown:
+				#ifndef NDEBUG
+					ui_print_error("[UI] [Dropdown] Null pointer provided for \"pp_dropdown\" in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+
+				// Error
+				return 0;
+			no_value:
+				#ifndef NDEBUG
+					ui_print_error("[UI] [Dropdown] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
+				#endif
+
+				// Error
+				return 0;
+		}
+
+		// TODO:
+		failed_to_allocate_label:
+
+		// Insufficent data error
+		{
+			// TODO: 
+			no_text:
+			no_x:
+			no_y:
+				return 0;
+		}
+	}
 }
 
 int construct_dropdown(UIDropdown_t** pp_dropdown, char** options, i32 x, i32 y, i32 index)
@@ -128,7 +190,7 @@ int construct_dropdown(UIDropdown_t** pp_dropdown, char** options, i32 x, i32 y,
             // Count each option
             while (options[++option_count]);
 
-            dropdown->options_len = option_count;
+            dropdown->options_count = option_count;
 
             // Allocate options
             dropdown->options = calloc(option_count, sizeof(char *));
@@ -165,7 +227,7 @@ int construct_dropdown(UIDropdown_t** pp_dropdown, char** options, i32 x, i32 y,
     }
 
     // Error detection
-    if (dropdown->index >= dropdown->options_len || dropdown->index < 0)
+    if (dropdown->index >= dropdown->options_count || dropdown->index < 0)
         dropdown->index = 0;
 
 
@@ -182,8 +244,8 @@ int hover_dropdown               ( UIDropdown_t* dropdown, ui_mouse_state_t mous
         if (y >= 0)
         {
             dropdown->hover_index = y / 11;
-            if (dropdown->hover_index >= dropdown->options_len)
-                dropdown->hover_index = dropdown->options_len-1;
+            if (dropdown->hover_index >= dropdown->options_count)
+                dropdown->hover_index = dropdown->options_count-1;
             dropdown->index = dropdown->hover_index;
         }
         else
@@ -358,7 +420,7 @@ int draw_dropdown                ( UIWindow_t* window, UIDropdown_t* dropdown)
     {
         SDL_SetRenderDrawColor(window->renderer, (u8)instance->primary, (u8)(instance->primary >> 8), (u8)(instance->primary >> 16), 0xff);
         ui_draw_text("\203", window, r.x + r.w - 10, r.y + 1, 1);
-        for(size_t i = 0; i < dropdown->options_len; i++ )
+        for(size_t i = 0; i < dropdown->options_count; i++ )
         {
             if (i == dropdown->hover_index)
             {
@@ -379,8 +441,8 @@ int draw_dropdown                ( UIWindow_t* window, UIDropdown_t* dropdown)
             SDL_RenderDrawLine(window->renderer, r.x + 1, r.y + (11 * (i + 2)), r.x + r.w, r.y + (11 * (i + 2)));
             dropdown->height += 12;
         }
-        SDL_RenderDrawLine(window->renderer, r.x + 1, r.y + r.h, r.x + 1, r.y + r.h + (12 * dropdown->options_len) - (dropdown->options_len + 1));
-        SDL_RenderDrawLine(window->renderer, r.x + r.w , r.y + 1, r.x + r.w, r.y + r.h + (12 * dropdown->options_len) - (dropdown->options_len + 1));
+        SDL_RenderDrawLine(window->renderer, r.x + 1, r.y + r.h, r.x + 1, r.y + r.h + (12 * dropdown->options_count) - (dropdown->options_count + 1));
+        SDL_RenderDrawLine(window->renderer, r.x + r.w , r.y + 1, r.x + r.w, r.y + r.h + (12 * dropdown->options_count) - (dropdown->options_count + 1));
         
     }
     else

@@ -3,7 +3,7 @@
 
 #include <dict/dict.h>
 
-#include <JSON/JSON.h>
+#include <json/json.h>
 
 #include <UI/UItypedef.h>
 #include <UI/UIElement.h>
@@ -51,19 +51,19 @@ DLLEXPORT int           create_slider               ( UISlider_t  **pp_slider );
  /* !
   *  Load a UI Slider from a dict 
   *
-  *  @param pp_slider    : Pointer to pointer to slider
-  *  @param p_dictionary : Pointer to dict 
+  *  @param pp_slider : Pointer to pointer to slider
+  *  @param p_value   : Pointer to a JSONValue_t
   * 
-  *  @sa load_element_as_json 
+  *  @sa load_element_as_json_value 
   *  
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int           load_slider_as_dict         ( UISlider_t **pp_slider, dict *dictionary );
+DLLEXPORT int           load_slider_as_json_value         ( UISlider_t **pp_slider, JSONValue_t *p_value );
 
 // Callbacks
 
 /* !
-  *  Fire each hover callbacks. 
+  *  Fire each hover callback. 
   *
   *  @param p_slider    : Pointer to slider
   *  @param mouse_state : Mouse state 
@@ -76,7 +76,7 @@ DLLEXPORT int           load_slider_as_dict         ( UISlider_t **pp_slider, di
 DLLEXPORT int           hover_slider                ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state );
 
 /* !
-  *  Fire each click callbacks. 
+  *  Fire each click callback. 
   *
   *  @param p_slider    : Pointer to slider
   *  @param mouse_state : Mouse state 
@@ -89,7 +89,7 @@ DLLEXPORT int           hover_slider                ( UISlider_t     *p_slider ,
 DLLEXPORT int           click_slider                ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state );
 
 /* !
-  *  Fire each release callbacks. 
+  *  Fire each release callback. 
   *
   *  @param p_slider    : Pointer to slider
   *  @param mouse_state : Mouse state 
@@ -133,7 +133,7 @@ DLLEXPORT int           add_hover_callback_slider   ( UISlider_t     *p_slider ,
   *  Add a release callback.
   *
   *  @param p_slider : Pointer to slider
-  *  @param callback : function pointer. Should be of type int callback ( UISlider_t* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int (callback) ( UISlider_t* , ui_mouse_state_t )
   *
   *  @sa add_click_callback_slider
   *  @sa add_hover_callback_slider

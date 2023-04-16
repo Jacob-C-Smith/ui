@@ -1,4 +1,4 @@
-#include <JSON/JSON.h>
+#include <json/json.h>
 
 #include <UI/UItypedef.h>
 

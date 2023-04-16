@@ -58,12 +58,12 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
     // Find a directory for the config file
     {
 
-// Find a directoroy using environment variables
-#ifdef _WIN64
-        appdata = getenv("APPDATA");
-#else
-        appdata = getenv("HOME");
-#endif
+        // Find a directoroy using environment variables
+        #ifdef _WIN64
+            appdata = getenv("APPDATA");
+        #else
+            appdata = getenv("HOME");
+        #endif
 
         // Compute the length of the path
         appdata_len = strlen(appdata) + strlen(config_file_name);
@@ -441,6 +441,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
 
 size_t ui_load_file(const char *path, void *buffer, bool binary)
 {
+    
     // Argument checking
     {
         #ifndef NDEBUG

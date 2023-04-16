@@ -164,7 +164,7 @@ DLLEXPORT int           ui_draw_circle      ( int               radius  , UIWind
 
 // Window operations
 /* !
-  *  Append a window
+  *  Append a window to an instance
   *
   *  @param instance : Pointer to instance
   *  @param window   : The window to append
@@ -202,7 +202,6 @@ DLLEXPORT int           ui_process_input    ( UIInstance_t     *p_instance );
 DLLEXPORT int           ui_draw             ( UIInstance_t     *p_instance );
 
 // Image drawing
-
 /* !
   *  Get the active instance
   *
@@ -211,7 +210,6 @@ DLLEXPORT int           ui_draw             ( UIInstance_t     *p_instance );
 DLLEXPORT UIInstance_t *ui_get_active_instance ( void );
 
 // File I/O
-
 /* !
   *  Load a file
   *

@@ -19,15 +19,16 @@ struct UILabel_s
              height,
              size;
     bool     hidden;
-
-    // Callbacks
-    size_t     on_click_count,   on_click_max,
-               on_hover_count,   on_hover_max,
-               on_release_count, on_release_max;
     
-    void      **on_click,
-              **on_hover,
-              **on_release;
+    // Callbacks
+    size_t   on_click_count,   on_click_max,
+             on_hover_count,   on_hover_max,
+             on_release_count, on_release_max;
+    
+    void   **on_click,
+           **on_hover,
+           **on_release;
+    
 };
 
 // Allocators
@@ -51,6 +52,9 @@ DLLEXPORT int  add_release_callback_label ( UILabel_t   *p_label, void          
 
 // Bounds
 DLLEXPORT bool label_in_bounds            ( UILabel_t   *p_label, ui_mouse_state_t  mouse_state );
+
+// Printers
+DLLEXPORT int  print_label_to_file        ( UILabel_t   *p_label, FILE *f );
 
 // Deallocators
 DLLEXPORT void destroy_label              ( UILabel_t   *label );

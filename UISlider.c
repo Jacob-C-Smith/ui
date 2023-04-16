@@ -47,38 +47,30 @@ int           create_slider               ( UISlider_t  **pp_slider )
         }
     }
 }
-int           load_slider_as_dict         ( UISlider_t **pp_slider, dict *dictionary )
+int           load_slider_as_json_value         ( UISlider_t **pp_slider, JSONValue_t *p_value )
 {
-        // Argument errors
+    // Argument errors
     {
         #ifndef NDEBUG
             if ( pp_slider == (void *) 0 )
                 goto no_slider;
-            if ( dictionary == (void *) 0 )
-                goto no_dictionary;
+            if ( p_value == (void *) 0 )
+                goto no_value;
         #endif
     }
 
     // Initialized data
     UISlider_t *p_slider = 0;
-    char       *label    = 0,
-               *x        = 0,
-               *y        = 0;
-
-    // Parse the dictionary
-    {
-
-        // Initialized data
-        JSONToken_t *token = 0;
+    signed      x        = 0,
+                y        = 0;
+    // Parse the slider
+    {        
         
-        // Parse each property
-        {
-            token = dict_get(dictionary, "x");
-            x     = JSON_VALUE(token, JSONprimative);
+        // Initialized data
+        dict *p_dict = p_value->object;
 
-            token = dict_get(dictionary, "y");
-            y     = JSON_VALUE(token, JSONprimative);
-        }
+        x = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x")), JSONinteger);
+        y = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y")), JSONinteger);
     }
 
     // Is there enough information to construct the slider?
@@ -92,23 +84,25 @@ int           load_slider_as_dict         ( UISlider_t **pp_slider, dict *dictio
     }
 
     // Allocate the slider
-    create_slider(pp_slider);
-
-    // Return the slider
-    p_slider = *pp_slider;
-
+    create_slider(&p_slider);
+    
     // Construct the slider
     {
 
         // Set the slider position
-        p_slider->x = atoi(x);
-        p_slider->y = atoi(y);
+        p_slider->x = x;
+        p_slider->y = y;
         p_slider->pre = 2;
         p_slider->post = 3;
         p_slider->value = 0;
+        p_slider->max = 10.0;
+        p_slider->min = 0.0;
     }
-    
-    return 0;
+
+    // Return the slider
+    *pp_slider = p_slider;
+   
+    return 1;
 
     // Error handling
     {
@@ -120,9 +114,9 @@ int           load_slider_as_dict         ( UISlider_t **pp_slider, dict *dictio
                     ui_print_error("[UI] [Slider] Null pointer provided for \"pp_slider\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
-            no_dictionary:
+            no_value:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Slider] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
+                    ui_print_error("[UI] [Slider] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return -1;
         }
@@ -198,11 +192,11 @@ int           draw_slider                 ( UIWindow_t   *window   , UISlider_t 
     SDL_RenderDrawLine(window->renderer, p_slider->x, p_slider->y+9, p_slider->x+64, p_slider->y+9);
 
     if(p_slider->sliding)
-        ui_draw_format_text("%c%*.*f",window, p_slider->x-4, p_slider->y, 1, 132, p_slider->pre+p_slider->post, p_slider->pre, p_slider->value);
+        ui_draw_format_text("%c%*.*f",window, p_slider->x-4, p_slider->y, 1, (unsigned char)132, p_slider->pre+p_slider->post, p_slider->pre, p_slider->value);
     else
-        ui_draw_format_text("%c",window, p_slider->x-4, p_slider->y, 1, 132);
+        ui_draw_format_text("%c", window, p_slider->x-4, p_slider->y, 1, (unsigned char)132);
 
-    return 0;
+    return 1;
 }
 bool          slider_in_bounds            ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state )
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <JSON/JSON.h>
+#include <json/json.h>
 
 #include <UI/UItypedef.h>
 #include <UI/UI.h>
@@ -33,7 +33,7 @@ struct UITextInput_s
 DLLEXPORT int  create_text_input       ( UITextInput_t **pp_text_input );
 
 // Constructors
-DLLEXPORT int  load_text_input_as_dict ( UITextInput_t **pp_text_input, dict *dictionary );
+DLLEXPORT int  load_text_input_as_json_value ( UITextInput_t **pp_text_input, JSONValue_t *p_value );
 DLLEXPORT int  construct_text_input    ( UITextInput_t **pp_text_input, char *placeholder, char *text , i32 x, i32 y, size_t buffer_len );
 
 // Callbacks

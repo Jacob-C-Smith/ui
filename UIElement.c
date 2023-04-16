@@ -17,132 +17,132 @@ char* element_names[ELEMENT_COUNT] =
 
 void* load_callbacks[ELEMENT_COUNT] =
 {
-    0,//load_button_as_json_value,
-    0,//load_checkbox_as_json_value,
-    0,//load_dropdown_as_json_value,
-    0,//load_image_as_json_value,
+    load_button_as_json_value,
+    load_checkbox_as_json_value,
+    load_dropdown_as_json_value,
+    load_image_as_json_value,
     load_label_as_json_value,
-    0,//load_radio_button_as_json_value,
-    0,//load_slider_as_json_value,
-    0,//load_table_as_json_value,
-    0,//load_text_input_as_djson_value
+    load_radio_button_as_json_value,
+    load_slider_as_json_value,
+    load_table_as_json_value,
+    load_text_input_as_json_value
 };
 
 void* click_callbacks[ELEMENT_COUNT] =
 {
-    0,//click_button,
-    0,//click_checkbox,
-    0,//click_dropdown,
-    0,//click_image,
+    click_button,
+    click_checkbox,
+    click_dropdown,
+    click_image,
     click_label,
-    0,//click_radio_button,
-    0,//click_slider,
-    0,//click_table,
-    0,//click_text_input
+    click_radio_button,
+    click_slider,
+    click_table,
+    click_text_input
 };
 
 void* hover_callbacks[ELEMENT_COUNT] =
 {
-    0,//hover_button,
-    0,//hover_checkbox,
-    0,//hover_dropdown,
-    0,//hover_image,
+    hover_button,
+    hover_checkbox,
+    hover_dropdown,
+    hover_image,
     hover_label,
-    0,//hover_radio_button,
-    0,//hover_slider,
-    0,//hover_table,
-    0,//hover_text_input
+    hover_radio_button,
+    hover_slider,
+    hover_table,
+    hover_text_input
 };
 
 void* release_callbacks[ELEMENT_COUNT] =
 {
-    0,//release_button,
-    0,//release_checkbox,
-    0,//release_dropdown,
-    0,//release_image,
+    release_button,
+    release_checkbox,
+    release_dropdown,
+    release_image,
     release_label,
-    0,//release_radio_button,
-    0,//release_slider,
-    0,//release_table,
-    0,//release_text_input
+    release_radio_button,
+    release_slider,
+    release_table,
+    release_text_input
 };
 
 void* add_click_callbacks[ELEMENT_COUNT] =
 {
-    0,//add_click_callback_button,
-    0,//add_click_callback_checkbox,
-    0,//add_click_callback_dropdown,
-    0,//add_click_callback_image,
+    add_click_callback_button,
+    add_click_callback_checkbox,
+    add_click_callback_dropdown,
+    add_click_callback_image,
     add_click_callback_label,
-    0,//add_click_callback_radio_button,
-    0,//add_click_callback_slider,
-    0,//0,
-    0,//add_click_callback_text_input
+    add_click_callback_radio_button,
+    add_click_callback_slider,
+    add_click_callback_table,
+    add_click_callback_text_input
 };
 
 void* add_hover_callbacks[ELEMENT_COUNT] =
 {
-    0,//add_hover_callback_button,
-    0,//add_hover_callback_checkbox,
-    0,//add_hover_callback_dropdown,
-    0,//add_hover_callback_image,
+    add_hover_callback_button,
+    add_hover_callback_checkbox,
+    add_hover_callback_dropdown,
+    add_hover_callback_image,
     add_hover_callback_label,
-    0,//add_hover_callback_radio_button,
-    0,//add_hover_callback_slider,
-    0,//0,
-    0,//add_hover_callback_text_input
+    add_hover_callback_radio_button,
+    add_hover_callback_slider,
+    add_hover_callback_table,
+    add_hover_callback_text_input
 };
 
 void* add_release_callbacks[ELEMENT_COUNT] =
 {
-    0,//add_release_callback_button,
-    0,//add_release_callback_checkbox,
-    0,//add_release_callback_dropdown,
-    0,//add_release_callback_image,
+    add_release_callback_button,
+    add_release_callback_checkbox,
+    add_release_callback_dropdown,
+    add_release_callback_image,
     add_release_callback_label,
-    0,//add_release_callback_radio_button,
-    0,//add_release_callback_slider,
-    0,//0,
-    0,//add_release_callback_text_input
+    add_release_callback_radio_button,
+    add_release_callback_slider,
+    add_release_callback_table,
+    add_release_callback_text_input
 };
 
 void* draw_callback[ELEMENT_COUNT] =
 {
-    0,//draw_button,
-    0,//draw_checkbox,
-    0,//draw_dropdown,
-    0,//draw_image,
+    draw_button,
+    draw_checkbox,
+    draw_dropdown,
+    draw_image,
     draw_label,
-    0,//draw_radio_button,
-    0,//draw_slider,
-    0,//draw_table,
-    0,//draw_text_input
+    draw_radio_button,
+    draw_slider,
+    draw_table,
+    draw_text_input
 };
 
 void* destructor_callback[ELEMENT_COUNT] =
 {
-    0,//destroy_button,
-    0,//destroy_checkbox,
-    0,//destroy_dropdown,
-    0,//destroy_image,
+    destroy_button,
+    destroy_checkbox,
+    destroy_dropdown,
+    destroy_image,
     destroy_label,
-    0,//destroy_radio_button,
-    0,//destroy_slider,
-    0,//0,
-    0,//destroy_text_input
+    destroy_radio_button,
+    destroy_slider,
+    destroy_table,
+    destroy_text_input
 };
 
 void* bounds_callback[ELEMENT_COUNT] =
 {
-    0,//button_in_bounds,
-    0,//checkbox_in_bounds,
-    0,//dropdown_in_bounds,
-    0,//image_in_bounds,
+    button_in_bounds,
+    checkbox_in_bounds,
+    dropdown_in_bounds,
+    image_in_bounds,
     label_in_bounds,
-    0,//radio_button_in_bounds,
-    0,//slider_in_bounds,
-    0,//table_in_bounds,
-    0,//text_input_in_bounds
+    radio_button_in_bounds,
+    slider_in_bounds,
+    table_in_bounds,
+    text_input_in_bounds
 };
 
 dict *load_lut        = 0;
@@ -352,6 +352,7 @@ int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
 
 int construct_element(UIElement_t **element, char *name, char *type, void* element_data)
 {
+    
     // Argument check
     {
         #ifndef NDEBUG
@@ -424,17 +425,14 @@ int construct_element(UIElement_t **element, char *name, char *type, void* eleme
 int click_element(UIElement_t* element, ui_mouse_state_t mouse_state)
 {
     UIInstance_t *instnace = ui_get_active_instance();
-
-    UIWindow_t *w = instnace->active_window;
-
+    
     // Initialized data
     int (*click)(void*, ui_mouse_state_t) = dict_get(click_lut, element->type);
 
     (*click)((void*)element->label, mouse_state); // Call the element constructor for the specific type
     
     // Set last
-    if(instnace->active_window == w)
-        instnace->active_window->last = element;
+    instnace->active_window->last = element;
 
     return 0;
 }
@@ -494,40 +492,7 @@ int add_hover_callback_element(UIElement_t* element, void(*callback)(UIElement_t
 
 int add_release_callback_element(UIElement_t* element, void(*callback)(UIElement_t*, ui_mouse_state_t))
 {
-    //switch (element->type)
-    //{
-    //case UI_BUTTON:
-    //    add_release_callback_button(element->element.button, callback);
-    //    break;
-    //case UI_CANVAS:
-    //    // TODO: 
-    //    break;
-    //case UI_CHART:
-    //    // TODO:
-    //    break;
-    //case UI_CHECKBOX:
-    //    add_release_callback_checkbox(element->element.checkbox, callback);
-    //    break;
-    //case UI_DROPDOWN:
-    //    add_release_callback_dropdown(element->element.dropdown, callback);
-    //    break;
-    //case UI_IMAGE:
-    //    // TODO:
-    //    break;
-    //case UI_LABEL:
-    //    add_release_callback_label(element->element.label, callback);
-    //    break;
-    //case UI_RADIOBUTTON:
-    //    add_release_callback_radio_button(element->element.radio_button, callback);
-    //    break;
-    //case UI_SLIDER:
-    //    add_release_callback_slider(element->element.slider, callback);
-    //    break;
-    //case UI_TEXTINPUT:
-    //    add_release_callback_text_input(element->element.text_input, callback);
-    //    break;
-    //}
-
+    
     return 0;
 }
 
@@ -545,76 +510,6 @@ bool in_bounds ( UIElement_t* element, ui_mouse_state_t mouse_state )
 
     return ret;
 
-    // Initialized data
-//    bool ret = false;
-//    i32  x = 0,
-//         y = 0,
-//         w = 0,
-//         h = 0;
-//         
-//    switch (element->type)
-//    {
-//    case UI_BUTTON:
-//        x = element->element.button->x,
-//        y = element->element.button->y,
-//        w = element->element.button->width,
-//        h = element->element.button->height;
-//        break;
-//    case UI_CANVAS:
-//        // TODO: 
-//        // draw_canvas(window, element->element.canvas);
-//        break;
-//    case UI_CHART:
-//        // TODO:
-//        // draw_chart(window, element->element.chart);
-//        break;
-//    case UI_CHECKBOX:
-//        x = element->element.checkbox->x,
-//        y = element->element.checkbox->y,
-//        w = element->element.checkbox->width + (8*element->element.checkbox->longest_label),
-//        h = element->element.checkbox->height;
-//        break;
-//    case UI_DROPDOWN:
-//        x = element->element.dropdown->x,
-//        y = element->element.dropdown->y,
-//        w = element->element.dropdown->width,
-//        h = element->element.dropdown->height;
-//        break;
-//    case UI_IMAGE:
-//        // TODO:
-//        // draw_image(window, element->element.image);
-//        break;
-//    case UI_LABEL:
-//        x = element->element.label->x,
-//        y = element->element.label->y,
-//        w = element->element.label->width,
-//        h = element->element.label->height;
-//        break;
-//    case UI_RADIOBUTTON:
-//        x = element->element.radio_button->x,
-//        y = element->element.radio_button->y,
-//        w = element->element.radio_button->width + (8 * element->element.radio_button->longest_label),
-//        h = element->element.radio_button->height;
-//        break;
-//    case UI_SLIDER:
-//        x = element->element.slider->x,
-//        y = element->element.slider->y+12,
-//        w = element->element.slider->width,
-//        h = 10+12;
-//        break;
-//    case UI_TEXTINPUT:
-//        x = element->element.text_input->x,
-//        y = element->element.text_input->y,
-//        w = (element->element.text_input->width/8 > element->element.text_input->max_chars) ? element->element.text_input->max_chars*8 : element->element.text_input->width,
-//        h = 12;
-//
-//        break;
-//    }
-//
-//
-//    return ret;
-//
-//    // TODO: Error handling
 }
 
 int draw_element( UIWindow_t *window, UIElement_t* element)

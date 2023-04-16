@@ -11,7 +11,7 @@ int create_text_input(UITextInput_t** pp_text_input)
 	return 0;
 }
 
-int load_text_input_as_dict(UITextInput_t** pp_text_input, dict* dictionary)
+int load_text_input_as_json_value ( UITextInput_t **pp_text_input, JSONValue_t *p_value )
 {
 	char *placeholder = 0,
 		 *text        = 0,
@@ -23,26 +23,18 @@ int load_text_input_as_dict(UITextInput_t** pp_text_input, dict* dictionary)
 
 	// Parse JSON
 	{
-		JSONToken_t *token = 0;
 
-		token = dict_get(dictionary, "placeholder");
-		placeholder = JSON_VALUE(token, JSONstring);
+		dict *p_dict = p_value->object;
 
-		token = dict_get(dictionary, "text");
-		text = JSON_VALUE(token, JSONstring);
-
-		token = dict_get(dictionary, "x");
-		x = JSON_VALUE(token, JSONprimative);
-
-		token = dict_get(dictionary, "y");
-		y = JSON_VALUE(token, JSONprimative);
-
-		token = dict_get(dictionary, "length");
-		buffer_len = JSON_VALUE(token, JSONprimative);
+		placeholder = JSON_VALUE(dict_get(p_dict, "placeholder"), JSONstring);
+        text        = JSON_VALUE(dict_get(p_dict, "text")       , JSONstring);
+        x           = JSON_VALUE(dict_get(p_dict, "x")          , JSONinteger);
+        y           = JSON_VALUE(dict_get(p_dict, "y")          , JSONinteger);
+        buffer_len  = JSON_VALUE(dict_get(p_dict, "length")     , JSONinteger);
 
 	}
 
-	construct_text_input(pp_text_input, placeholder, text, atoi(x), atoi(y), atoi(buffer_len));
+	construct_text_input(pp_text_input, placeholder, text, x, y, buffer_len);
 
 	return 0;
 }

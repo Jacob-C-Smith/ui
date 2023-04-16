@@ -17,8 +17,6 @@
 
 struct UIElement_s
 {
-    char *name,
-         *type;
     union {
         UIButton_t      *button;
         UICanvas_t      *canvas;
@@ -32,6 +30,9 @@ struct UIElement_s
         UITable_t       *table;
         UITextInput_t   *text_input;
     };
+    char    *name,
+            *type;
+
 };
 
 // Allocators 
@@ -62,10 +63,10 @@ DLLEXPORT int          create_element               ( UIElement_t **pp_element )
 DLLEXPORT int          load_element                 ( UIElement_t **pp_element, const char   path[] );
 
  /* !
-  *  Load a UI Button from JSON text
+  *  Load a UI Button from a JSON value
   *
   *  @param pp_element : Pointer to pointer to element
-  *  @param token_text : JSON token text
+  *  @param p_value : JSON token text
   * 
   *  @return 0 on success, -1 on error.  
   */
