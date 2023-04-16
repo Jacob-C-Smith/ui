@@ -26,11 +26,11 @@ int load_text_input_as_json_value ( UITextInput_t **pp_text_input, JSONValue_t *
 
 		dict *p_dict = p_value->object;
 
-		placeholder = JSON_VALUE(dict_get(p_dict, "placeholder"), JSONstring);
-        text        = JSON_VALUE(dict_get(p_dict, "text")       , JSONstring);
-        x           = JSON_VALUE(dict_get(p_dict, "x")          , JSONinteger);
-        y           = JSON_VALUE(dict_get(p_dict, "y")          , JSONinteger);
-        buffer_len  = JSON_VALUE(dict_get(p_dict, "length")     , JSONinteger);
+		placeholder = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "placeholder")), JSONstring);
+        text        = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "text")       ), JSONstring);
+        x           = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "x")          ), JSONinteger);
+        y           = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "y")          ), JSONinteger);
+        buffer_len  = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "length")     ), JSONinteger);
 
 	}
 

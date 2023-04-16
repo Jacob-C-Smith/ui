@@ -135,15 +135,11 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 		
 		dict *p_dict = p_value->object;
 
-        name       = JSON_VALUE(dict_get(p_dict, "name")    , JSONstring);
-        title      = JSON_VALUE(dict_get(p_dict, "title")   , JSONstring);
-        width      = JSON_VALUE(dict_get(p_dict, "width")   , JSONinteger);
-        height     = JSON_VALUE(dict_get(p_dict, "height")  , JSONinteger);
-        p_elements = JSON_VALUE(dict_get(p_dict, "elements"), JSONarray);
-
-		if (!(name && title && width && height && p_elements))
-			goto missing_properties;
-
+        name       = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "name")    ), JSONstring);
+        title      = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "title")   ), JSONstring);
+        width      = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "width")   ), JSONinteger);
+        height     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "height")  ), JSONinteger);
+        p_elements = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "elements")), JSONarray);
     }
 
 	// Error checking

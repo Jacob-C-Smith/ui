@@ -83,11 +83,11 @@ int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 		dict *p_dict = p_value->object;
 
 		// Get values for constructing the ui image
-		x      = JSON_VALUE(dict_get(p_dict, "x")     , JSONinteger);
-		y      = JSON_VALUE(dict_get(p_dict, "y")     , JSONinteger);
-		width  = JSON_VALUE(dict_get(p_dict, "width") , JSONinteger);
-		height = JSON_VALUE(dict_get(p_dict, "height"), JSONinteger);
-		path   = JSON_VALUE(dict_get(p_dict, "path")  , JSONstring);
+		x      = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x")     ), JSONinteger);
+		y      = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y")     ), JSONinteger);
+		width  = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "width") ), JSONinteger);
+		height = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "height")), JSONinteger);
+		path   = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "path")  ), JSONstring);
 
 	}
 
