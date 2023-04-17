@@ -564,7 +564,7 @@ int  print_label_to_file ( UILabel_t *p_label, FILE *f, char *name )
 	}
 }
 
-void destroy_label ( UILabel_t  **pp_label )
+int destroy_label ( UILabel_t  **pp_label )
 {
 
 	// Argument check
@@ -586,6 +586,8 @@ void destroy_label ( UILabel_t  **pp_label )
 
 	// Free the label
 	free(p_label);
+	
+	return 1;
 
 	// Error handling
 	{

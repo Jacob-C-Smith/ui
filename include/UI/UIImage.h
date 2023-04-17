@@ -51,8 +51,7 @@ DLLEXPORT int  add_release_callback_image ( UIImage_t  *p_image, void           
 // Drawers
 DLLEXPORT int  draw_image                 ( UIWindow_t *p_window, UIImage_t         *p_image);
 
-DLLEXPORT bool image_in_bounds            ( UIWindow_t *p_window, ui_mouse_state_t   mouse_state);
-
+DLLEXPORT bool image_in_bounds            ( UIImage_t  *p_image, ui_mouse_state_t   mouse_state);
 
 // Deallocators
 DLLEXPORT int  destroy_image              ( UIImage_t  **pp_image );

@@ -54,7 +54,7 @@ DLLEXPORT int  add_release_callback_label ( UILabel_t   *p_label, void          
 DLLEXPORT bool label_in_bounds            ( UILabel_t   *p_label, ui_mouse_state_t  mouse_state );
 
 // Printers
-DLLEXPORT int  print_label_to_file        ( UILabel_t   *p_label, FILE *f );
+DLLEXPORT int  print_label_to_file        ( UILabel_t   *p_label, FILE *f, char *name );
 
 // Deallocators
-DLLEXPORT void destroy_label              ( UILabel_t   *label );
+DLLEXPORT int destroy_label              ( UILabel_t   **pp_label );
