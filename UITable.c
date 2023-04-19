@@ -472,6 +472,8 @@ bool          table_in_bounds            ( UITable_t  *table, ui_mouse_state_t m
     for (size_t i = 0; i < table->max_columns; i++)
         w += (table->column_widths[i] * 8) + 7;
 
+    table->w = w;
+
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
 		return true;
 

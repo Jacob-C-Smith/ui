@@ -20,7 +20,7 @@ int file_selector (char *path)
     UITable_t     *t = ((UIElement_t *)find_element(p_ui_window, "ftab"))->table;
     UITextInput_t *i = ((UIElement_t *)find_element(p_ui_window, "filepath"))->text_input;
     UIButton_t    *b1 = ((UIElement_t *)find_element(p_ui_window, "up"))->button;
-
+    
     size_t plen = strlen(path);
     strncpy(i->text, path, plen);
     i->width = 8*(plen+1);
@@ -74,9 +74,10 @@ int update_ftab()
         }
         closedir(dir);
     }
+    table_in_bounds(t,(ui_mouse_state_t){0});
     t->max_rows = z;
     p_ui_window->height = z*12+64;
-
+    p_ui_window->width = 32+t->w;
     b2->y=z*12+44;
     resize_window(p_ui_window);
     return 1;
