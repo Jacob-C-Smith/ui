@@ -96,7 +96,7 @@ int           load_table_as_json_value         ( UITable_t  **pp_table, JSONValu
     }
 
     // Allocate the table
-    create_window(pp_table);
+    create_table(pp_table);
 
     // Return the table
     p_table = *pp_table;
@@ -295,7 +295,7 @@ int           click_table                ( UITable_t   *p_table , ui_mouse_state
         for (size_t i = 0; i < p_table->on_click_count; i++)
         {
             // Define the callback function
-            void (*callback)(UITable_t*, ui_mouse_state_t) = p_table->on_click[i];
+            int (*callback)(UITable_t*, ui_mouse_state_t) = p_table->on_click[i];
 
             // Call the callback function
             if (callback)
@@ -308,7 +308,7 @@ int           click_table                ( UITable_t   *p_table , ui_mouse_state
             SDL_SetClipboardText(p_table->data[(p_table->last_y * p_table->max_columns + p_table->last_x)]);
         }
     }
-    
+
     return 0;
 }
 
@@ -333,6 +333,25 @@ int           release_table              ( UITable_t   *p_table, ui_mouse_state_
 int add_click_callback_table   ( UITable_t  *p_table, void(*callback)(UITable_t*, ui_mouse_state_t))
 {
     // TODO: Argument check
+
+    // If this is the first callback, set the max to 1 and 
+    if (p_table->on_click_max == 0)
+    {
+        p_table->on_click_max = 1;
+        p_table->on_click = calloc(1, sizeof(void*));
+    }
+
+    // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
+    if (p_table->on_click_count + 1 > p_table->on_click_max)
+    {
+        // Double the max
+        p_table->on_click_max *= 2;
+
+        realloc(p_table->on_click, p_table->on_click_max);
+    }
+
+    // Increment the callback counter and install the new callback
+    p_table->on_click[p_table->on_click_count++] = callback;
 
     return 1;
 
@@ -365,20 +384,12 @@ char *get_table_cell(UITable_t* p_table, size_t x, size_t y)
 
 int set_table_cell(UITable_t* p_table, size_t x, size_t y, char* cell_text)
 {
-    char **a = &p_table->data[y * p_table->max_columns + x];
-
-    if (*a == (void*)0)
-        ;// goto copy_cell_text;
+    p_table->data[y * p_table->max_columns + x] = cell_text;
 
     size_t b = strlen(cell_text);
 
     if ( p_table->column_widths[x] < b )
         p_table->column_widths[x] = b;
-
-    //free(a);
-
-    copy_cell_text:
-        *a=cell_text;
 
     return 1;
 }

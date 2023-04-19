@@ -468,7 +468,7 @@ int add_click_callback_element(UIElement_t* element, void(*callback)(UIElement_t
     // TODO: Argument check
 
     // Initialized data
-    bool (*add_click_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_click_lut, element->type);
+    int (*add_click_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_click_lut, element->type);
 
     // Call the element constructor for the specific type
     return (*add_click_callback)((void*)element->label, callback);

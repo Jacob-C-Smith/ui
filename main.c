@@ -1,10 +1,15 @@
 // Include the main UI header
 #include <UI/UI.h>
+#include <UI/UIFileSelector.h>
 
-void click (UILabel_t *p_label, ui_mouse_state_t mouse_state)
+int click (UILabel_t *p_label, ui_mouse_state_t mouse_state)
 {
-    return;
+    /*
+    
+    */
+   return 1;
 }
+
 
 // Entry point
 int main ( int argc, const char **argv )
@@ -25,7 +30,9 @@ int main ( int argc, const char **argv )
     // Add the window to the instance
     ui_append_window(p_ui_instance, p_ui_window);
 
-    //add_click_callback_element(find_element(p_ui_window,"label"), &click);
+    file_selector("/Users/jacobsmith/Desktop/C/");
+
+    add_click_callback_element(find_element(p_ui_window, "label"), &click);
 
     // UI Loop
     while ( /* Specify your exit condition, for instance */ p_ui_instance->running )
