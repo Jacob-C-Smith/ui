@@ -689,17 +689,18 @@ UIWindow_t *ui_remove_window(UIInstance_t *p_instance, const char *name)
     }
 
     // Initialized data
-    size_t      window_count = dict_values(p_instance->windows, 0);
+    size_t      window_count = 0;
     UIWindow_t *ret          = 0;
 
     // Remove the specified window
     dict_pop(p_instance->windows, name, &ret);
     memset( p_instance->windows_list,0,window_count*sizeof(void *));
     dict_values(p_instance->windows, p_instance->windows_list);
+    window_count = dict_values(p_instance->windows, 0);
 
     p_instance->active_window = 0;
 
-    if (window_count)
+    if (window_count==0)
         p_instance->running = false;
 
     // Return the window (for deallocation)
@@ -742,7 +743,7 @@ int ui_process_input ( UIInstance_t *p_instance )
             {
                 UIWindow_t *w = ui_remove_window(p_instance, p_instance->windows_list[i]->name);
                 if (w)
-                    ; // destroy_window(w);
+                    destroy_window(w);
                 if (dict_values(p_instance->windows, 0))
                 {
                     p_instance->active_window = p_instance->windows_list[dict_values(p_instance->windows, 0) - 1];

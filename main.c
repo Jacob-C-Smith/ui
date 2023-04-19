@@ -10,6 +10,12 @@ int click (UILabel_t *p_label, ui_mouse_state_t mouse_state)
    return 1;
 }
 
+int file_selector_callback(char *path)
+{
+    printf(path);
+    
+    return 1;
+}
 
 // Entry point
 int main ( int argc, const char **argv )
@@ -30,7 +36,7 @@ int main ( int argc, const char **argv )
     // Add the window to the instance
     ui_append_window(p_ui_instance, p_ui_window);
 
-    file_selector("/Users/jacobsmith/Desktop/C/");
+    file_selector("/Users/jacobsmith/Desktop/C/", file_selector_callback);
 
     add_click_callback_element(find_element(p_ui_window, "label"), &click);
 

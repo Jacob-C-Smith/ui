@@ -3,7 +3,9 @@ int update_ftab();
 int dirup_click  (UIButton_t *p_button, ui_mouse_state_t m);
 int select_click (UIButton_t *p_button, ui_mouse_state_t m);
 
-int file_selector (char *path)
+int (*filesel_callb)(char *);
+
+int file_selector (char *path, int(*cb)(char *))
 {
 
     // Initialized data
@@ -24,6 +26,7 @@ int file_selector (char *path)
     size_t plen = strlen(path);
     strncpy(i->text, path, plen);
     i->width = 8*(plen+1);
+
     add_click_callback_element(find_element(p_ui_window, "ftab"), &dirtab_click);
     add_click_callback_element(find_element(p_ui_window, "up"), &dirup_click);
     add_click_callback_element(find_element(p_ui_window, "select"), &select_click);
@@ -32,7 +35,7 @@ int file_selector (char *path)
     
     set_table_cell(t,1,0,"name");
     update_ftab();
-    
+    filesel_callb = cb;
     return 1;
 
     failed_to_load_window:
@@ -80,6 +83,7 @@ int update_ftab()
     p_ui_window->width = 32+t->w;
     b2->y=z*12+44;
     resize_window(p_ui_window);
+    
     return 1;
 
 }
@@ -134,12 +138,7 @@ int select_click (UIButton_t *p_button, ui_mouse_state_t m)
     sprintf(buf, "%s%s",i->text,get_table_cell(t,1,t->last_y));
     fflush(stdout);
 
-    // Load a window from the filesystem
-    if ( load_window(&p_load_w, buf) == 0 )
-        return 0;
-
-    // Add the window to the instance
-    ui_append_window(p_ui_instance, p_load_w);
-
+    filesel_callb(buf);
+    p_ui_window->is_open = false;
     return 1;
 }
