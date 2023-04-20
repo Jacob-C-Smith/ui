@@ -215,6 +215,24 @@ int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
 	return 0;
 }
 
+int  set_text_input_text ( UITextInput_t *p_text_input, char *text )
+{
+	size_t len = strlen(text);
+
+	if(len > p_text_input->max_chars)
+	{
+		p_text_input->text = realloc(p_text_input->text, len+1);
+		p_text_input->max_chars = len;
+	}
+
+	strncpy(p_text_input->text, text, len+1);
+
+
+	p_text_input->width = 8 + (8 * len);
+
+	return 1;
+}
+
 bool text_input_in_bounds(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
 {
 	i32  x = text_input->x,
@@ -226,7 +244,8 @@ bool text_input_in_bounds(UITextInput_t* text_input, ui_mouse_state_t mouse_stat
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
 		return true;
 
-	return false;}
+	return false;
+}
 
 int destroy_text_input(UITextInput_t* text_input)
 {

@@ -15,8 +15,8 @@ struct UITextInput_s
     i32       width,
               height,
               x,
-              y,
-              max_chars;
+              y;
+    size_t    max_chars;
     bool      hidden;
 
     // Callbacks
@@ -42,14 +42,17 @@ DLLEXPORT int  click_text_input(UITextInput_t* text_input, ui_mouse_state_t mous
 DLLEXPORT int  release_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state);
 
 // Add callbacks
-DLLEXPORT int  add_click_callback_text_input(UITextInput_t* text_input, void          (*callback)(UITextInput_t*, ui_mouse_state_t));
-DLLEXPORT int  add_hover_callback_text_input(UITextInput_t* text_input, void          (*callback)(UITextInput_t*, ui_mouse_state_t));
-DLLEXPORT int  add_release_callback_text_input(UITextInput_t* text_input, void          (*callback)(UITextInput_t*, ui_mouse_state_t));
+DLLEXPORT int  add_click_callback_text_input   ( UITextInput_t *text_input, void (*callback)(UITextInput_t*, ui_mouse_state_t));
+DLLEXPORT int  add_hover_callback_text_input   ( UITextInput_t *text_input, void (*callback)(UITextInput_t*, ui_mouse_state_t));
+DLLEXPORT int  add_release_callback_text_input ( UITextInput_t *text_input, void (*callback)(UITextInput_t*, ui_mouse_state_t));
+
+// Mutators
+DLLEXPORT int  set_text_input_text     ( UITextInput_t *p_text_input, char *text );
 
 // Draw
 DLLEXPORT int  draw_text_input         ( UIWindow_t    *window     , UITextInput_t *text_input );
 
-DLLEXPORT bool text_input_in_bounds (UITextInput_t* checkbox, ui_mouse_state_t mouse_state);
+DLLEXPORT bool text_input_in_bounds    ( UITextInput_t *text_input, ui_mouse_state_t mouse_state);
 
 // Destructors
 DLLEXPORT int  destroy_text_input      ( UITextInput_t *text_input );
