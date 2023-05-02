@@ -643,13 +643,15 @@ int ui_append_window(UIInstance_t *p_instance, UIWindow_t *p_window)
     // Add the window to the dictionary
     dict_add(p_instance->windows, p_window->name, p_window);
     dict_values(p_instance->windows, p_instance->windows_list);
+    
+    p_instance->active_window->last = 0;
 
     // Update the active window
     p_instance->active_window = p_window;
 
     // There hasn't been a last element yet
     p_instance->active_window->last = 0;
-
+    
     // Success
     return 1;
 
