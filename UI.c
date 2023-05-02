@@ -644,7 +644,8 @@ int ui_append_window(UIInstance_t *p_instance, UIWindow_t *p_window)
     dict_add(p_instance->windows, p_window->name, p_window);
     dict_values(p_instance->windows, p_instance->windows_list);
     
-    p_instance->active_window->last = 0;
+    if(p_instance->active_window)
+        p_instance->active_window->last = 0;
 
     // Update the active window
     p_instance->active_window = p_window;
