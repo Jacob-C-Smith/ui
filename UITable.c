@@ -34,7 +34,9 @@ int           create_table               ( UITable_t  **pp_table )
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Table] Null pointer provided for \"pp_table\" in call to function \"%s\"\n",__FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
         }
 
         // Standard library errors
@@ -43,7 +45,9 @@ int           create_table               ( UITable_t  **pp_table )
                 #ifndef NDEBUG
                     ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
         }
     }
 }
@@ -190,12 +194,17 @@ int           load_table_as_json_value         ( UITable_t  **pp_table, JSONValu
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Table] Null pointer provided for \"pp_table\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+
+                // Error
+                return 0;
+
             no_value:
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Table] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
         }
 
         // Missing required construction parameters
@@ -204,17 +213,23 @@ int           load_table_as_json_value         ( UITable_t  **pp_table, JSONValu
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Table] No \"label\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
             no_x:
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Table] No \"x\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
             no_y:
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Table] No \"y\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
         }
 
         // Standard library errors
@@ -223,7 +238,9 @@ int           load_table_as_json_value         ( UITable_t  **pp_table, JSONValu
                 #ifndef NDEBUG
                     ui_print_error("[Standard Library] Failed to allocate memory in call to funciton \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+
+                // Error
+                return 0;
         }
     }
 }
@@ -501,7 +518,9 @@ int           destroy_table              ( UITable_t  *p_button )
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Button] Null pointer provided for \"p_button\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
         }
     }
 }

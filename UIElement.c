@@ -258,29 +258,18 @@ int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
 
     // Initialized data
     dict        *dictionary   = 0;
-    
     char        *type         = 0,
                 *name         = 0;
 
     // Get properties from the dictionary
-    if (p_value->type == JSONobject)
+    if ( p_value->type == JSONobject )
     {
+        type = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "type")), JSONstring);
+        name = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "name")), JSONstring);
 
-        // Initialized data
-        dict *p_dict = p_value->object;
-
-        type = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "type")), JSONstring);
-        name = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "name")), JSONstring);
-    }
-
-    // Error checking
-    {
-        #ifndef NDEBUG
-            if(type == (void *)0)
-                goto no_type;
-            if(name == (void *)0)
-                goto no_name;
-        #endif
+        // Check for missing properties
+        if ( ! ( type && name ) )
+            goto missing_properties;
     }
 
     // Construct the element
@@ -302,11 +291,13 @@ int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
 
         // Construct the element
         construct_element(pp_element, name, type, p_value);
-
     }
 
     // Success
     return 1;
+
+    missing_properties:
+        return 0;
 
     // Error handling
     {
@@ -350,63 +341,80 @@ int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
     }
 }
 
-int construct_element(UIElement_t **element, char *name, char *type, void* element_data)
+int construct_element(UIElement_t **pp_element, char *p_name, char *p_type, void* element_data)
 {
     
     // Argument check
     {
         #ifndef NDEBUG
-            if(element_data == (void *)0)
-                goto no_element_data;
-
+            if ( element_data == (void *) 0 ) goto no_element_data;
         #endif
     }
 
     // Initialized data
-    UIElement_t *i_element = 0;
+    UIElement_t *p_element = 0;
     
-    create_element(element);
+    // Allocate memory for an element
+    if ( create_element(pp_element) == 0 )
+        goto failed_to_allocate_element;
     
-    i_element = *element;
+    // Get a pointer to the element memory
+    p_element = *pp_element;
 
     // Construct the element
     {
 
-        i_element->label = (UIButton_t*)element_data;
-                
+        // Initialized data
+        char *name = 0,
+             *type = 0;
+               
         // Set the name
         {
-            size_t len = strlen(name);
-            i_element->name = calloc(len + 1, sizeof(u8));
+
+            // Initialized data
+            size_t len = strlen(p_name);
+
+            // Allocate memory for the name
+            name = calloc(len + 1, sizeof(u8));
 
             // Error handling
-            {
-                #ifndef NDEBUG
-                    if(i_element->name == (void *)0)
-                        goto no_mem;
-                #endif
-            }
+            if ( name == (void *) 0 )
+                goto no_mem;
 
-            strncpy(i_element->name, name, len);
+            // Copy the name
+            strncpy(name, p_name, len);
         }
 
         // Set the type
         {
-            size_t len = strlen(type);
-            i_element->type = calloc(len + 1, sizeof(u8));
+
+            // Initialized data
+            size_t len = strlen(p_type);
+            
+            // Allocate memory for the name
+            type = calloc(len + 1, sizeof(u8));
 
             // Error handling
-            {
-                #ifndef NDEBUG
-                    if(i_element->type == (void *)0)
-                        goto no_mem;
-                #endif
-            }
+            if ( type == (void *) 0 )
+                goto no_mem;
 
-            strncpy(i_element->type, type, len);
+            // Copy the type
+            strncpy(type, p_type, len);
         }
+
+        // Populate the element
+        *p_element = (UIElement_t)
+        {
+            .name = name,
+            .type = type,
+            .draw = true,
+
+            // Not really a button. Rather, a pointer to the element 
+            .button = element_data
+        };
     }
 
+    // Success
     return 1;
 
     // Error handling
@@ -416,6 +424,7 @@ int construct_element(UIElement_t **element, char *name, char *type, void* eleme
         {
             no_element_data:
             invalid_type:
+            failed_to_allocate_element:
             no_mem:
                 return 0;
         }
@@ -512,11 +521,12 @@ bool in_bounds ( UIElement_t* element, ui_mouse_state_t mouse_state )
 
 }
 
-int draw_element( UIWindow_t *window, UIElement_t* element)
+int draw_element( UIWindow_t *window, UIElement_t* element )
 {
     // TODO: Argument check
 
     // Construct the element
+    if ( element->draw )
     {
 
         // Initialized data

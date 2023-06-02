@@ -34,7 +34,9 @@ int           create_slider               ( UISlider_t  **pp_slider )
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Slider] Null pointer provided for \"pp_slider\" in call to function \"%s\"\n",__FUNCTION__);
                 #endif
-                return -1;
+
+                // Error
+                return 0;
         }
 
         // Standard library errors
@@ -43,7 +45,9 @@ int           create_slider               ( UISlider_t  **pp_slider )
                 #ifndef NDEBUG
                     ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
         }
     }
 }
@@ -113,12 +117,17 @@ int           load_slider_as_json_value         ( UISlider_t **pp_slider, JSONVa
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Slider] Null pointer provided for \"pp_slider\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+
+                // Error
+                return 0;
+
             no_value:
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Slider] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+
+                // Error
+                return 0;
         }
 
         // Missing required construction parameters
@@ -127,17 +136,24 @@ int           load_slider_as_json_value         ( UISlider_t **pp_slider, JSONVa
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Slider] No \"label\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
             no_x:
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Slider] No \"x\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+
+                // Error
+                return 0;
+
             no_y:
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Slider] No \"y\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
         }
 
         // Standard library errors
@@ -146,7 +162,9 @@ int           load_slider_as_json_value         ( UISlider_t **pp_slider, JSONVa
                 #ifndef NDEBUG
                     ui_print_error("[Standard Library] Failed to allocate memory in call to funciton \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+                
+                // Error
+                return 0;
         }
     }
 }

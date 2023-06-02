@@ -34,7 +34,9 @@ int           create_button               ( UIButton_t **pp_button )
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Button] Null pointer provided for \"pp_button\" in call to function \"%s\"\n",__FUNCTION__);
                 #endif
-                return -1;
+
+                // Error
+                return 0;
         }
 
         // Standard library errors
@@ -43,7 +45,9 @@ int           create_button               ( UIButton_t **pp_button )
                 #ifndef NDEBUG
                     ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
                 #endif
-                return -1;
+
+                // Error
+                return 0;
         }
     }
 }
@@ -420,7 +424,9 @@ int           destroy_button              ( UIButton_t  *p_button )
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Button] Null pointer provided for \"p_button\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-                return -1;
+
+                // Error
+                return 0;
         }
     }
 }

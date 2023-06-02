@@ -24,6 +24,7 @@ int main ( int argc, const char **argv )
     // Initialized data
     UIInstance_t *p_ui_instance = 0;
     UIWindow_t   *p_ui_window   = 0;
+    UIElement_t  *p_ui_element  = 0;
 
     // Initialize the UI library
     if ( ui_init(&p_ui_instance, "") == 0 )
