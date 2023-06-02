@@ -39,7 +39,7 @@ struct UIRadioButton_s
 };
 
 // Allocators
- /* !
+ /** !
   *  Allocate a UI Radio Butto
   *
   *  @param pp_radio_button : Pointer to pointer to radio button

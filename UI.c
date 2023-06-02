@@ -382,8 +382,8 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                     ui_print_error("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
-            // Error
-            return 0;
+                // Error
+                return 0;
         }
 
         // JSON Errors
@@ -758,7 +758,7 @@ int ui_process_input ( UIInstance_t *p_instance )
             }
             
             // Focus
-            if (SDL_GetWindowFlags(p_instance->windows_list[i]->window) & SDL_WINDOW_INPUT_FOCUS)
+            if ( SDL_GetWindowFlags(p_instance->windows_list[i]->window) & SDL_WINDOW_INPUT_FOCUS )
             {
                 p_instance->active_window = p_instance->windows_list[i];
             }

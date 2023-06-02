@@ -41,7 +41,7 @@ struct UIDropdown_s
 
 // Allocators
 
- /* !
+ /** !
   *  Allocate a UI Dropdown
   *
   *  @param pp_dropdown : Pointer to pointer to dropdown struct

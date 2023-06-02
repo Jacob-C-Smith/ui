@@ -37,7 +37,7 @@ struct UIElement_s
 
 // Allocators 
 
- /* !
+ /** !
   *  Allocate a UI Element
   *
   *  @param pp_element : Pointer to pointer to element
@@ -50,7 +50,7 @@ DLLEXPORT int          create_element               ( UIElement_t **pp_element )
 
 // Constructors
 
- /* !
+ /** !
   *  Load a UI Button from a dict 
   *
   *  @param pp_element : Pointer to pointer to element
@@ -62,7 +62,7 @@ DLLEXPORT int          create_element               ( UIElement_t **pp_element )
   */
 DLLEXPORT int          load_element                 ( UIElement_t **pp_element, const char   path[] );
 
- /* !
+ /** !
   *  Load a UI Button from a JSON value
   *
   *  @param pp_element : Pointer to pointer to element

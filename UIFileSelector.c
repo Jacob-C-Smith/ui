@@ -1,4 +1,5 @@
 #include <UI/UIFileSelector.h>
+/*
 int update_ftab();
 int dirup_click  (UIButton_t *p_button, ui_mouse_state_t m);
 int select_click (UIButton_t *p_button, ui_mouse_state_t m);
@@ -141,4 +142,4 @@ int select_click (UIButton_t *p_button, ui_mouse_state_t m)
     filesel_callb(buf);
     p_ui_window->is_open = false;
     return 1;
-}
+}*/

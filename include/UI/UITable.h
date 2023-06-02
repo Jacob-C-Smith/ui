@@ -38,7 +38,7 @@ struct UITable_s
 
 // Allocators
 
- /* !
+ /** !
   *  Allocate a UI Table
   *
   *  @param pp_table : Pointer to pointer to table
@@ -50,7 +50,7 @@ struct UITable_s
 DLLEXPORT int           create_table               ( UITable_t  **pp_table );
 
 // Constructors
- /* !
+ /** !
   *  Load a UI Table from a dict 
   *
   *  @param pp_table     : Pointer to pointer to table
@@ -64,7 +64,7 @@ DLLEXPORT int           load_table_as_json_value   ( UITable_t  **pp_table, JSON
 
 
 // Callbacks
-/* !
+/** !
   *  Fire each hover callbacks. 
   *
   *  @param p_table    : Pointer to table
@@ -77,7 +77,7 @@ DLLEXPORT int           load_table_as_json_value   ( UITable_t  **pp_table, JSON
   */
 DLLEXPORT int           hover_table                ( UITable_t   *p_table, ui_mouse_state_t mouse_state );
 
-/* !
+/** !
   *  Fire each click callbacks. 
   *
   *  @param p_table    : Pointer to table
@@ -90,7 +90,7 @@ DLLEXPORT int           hover_table                ( UITable_t   *p_table, ui_mo
   */
 DLLEXPORT int           click_table                ( UITable_t   *p_table, ui_mouse_state_t mouse_state );
 
-/* !
+/** !
   *  Fire each release callbacks. 
   *
   *  @param p_table    : Pointer to table
@@ -104,7 +104,7 @@ DLLEXPORT int           click_table                ( UITable_t   *p_table, ui_mo
 DLLEXPORT int           release_table              ( UITable_t   *p_table , ui_mouse_state_t mouse_state );
 
 // Add callbacks
-/* !
+/** !
   *  Add a click callback.
   *
   *  @param p_table : Pointer to table
@@ -117,7 +117,7 @@ DLLEXPORT int           release_table              ( UITable_t   *p_table , ui_m
   */
 DLLEXPORT int           add_click_callback_table   ( UITable_t   *p_table , void (*callback) ( UITable_t*, ui_mouse_state_t ) );
 
-/* !
+/** !
   *  Add a hover callback.
   *
   *  @param p_table : Pointer to table
@@ -130,7 +130,7 @@ DLLEXPORT int           add_click_callback_table   ( UITable_t   *p_table , void
   */
 DLLEXPORT int           add_hover_callback_table   ( UITable_t   *p_table, void (*callback) ( UITable_t*, ui_mouse_state_t ) );
 
-/* !
+/** !
   *  Add a release callback.
   *
   *  @param p_table : Pointer to table
@@ -148,7 +148,7 @@ DLLEXPORT char         *get_table_cell ( UITable_t   *p_table, size_t x, size_t 
 DLLEXPORT int           set_table_cell ( UITable_t   *p_table, size_t x, size_t y, char *cell_text );
 
 // Drawing
-/* !
+/** !
   *  Draw a UI table.
   *
   *  @param window  : Pointer to UI window
@@ -161,7 +161,7 @@ DLLEXPORT int           set_table_cell ( UITable_t   *p_table, size_t x, size_t 
 DLLEXPORT int           draw_table                 ( UIWindow_t   *window   , UITable_t *p_table );
 
 // Collision
-/* !
+/** !
   *  Checks for pointer table overlap
   * 
   *  @param p_table    : Pointer to table
@@ -172,7 +172,7 @@ DLLEXPORT int           draw_table                 ( UIWindow_t   *window   , UI
 DLLEXPORT bool          table_in_bounds            ( UITable_t   *p_table, ui_mouse_state_t mouse_state );
 
 // Deallocators
-/* !
+/** !
   *  Deallocates a table and its contents
   *  @param p_table    : Pointer to table
   *

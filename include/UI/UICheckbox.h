@@ -39,7 +39,7 @@ struct UICheckbox_s
 };
 
 // Allocators
- /* !
+ /** !
   *  Allocate a UI Checkbox
   *
   *  @param pp_checkbox : Pointer to pointer to checkbox

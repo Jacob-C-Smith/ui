@@ -64,7 +64,7 @@ struct UIInstance_s {
 };
 
 // Initializers
-/* !
+/** !
  *  Initialize UI. If path is null, a config file will be loaded from the user's home directory. 
  *  If no config file exists, a default config file will be generated.
  *
@@ -75,10 +75,10 @@ struct UIInstance_s {
  *
  *  @return 1 on success, 0 on error.
  */
-DLLEXPORT int           ui_init             ( UIInstance_t    **pp_instance, const char *path );
+DLLEXPORT int ui_init ( UIInstance_t **pp_instance, const char *path );
 
 // ANSI colored prints
-/* !
+/** !
  *  printf in ANSI blue
  *
  *  @param format : printf format text
@@ -89,9 +89,9 @@ DLLEXPORT int           ui_init             ( UIInstance_t    **pp_instance, con
  *
  *  @return 1 on success, 0 on error.
  */
-DLLEXPORT int           ui_print_log        ( const char* const format  , ... );
+DLLEXPORT int ui_print_log ( const char* const format, ... );
 
-/* !
+/** !
   *  printf in ANSI yellow
   *
   *  @param format : printf format text
@@ -102,9 +102,9 @@ DLLEXPORT int           ui_print_log        ( const char* const format  , ... );
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_print_warning    ( const char* const format  , ... );
+DLLEXPORT int ui_print_warning ( const char* const format, ... );
 
-/* !
+/** !
   *  printf in ANSI red
   *
   *  @param format : printf format text
@@ -115,10 +115,10 @@ DLLEXPORT int           ui_print_warning    ( const char* const format  , ... );
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           ui_print_error      ( const char* const format  , ... );
+DLLEXPORT int ui_print_error ( const char* const format, ... );
 
 // Text drawing
-/* !
+/** !
   *  Graphical printf
   *
   *  @param format : printf format text
@@ -132,10 +132,10 @@ DLLEXPORT int           ui_print_error      ( const char* const format  , ... );
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           ui_draw_format_text ( const char* const format  , UIWindow_t *p_window, int x, int y, int size, ... );
+DLLEXPORT int ui_draw_format_text ( const char* const format, UIWindow_t *p_window, int x, int y, int size, ... );
 
 // Text drawing
-/* !
+/** !
   *  Graphical puts
   *
   *  @param format : printf format text
@@ -148,9 +148,9 @@ DLLEXPORT int           ui_draw_format_text ( const char* const format  , UIWind
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_draw_text        ( const char* const text    , UIWindow_t *p_window, int x, int y, int size );
+DLLEXPORT int ui_draw_text ( const char* const text, UIWindow_t *p_window, int x, int y, int size );
 
-/* !
+/** !
   *  Draw a circle
   *
   *  @param radius : printf format text
@@ -160,10 +160,10 @@ DLLEXPORT int           ui_draw_text        ( const char* const text    , UIWind
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_draw_circle      ( int               radius  , UIWindow_t *p_window, int x, int y );
+DLLEXPORT int ui_draw_circle ( int radius, UIWindow_t *p_window, int x, int y );
 
 // Window operations
-/* !
+/** !
   *  Append a window to an instance
   *
   *  @param instance : Pointer to instance
@@ -171,9 +171,9 @@ DLLEXPORT int           ui_draw_circle      ( int               radius  , UIWind
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_append_window    ( UIInstance_t     *p_instance, UIWindow_t *p_window );
+DLLEXPORT int ui_append_window ( UIInstance_t *p_instance, UIWindow_t *p_window );
 
-/* !
+/** !
   *  Remove a window
   *
   *  @param instance : Pointer to instance
@@ -181,28 +181,28 @@ DLLEXPORT int           ui_append_window    ( UIInstance_t     *p_instance, UIWi
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT UIWindow_t   *ui_remove_window    ( UIInstance_t     *p_instance, const char *name );
+DLLEXPORT UIWindow_t *ui_remove_window ( UIInstance_t *p_instance, const char *name );
 
-/* !
+/** !
   *  Process active window input
   *
   *  @param instance : Pointer to instance
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_process_input    ( UIInstance_t     *p_instance );
+DLLEXPORT int ui_process_input ( UIInstance_t *p_instance );
 
-/* !
+/** !
   *  Draw the active window
   *
   *  @param instance : Pointer to instance
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_draw             ( UIInstance_t     *p_instance );
+DLLEXPORT int ui_draw ( UIInstance_t *p_instance );
 
 // Image drawing
-/* !
+/** !
   *  Get the active instance
   *
   *  @return active instance for this process ID
@@ -210,7 +210,7 @@ DLLEXPORT int           ui_draw             ( UIInstance_t     *p_instance );
 DLLEXPORT UIInstance_t *ui_get_active_instance ( void );
 
 // File I/O
-/* !
+/** !
   *  Load a file
   *
   *  @param path   : File path
@@ -219,14 +219,14 @@ DLLEXPORT UIInstance_t *ui_get_active_instance ( void );
   * 
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT size_t        ui_load_file        ( const char       *path    , void       *buffer, bool binary );
+DLLEXPORT size_t ui_load_file ( const char *path, void *buffer, bool binary );
 
 // Exit
-/* !
+/** !
   *  Shutdown the UI
   *
   *  @param instance : Pointer to instance
   *
   *  @return 0 on success, -1 on error.
   */
-DLLEXPORT int           ui_exit             ( UIInstance_t     **pp_instance );
+DLLEXPORT int ui_exit ( UIInstance_t **pp_instance );

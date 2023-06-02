@@ -10,10 +10,10 @@ int click (UILabel_t *p_label, ui_mouse_state_t mouse_state)
    return 1;
 }
 
-int file_selector_callback(char *path)
+int fun ( UIWindow_t *p_window, char *path )
 {
-    printf(path);
-    
+
+    printf("%s got %s", p_window->title, path);
     return 1;
 }
 
@@ -36,9 +36,7 @@ int main ( int argc, const char **argv )
     // Add the window to the instance
     ui_append_window(p_ui_instance, p_ui_window);
 
-    file_selector("/Users/jacobsmith/Desktop/C/", file_selector_callback);
-
-    add_click_callback_element(find_element(p_ui_window, "label"), &click);
+    set_file_drop_operation(p_ui_window, &fun);
 
     // UI Loop
     while ( /* Specify your exit condition, for instance */ p_ui_instance->running )

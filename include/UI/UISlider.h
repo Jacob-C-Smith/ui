@@ -36,7 +36,7 @@ struct UISlider_s
 
 // Allocators
 
- /* !
+ /** !
   *  Allocate a UI Slider
   *
   *  @param pp_slider : Pointer to pointer to slider
@@ -48,7 +48,7 @@ struct UISlider_s
 DLLEXPORT int           create_slider               ( UISlider_t  **pp_slider );
 
 // Constructors
- /* !
+ /** !
   *  Load a UI Slider from a dict 
   *
   *  @param pp_slider : Pointer to pointer to slider
@@ -62,7 +62,7 @@ DLLEXPORT int           load_slider_as_json_value         ( UISlider_t **pp_slid
 
 // Callbacks
 
-/* !
+/** !
   *  Fire each hover callback. 
   *
   *  @param p_slider    : Pointer to slider
@@ -75,7 +75,7 @@ DLLEXPORT int           load_slider_as_json_value         ( UISlider_t **pp_slid
   */
 DLLEXPORT int           hover_slider                ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state );
 
-/* !
+/** !
   *  Fire each click callback. 
   *
   *  @param p_slider    : Pointer to slider
@@ -88,7 +88,7 @@ DLLEXPORT int           hover_slider                ( UISlider_t     *p_slider ,
   */
 DLLEXPORT int           click_slider                ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state );
 
-/* !
+/** !
   *  Fire each release callback. 
   *
   *  @param p_slider    : Pointer to slider
@@ -103,7 +103,7 @@ DLLEXPORT int           release_slider              ( UISlider_t     *p_slider ,
 
 // Add callbacks
 
-/* !
+/** !
   *  Add a click callback.
   *
   *  @param p_slider : Pointer to slider
@@ -116,7 +116,7 @@ DLLEXPORT int           release_slider              ( UISlider_t     *p_slider ,
   */
 DLLEXPORT int           add_click_callback_slider   ( UISlider_t     *p_slider , void (*callback) ( UISlider_t*, ui_mouse_state_t ) );
 
-/* !
+/** !
   *  Add a hover callback.
   *
   *  @param p_slider : Pointer to slider
@@ -129,7 +129,7 @@ DLLEXPORT int           add_click_callback_slider   ( UISlider_t     *p_slider ,
   */
 DLLEXPORT int           add_hover_callback_slider   ( UISlider_t     *p_slider , void (*callback) ( UISlider_t*, ui_mouse_state_t ) );
 
-/* !
+/** !
   *  Add a release callback.
   *
   *  @param p_slider : Pointer to slider
@@ -143,7 +143,7 @@ DLLEXPORT int           add_hover_callback_slider   ( UISlider_t     *p_slider ,
 DLLEXPORT int           add_release_callback_slider ( UISlider_t     *p_slider , void (*callback) ( UISlider_t*, ui_mouse_state_t ) );
 
 // Drawing
-/* !
+/** !
   *  Draw a UI slider.
   *
   *  @param window   : Pointer to UI window
@@ -156,7 +156,7 @@ DLLEXPORT int           add_release_callback_slider ( UISlider_t     *p_slider ,
 DLLEXPORT int           draw_slider                 ( UIWindow_t   *window   , UISlider_t *p_slider );
 
 // Collision
-/* !
+/** !
   *  Checks for pointer slider overlap
   * 
   *  @param p_slider    : Pointer to slider
@@ -167,7 +167,7 @@ DLLEXPORT int           draw_slider                 ( UIWindow_t   *window   , U
 DLLEXPORT bool          slider_in_bounds            ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state );
 
 // Deallocators
-/* !
+/** !
   *  Deallocates a slider and its contents
   *  @param p_slider    : Pointer to slider
   *
