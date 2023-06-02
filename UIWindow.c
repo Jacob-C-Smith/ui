@@ -653,7 +653,12 @@ int process_window_input ( UIWindow_t *p_window )
 
 						for (size_t i = p_window->element_count; i > 0; i--)
 							if (strcmp(p_window->element_data[(last_i + i) % p_window->element_count]->type, "TEXT INPUT") == 0)
+							{
+								if ( p_window->element_data[(last_i + i) % p_window->element_count]->draw == false )
+									continue;
+									
 								p_window->last = p_window->element_data[(last_i + i) % p_window->element_count];
+							}
 					}
 			}
 
