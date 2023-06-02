@@ -15,12 +15,8 @@ int create_label ( UILabel_t **pp_label )
 	UILabel_t *p_label = calloc(1, sizeof(UILabel_t));
 	
 	// Error checking
-	{
-		#ifndef NDEBUG
-			if (p_label == (void*)0)
-				goto no_mem;
-		#endif
-	}
+	if ( p_label == (void *) 0 )
+		goto no_mem;
 	
 	// Return
 	*pp_label = p_label;
@@ -69,23 +65,24 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 	}
 
 	// Initialized data
+	UIInstance_t *p_instance = ui_get_active_instance();
 	UILabel_t *p_label = 0;
 	char      *text    = 0;
 	signed     x       = 0,
 		       y       = 0,
 		       size    = 0;
+	JSONValue_t *p_color = 0;
 
 	// Get properties from the dictionary
     if (p_value->type == JSONobject)
     {
 
-        // Initialized data
-        dict *p_dict = p_value->object;
+        text    = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "text")), JSONstring);
+        x       = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "x"))   , JSONinteger);
+		y       = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "y"))   , JSONinteger);
+		size    = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "size")), JSONinteger);
+		p_color = dict_get(p_value->object, "color");
 
-        text = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "text")), JSONstring);
-        x    = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))   , JSONinteger);
-		y    = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))   , JSONinteger);
-		size = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "size")), JSONinteger);
     }
 
 	// Error checking
@@ -118,6 +115,35 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 			strncpy(p_label->text, text, label_text_len);
 		}
 
+		// Set the label color
+		if ( p_color )
+		{
+
+			// Initialized data
+			JSONValue_t *p_colors[3] = { 0, 0, 0 };
+			size_t       len = 0;
+			size_t       p_bytes[3] = { 0, 0, 0 };
+
+			array_get(p_color->list, 0, &len);
+
+			if ( len != 3 )
+				goto wrong_color_length;
+			
+			array_get(p_color->list, &p_colors, 0);
+
+			for (size_t i = 0; i < 3; i++)
+				p_bytes[i] = p_colors[i]->integer;
+			
+			color c = 0;
+			c |= p_bytes[0];
+			c |= p_bytes[1] << 8;
+			c |= p_bytes[2] << 16;
+
+			p_label->c = c;
+		}
+		else
+			p_label->c = p_instance->primary;
+
 		// Set the label x, y, and size
 		p_label->x    = x;
 		p_label->y    = y;
@@ -129,6 +155,9 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 
 	// Success
 	return 1;
+
+	wrong_color_length:
+		return 0;
 
 	// Error handling
 	{
@@ -186,7 +215,7 @@ int draw_label ( UIWindow_t *p_window, UILabel_t* p_label )
 	{
 
 		// Set the draw color
-		SDL_SetRenderDrawColor(p_window->renderer, (u8)p_instance->primary, (u8)(p_instance->primary >> 8), (u8)(p_instance->primary >> 16), 0xff);
+		SDL_SetRenderDrawColor(p_window->renderer, (u8)p_label->c, (u8)(p_label->c >> 8), (u8)(p_label->c >> 16), 0xff);
 
 		// Draw the label text
 		ui_draw_text(p_label->text, p_window, p_label->x, p_label->y, p_label->size);

@@ -19,6 +19,7 @@ struct UILabel_s
              height,
              size;
     bool     hidden;
+    color    c;
     
     // Callbacks
     size_t   on_click_count,   on_click_max,
