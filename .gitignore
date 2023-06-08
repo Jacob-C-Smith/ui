@@ -4,7 +4,6 @@ build/
 .vscode
 cmake_install.cmake
 CMakeFiles/
-ui_example
 Makefile
 lib/
 CMakeCache.txt
