@@ -43,29 +43,24 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t
 
 	// Initialized data
 	UIDropdown_t *p_dropdown = 0;
-	array        *p_options  = 0;
-	signed        x          = 0,
-		          y          = 0,
-                  index      = 0;
-    JSONValue_t **pp_options = 0;
+    JSONValue_t **pp_options = 0,
+                 *p_options  = 0,
+                 *p_x        = 0,
+                 *p_y        = 0,
+                 *p_index    = 0;
 
 	// Get properties from the dictionary
-    if (p_value->type == JSONobject)
+    if ( p_value->type == JSONobject )
     {
 
         // Initialized data
         dict *p_dict = p_value->object;
 
-        p_options = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "options")), JSONarray);
-        x         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))      , JSONinteger);
-		y         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))      , JSONinteger);
-        index     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "index"))  , JSONinteger);
+        p_options = dict_get(p_dict, "options");
+        p_x       = dict_get(p_dict, "x");
+		p_y       = dict_get(p_dict, "y");
+        p_index   = dict_get(p_dict, "index");
     }
-
-	// Error checking
-	{
-		// TODO
-	}
 
 	// Construct the dropdown
 	{
@@ -75,18 +70,19 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t
 			goto failed_to_allocate_label;
 
         // Set the options
+        if ( p_options->type == JSONarray)
         {
 
             // Initialized data
             size_t options_count = 0;
 
-            array_get(p_options, 0, &options_count);
+            array_get(p_options->list, 0, &options_count);
 
             pp_options  = calloc(options_count, sizeof(JSONValue_t *));
 
             p_dropdown->options = calloc(options_count, sizeof(char *));
 
-            array_get(p_options, pp_options, 0);
+            array_get(p_options->list, pp_options, 0);
 
             for (size_t i = 0; i < options_count; i++)
             {
@@ -111,10 +107,29 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t
             p_dropdown->options_count = options_count;
         }
 
-		// Set the label x, y, and size
-		p_dropdown->x     = x;
-		p_dropdown->y     = y;
-        p_dropdown->index = index;
+		// Set the x
+        if ( p_x->type == JSONinteger)
+		    p_dropdown->x = p_x->integer;
+        // Default
+        else
+            goto wrong_x_type;
+
+		// Set the y
+        if ( p_y->type == JSONinteger)
+		    p_dropdown->y = p_y->integer;
+        // Default
+        else
+            goto wrong_y_type;
+        
+        // Set the index
+        if ( p_index )
+        {
+            if ( p_index->type == JSONinteger)
+		        p_dropdown->index = p_index->integer;
+            // Default
+            else
+                goto wrong_index_type;
+        }
         p_dropdown->collapsed = true;
 	}
 
@@ -123,7 +138,10 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t
 
 	// Success
 	return 1;
-
+    wrong_x_type:
+    wrong_y_type:
+    wrong_index_type:
+        return 0;
 	// Error handling
 	{
 

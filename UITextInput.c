@@ -13,29 +13,83 @@ int create_text_input(UITextInput_t** pp_text_input)
 
 int load_text_input_as_json_value ( UITextInput_t **pp_text_input, JSONValue_t *p_value )
 {
-	char *placeholder = 0,
-		 *text        = 0,
-		 *x           = 0,
-		 *y           = 0,
-		 *width       = 0,
-		 *height      = 0,
-		 *buffer_len  = 0;
+	JSONValue_t *p_placeholder = 0,
+		        *p_text        = 0,
+		        *p_x           = 0,
+		        *p_y           = 0,
+		        *p_buffer_len  = 0;
 
 	// Parse JSON
 	{
 
 		dict *p_dict = p_value->object;
 
-		placeholder = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "placeholder")), JSONstring);
-        text        = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "text")       ), JSONstring);
-        x           = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "x")          ), JSONinteger);
-        y           = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "y")          ), JSONinteger);
-        buffer_len  = JSON_VALUE(((JSONValue_t *) dict_get(p_dict, "length")     ), JSONinteger);
+		p_placeholder = dict_get(p_dict, "placeholder");
+        p_text        = dict_get(p_dict, "text");
+        p_x           = dict_get(p_dict, "x");
+        p_y           = dict_get(p_dict, "y");
+        p_buffer_len  = dict_get(p_dict, "length");
 
 	}
 
-	construct_text_input(pp_text_input, placeholder, text, x, y, buffer_len);
+	// Construct the text input
+	{
 
+		// Initialized data
+		char  *placeholder = 0,
+		      *text        = 0;
+		i32    x           = 0,
+		       y           = 0;
+		size_t buffer_len  = 0;
+
+		// Set the placeholder
+		if ( p_placeholder->type == JSONstring )
+			placeholder = p_placeholder->string;
+		// Default
+		else
+			goto wrong_placeholder_type;
+		
+		// Set the text
+		if ( p_text )
+		{
+			if ( p_text->type == JSONstring )
+				text = p_text->string;
+			// Default
+			else
+				goto wrong_text_type;
+		}
+		// Set the x
+		if ( p_x->type == JSONinteger )
+			x = p_x->integer;
+		// Default
+		else
+			goto wrong_x_type;
+
+		// Set the y
+		if ( p_y->type == JSONinteger )
+			y = p_y->integer;
+		// Default
+		else
+			goto wrong_y_type;
+
+		// Set the buffer length
+		if ( p_buffer_len->type == JSONinteger )
+			buffer_len = p_buffer_len->integer;
+		// Default
+		else
+			goto wrong_buffer_len_type;
+
+		if ( construct_text_input(pp_text_input, placeholder, text, x, y, buffer_len) == 0 ) 
+			goto failed_to_construct_text_input;
+	}
+
+	return 1;
+wrong_placeholder_type:
+wrong_text_type:
+wrong_x_type:
+wrong_y_type:
+wrong_buffer_len_type:
+failed_to_construct_text_input:
 	return 0;
 }
 

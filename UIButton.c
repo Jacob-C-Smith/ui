@@ -66,10 +66,10 @@ int           load_button_as_json_value         ( UIButton_t **pp_button, JSONVa
 	}
 
 	// Initialized data
-	UIButton_t *p_button = 0;
-	char       *label    = 0;
-	signed      x        = 0,
-		        y        = 0;
+	UIButton_t  *p_button = 0;
+	JSONValue_t *p_label  = 0,
+	            *p_x      = 0,
+		        *p_y      = 0;
 
 	// Get properties from the dictionary
     if (p_value->type == JSONobject)
@@ -78,18 +78,10 @@ int           load_button_as_json_value         ( UIButton_t **pp_button, JSONVa
         // Initialized data
         dict *p_dict = p_value->object;
 
-        label = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "label")), JSONstring);
-        x     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))   , JSONinteger);
-		y     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))   , JSONinteger);
+        p_label = dict_get(p_dict, "label");
+        p_x     = dict_get(p_dict, "x");
+		p_y     = dict_get(p_dict, "y");
     }
-
-	// Error checking
-	{
-		#ifndef NDEBUG
-			//if((label && x && y))
-			//	goto no_x;
-		#endif
-	}
 
 	// Construct the label
 	{
@@ -99,23 +91,38 @@ int           load_button_as_json_value         ( UIButton_t **pp_button, JSONVa
 			goto failed_to_allocate_label;
 
 		// Copy the label text
-		{
+		if ( p_label->type == JSONstring )
+        {
 
 			// Initialized data
-			size_t label_text_len = strlen(label);
+			size_t label_text_len = strlen(p_label->string);
 
 			// Allocate memory for the label text
 			p_button->label = calloc(label_text_len+1, sizeof(char));
 
-			// TODO: Check memory
+			// Error checking
+            if ( p_button->label == (void *) 0 )
+                goto no_mem;
 
 			// Copy the string
-			strncpy(p_button->label, label, label_text_len);
+			strncpy(p_button->label, p_label->string, label_text_len);
 		}
+        // Default
+        else
+            goto wrong_label_type;
 
-		// Set the label x, y, and size
-		p_button->x    = x;
-		p_button->y    = y;
+		// Set the x
+        if ( p_x->type == JSONinteger )
+		    p_button->x = p_x->integer;
+        else
+            goto wrong_x_type;
+        
+		// Set the y
+		if ( p_y->type == JSONinteger )
+		    p_button->y = p_y->integer;
+        else
+            goto wrong_y_type;
+        
 	}
 
 	// Return
@@ -123,7 +130,12 @@ int           load_button_as_json_value         ( UIButton_t **pp_button, JSONVa
 
 	// Success
 	return 1;
-
+    
+    no_mem:
+    wrong_label_type:
+    wrong_x_type:
+    wrong_y_type:
+        return 0;
 	// Error handling
 	{
 

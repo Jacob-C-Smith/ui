@@ -58,12 +58,12 @@ int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, JSONValue_t *p_val
 
 	// Initialized data
 	UICheckbox_t *p_checkbox = 0;
-	array        *p_labels   = 0,
-                 *p_checked  = 0;
-	signed        x          = 0,
-		          y          = 0;
-    JSONValue_t **pp_labels  = 0,
-                **pp_checked = 0;
+	JSONValue_t  *p_labels   = 0,
+                 *p_checked  = 0,
+                **pp_labels  = 0,
+                **pp_checked = 0,
+                 *p_x        = 0,
+                 *p_y        = 0;
 
 	// Get properties from the dictionary
     if (p_value->type == JSONobject)
@@ -72,10 +72,10 @@ int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, JSONValue_t *p_val
         // Initialized data
         dict *p_dict = p_value->object;
 
-        p_labels  = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "labels")), JSONarray);
-        p_checked = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "checked")), JSONarray);
-        x         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))   , JSONinteger);
-		y         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))   , JSONinteger);
+        p_labels  = dict_get(p_dict, "labels");
+        p_checked = dict_get(p_dict, "checked");
+        p_x       = dict_get(p_dict, "x");
+		p_y       = dict_get(p_dict, "y");
     }
 
 	// Error checking
@@ -91,12 +91,13 @@ int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, JSONValue_t *p_val
 			goto failed_to_allocate_label;
 
         // Set the labels and checks
+        if ( p_labels->type == JSONarray)
         {
 
             // Initialized data
             size_t labels_count = 0;
 
-            array_get(p_labels, 0, &labels_count);
+            array_get(p_labels->list, 0, &labels_count);
 
             pp_labels  = calloc(labels_count, sizeof(JSONValue_t *));
             pp_checked = calloc(labels_count, sizeof(JSONValue_t *));
@@ -104,8 +105,8 @@ int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, JSONValue_t *p_val
             p_checkbox->labels = calloc(labels_count, sizeof(char *));
             p_checkbox->checks = calloc(labels_count, sizeof(bool));
 
-            array_get(p_labels, pp_labels, 0);
-            array_get(p_labels, pp_checked, 0);
+            array_get(p_labels->list, pp_labels, 0);
+            array_get(p_labels->list, pp_checked, 0);
 
             for (size_t i = 0; i < labels_count; i++)
             {
@@ -132,11 +133,19 @@ int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, JSONValue_t *p_val
             p_checkbox->label_count = labels_count;
         }
 
-    
+		// Set the x
+        if ( p_x->type == JSONinteger )
+		    p_checkbox->x = p_x->integer;
+        // Default
+        else
+            goto wrong_x_type;
 
-		// Set the label x, y, and size
-		p_checkbox->x    = x;
-		p_checkbox->y    = y;
+		// Set the y
+        if ( p_y->type == JSONinteger )
+		    p_checkbox->y = p_y->integer;
+        // Default
+        else
+            goto wrong_y_type;
 	}
 
 	// Return
@@ -144,6 +153,10 @@ int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, JSONValue_t *p_val
 
 	// Success
 	return 1;
+
+    wrong_x_type:
+    wrong_y_type:
+        return 0;
 
 	// Error handling
 	{

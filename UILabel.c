@@ -66,30 +66,33 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 
 	// Initialized data
 	UIInstance_t *p_instance = ui_get_active_instance();
-	UILabel_t *p_label = 0;
-	char      *text    = 0;
-	signed     x       = 0,
-		       y       = 0,
-		       size    = 0;
-	JSONValue_t *p_color = 0;
+	UILabel_t    *p_label    = 0;
+	JSONValue_t  *p_text     = 0,
+	             *p_x        = 0,
+		         *p_y        = 0,
+		         *p_size     = 0,
+	             *p_color    = 0;
 
 	// Get properties from the dictionary
     if (p_value->type == JSONobject)
     {
 
-        text    = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "text")), JSONstring);
-        x       = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "x"))   , JSONinteger);
-		y       = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "y"))   , JSONinteger);
-		size    = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "size")), JSONinteger);
-		p_color = dict_get(p_value->object, "color");
+		// Initialized data
+		dict *p_dict = p_value->object;
+
+        p_text  = dict_get(p_dict, "text");
+        p_x     = dict_get(p_dict, "x");
+		p_y     = dict_get(p_dict, "y");
+		p_size  = dict_get(p_dict, "size");
+		p_color = dict_get(p_dict, "color");
 
     }
 
 	// Error checking
 	{
 		#ifndef NDEBUG
-			if(!(text && x && y && size))
-				goto no_text;
+			if( ! ( p_text && p_x && p_y && p_size ) )
+				goto missing_properties;
 		#endif
 	}
 
@@ -101,18 +104,21 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 			goto failed_to_allocate_label;
 
 		// Copy the label text
+		if ( p_text->type == JSONstring )
 		{
 
 			// Initialized data
-			size_t label_text_len = strlen(text);
+			size_t label_text_len = strlen(p_text->string);
 
 			// Allocate memory for the label text
 			p_label->text = calloc(label_text_len+1, sizeof(char));
 
-			// TODO: Check memory
+			// Error check
+			if ( p_label->text == (void *) 0 )
+				goto no_mem;
 
 			// Copy the string
-			strncpy(p_label->text, text, label_text_len);
+			strncpy(p_label->text, p_text->string, label_text_len);
 		}
 
 		// Set the label color
@@ -144,10 +150,26 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 		else
 			p_label->c = p_instance->primary;
 
-		// Set the label x, y, and size
-		p_label->x    = x;
-		p_label->y    = y;
-		p_label->size = size;
+		// Set the x
+		if ( p_x->type == JSONinteger)
+			p_label->x = p_x->integer;
+		// Default
+		else
+			goto wrong_x_type;
+
+		// Set the y
+		if ( p_y->type == JSONinteger)
+			p_label->y = p_y->integer;
+		// Default
+		else
+			goto wrong_y_type;
+
+		// Set the size
+		if ( p_size->type == JSONinteger)
+			p_label->size = p_size->integer;
+		// Default
+		else
+			goto wrong_size_type;
 	}
 
 	// Return
@@ -157,6 +179,10 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 	return 1;
 
 	wrong_color_length:
+	wrong_x_type:
+	wrong_y_type:
+	wrong_size_type:
+	no_mem:
 		return 0;
 
 	// Error handling
@@ -186,7 +212,7 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 		// Insufficent data error
 		{
 			// TODO: 
-			no_text:
+			missing_properties:
 			no_x:
 			no_y:
 				return 0;

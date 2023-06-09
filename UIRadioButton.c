@@ -60,12 +60,11 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONVal
 
 	// Initialized data
 	UIRadioButton_t *p_radio_button = 0;
-	array           *p_labels       = 0,
-                    *p_checked      = 0;
-	signed           x              = 0,
-		             y              = 0,
-                     index          = 0;
-    JSONValue_t    **pp_labels      = 0,
+	JSONValue_t     *p_labels       = 0,
+	                *p_x            = 0,
+		            *p_y            = 0,
+                    *p_index        = 0,
+                   **pp_labels      = 0,
                    **pp_checked     = 0;
 
 	// Get properties from the dictionary
@@ -75,16 +74,11 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONVal
         // Initialized data
         dict *p_dict = p_value->object;
 
-        p_labels  = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "labels")), JSONarray);
-        x         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))     , JSONinteger);
-		y         = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))     , JSONinteger);
-        index     = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "index")) , JSONinteger);
+        p_labels  = dict_get(p_dict, "labels");
+        p_x       = dict_get(p_dict, "x");
+		p_y       = dict_get(p_dict, "y");
+        p_index   = dict_get(p_dict, "index");
     }
-
-	// Error checking
-	{
-		// TODO
-	}
 
 	// Construct the checkbox
 	{
@@ -94,46 +88,79 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONVal
 			goto failed_to_allocate_label;
 
         // Set the labels and checks
+        if ( p_labels->type == JSONarray)
         {
 
             // Initialized data
             size_t labels_count = 0;
 
-            array_get(p_labels, 0, &labels_count);
-
-            pp_labels  = calloc(labels_count, sizeof(JSONValue_t *));
-
-            p_radio_button->labels = calloc(labels_count, sizeof(char *));
-
-            array_get(p_labels, pp_labels, 0);
-
-            for (size_t i = 0; i < labels_count; i++)
+            // Dump the contents of the array
             {
 
-                // Copy the label
-                {
+                // Get the size of the array
+                array_get(p_labels->list, 0, &labels_count);
 
-                    // Initialized data
-                    size_t len = strlen(pp_labels[i]->string);
+                // Allocate memory for arrays
+                pp_labels = calloc(labels_count, sizeof(JSONValue_t *));
+                p_radio_button->labels = calloc(labels_count, sizeof(char *));
 
-                    if (len > p_radio_button->longest_label)
-                        p_radio_button->longest_label = len;
+                // Error checking
+                if ( pp_labels == (void *) 0 )
+                    goto no_mem;
+                if ( p_radio_button->labels == (void *) 0 )
+                    goto no_mem;
+                
+                // Dump the array
+                array_get(p_labels->list, pp_labels, 0);
+            }
 
-                    // Allocate memory for label text
-                    p_radio_button->labels[i] = calloc(len+1, sizeof(char));
-                    
-                    // Copy the string
-                    strncpy(p_radio_button->labels[i], pp_labels[i]->string, len);
-                }
+            // Iterate over each label
+            for (size_t i = 0; i < labels_count; i++)
+
+            // Copy the label
+            {
+                
+                // Initialized data
+                size_t len = strlen(pp_labels[i]->string);
+
+                if ( len > p_radio_button->longest_label )
+                    p_radio_button->longest_label = len;
+
+                // Allocate memory for label text
+                p_radio_button->labels[i] = calloc(len+1, sizeof(char));
+                
+                // Error checking
+                if ( p_radio_button->labels[i] == (void *) 0 )
+                    goto no_mem;
+
+                // Copy the string
+                strncpy(p_radio_button->labels[i], pp_labels[i]->string, len);
             }
             
             p_radio_button->label_count = labels_count;
         }
 
-		// Set the label x, y, and index
-		p_radio_button->x     = x;
-		p_radio_button->y     = y;
-        p_radio_button->index = index;
+		// Set the x
+        if ( p_x->type == JSONinteger )
+		    p_radio_button->x = p_x->integer;
+        // Default
+        else
+            goto wrong_x_type;
+        
+        // Set the y
+        if ( p_y->type == JSONinteger )
+		    p_radio_button->y = p_y->integer;
+        // Default
+        else
+            goto wrong_y_type;
+
+		// Set the index
+        if ( p_index->type == JSONinteger )
+		    p_radio_button->index = p_index->integer;
+        // Default
+        else
+            goto wrong_index_type;
+
 	}
 
 	// Return
@@ -141,6 +168,12 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONVal
 
 	// Success
 	return 1;
+
+    no_mem:
+    wrong_x_type:
+    wrong_y_type:
+    wrong_index_type:
+        return 0;
 
 	// Error handling
 	{

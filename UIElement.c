@@ -24,7 +24,7 @@ void* load_callbacks[ELEMENT_COUNT] =
     load_label_as_json_value,
     load_radio_button_as_json_value,
     load_slider_as_json_value,
-    load_table_as_json_value,
+    0,//load_table_as_json_value,
     load_text_input_as_json_value
 };
 
@@ -37,7 +37,7 @@ void* click_callbacks[ELEMENT_COUNT] =
     click_label,
     click_radio_button,
     click_slider,
-    click_table,
+    0,//click_table,
     click_text_input
 };
 
@@ -50,7 +50,7 @@ void* hover_callbacks[ELEMENT_COUNT] =
     hover_label,
     hover_radio_button,
     hover_slider,
-    hover_table,
+    0,//hover_table,
     hover_text_input
 };
 
@@ -63,7 +63,7 @@ void* release_callbacks[ELEMENT_COUNT] =
     release_label,
     release_radio_button,
     release_slider,
-    release_table,
+    0,//release_table,
     release_text_input
 };
 
@@ -76,7 +76,7 @@ void* add_click_callbacks[ELEMENT_COUNT] =
     add_click_callback_label,
     add_click_callback_radio_button,
     add_click_callback_slider,
-    add_click_callback_table,
+    0,//add_click_callback_table,
     add_click_callback_text_input
 };
 
@@ -89,7 +89,7 @@ void* add_hover_callbacks[ELEMENT_COUNT] =
     add_hover_callback_label,
     add_hover_callback_radio_button,
     add_hover_callback_slider,
-    add_hover_callback_table,
+    0,//add_hover_callback_table,
     add_hover_callback_text_input
 };
 
@@ -102,7 +102,7 @@ void* add_release_callbacks[ELEMENT_COUNT] =
     add_release_callback_label,
     add_release_callback_radio_button,
     add_release_callback_slider,
-    add_release_callback_table,
+    0,//add_release_callback_table,
     add_release_callback_text_input
 };
 
@@ -115,7 +115,7 @@ void* draw_callback[ELEMENT_COUNT] =
     draw_label,
     draw_radio_button,
     draw_slider,
-    draw_table,
+    0,//draw_table,
     draw_text_input
 };
 
@@ -128,7 +128,7 @@ void* destructor_callback[ELEMENT_COUNT] =
     destroy_label,
     destroy_radio_button,
     destroy_slider,
-    destroy_table,
+    0,//destroy_table,
     destroy_text_input
 };
 
@@ -141,7 +141,7 @@ void* bounds_callback[ELEMENT_COUNT] =
     label_in_bounds,
     radio_button_in_bounds,
     slider_in_bounds,
-    table_in_bounds,
+    0,//table_in_bounds,
     text_input_in_bounds
 };
 
@@ -257,26 +257,30 @@ int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
     }
 
     // Initialized data
-    dict        *dictionary   = 0;
-    char        *type         = 0,
-                *name         = 0;
+    JSONValue_t *p_type = 0,
+                *p_name = 0;
 
     // Get properties from the dictionary
     if ( p_value->type == JSONobject )
     {
-        type = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "type")), JSONstring);
-        name = JSON_VALUE(((JSONValue_t *)dict_get(p_value->object, "name")), JSONstring);
+
+        // Initialized data
+        dict *p_dict = p_value->object;
+
+        p_type = dict_get(p_dict, "type");
+        p_name = dict_get(p_dict, "name");
 
         // Check for missing properties
-        if ( ! ( type && name ) )
+        if ( ! ( p_type && p_name ) )
             goto missing_properties;
     }
 
     // Construct the element
+    if ( p_type->type == JSONstring )
     {
         
         // Initialized data
-        int (*constructor)(void*, void*) = dict_get(load_lut, type);
+        int (*constructor)(void*, void*) = dict_get(load_lut, p_type->string);
 
         // Error checking
         {
@@ -290,7 +294,7 @@ int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
         (*constructor)((void*) &p_value, p_value);
 
         // Construct the element
-        construct_element(pp_element, name, type, p_value);
+        construct_element(pp_element, p_name->string, p_type->string, p_value);
     }
 
     // Success
@@ -328,7 +332,7 @@ int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
         {
             not_implemented:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Element] Failed to call constructor for type \"%s\" in call to function \"%s\"\n", type, __FUNCTION__);
+                    ui_print_error("[UI] [Element] Failed to call constructor for type \"%s\" in call to function \"%s\"\n", p_type->string, __FUNCTION__);
                 #endif
 
                 // Error

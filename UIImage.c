@@ -69,12 +69,12 @@ int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 	}
 
 	// Initialized data
-	UIImage_t *p_image = 0;
-	signed    *x       = 0,
-		      *y       = 0,
-		      *width   = 0,
-		      *height  = 0;
-	char      *path    = 0;
+	UIImage_t   *p_image  = 0;
+	JSONValue_t *p_x      = 0,
+		        *p_y      = 0,
+		        *p_width  = 0,
+		        *p_height = 0,
+	            *p_path   = 0;
 
 	// Parse JSON
 	if ( p_value->type == JSONobject ){
@@ -83,11 +83,11 @@ int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 		dict *p_dict = p_value->object;
 
 		// Get values for constructing the ui image
-		x      = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x")     ), JSONinteger);
-		y      = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y")     ), JSONinteger);
-		width  = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "width") ), JSONinteger);
-		height = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "height")), JSONinteger);
-		path   = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "path")  ), JSONstring);
+		p_x      = dict_get(p_dict, "x");
+		p_y      = dict_get(p_dict, "y");
+		p_width  = dict_get(p_dict, "width");
+		p_height = dict_get(p_dict, "height");
+		p_path   = dict_get(p_dict, "path");
 
 	}
 
@@ -96,7 +96,7 @@ int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 
 		// Initialized data
 		UIInstance_t *p_instance = ui_get_active_instance();
-        SDL_Texture  *t          = IMG_LoadTexture(p_instance->load_window->renderer, path);
+        SDL_Texture  *t          = IMG_LoadTexture(p_instance->load_window->renderer, p_path->string);
 
 		// Error check
 		if(t == 0)
@@ -109,10 +109,35 @@ int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 			goto faield_to_allocate_image;
 		
 		// Set the image data
-        p_image->x       = x,
-        p_image->y       = y,
-        p_image->width   = width,
-        p_image->height  = height;
+
+		// Set the x
+		if ( p_x->type == JSONinteger)
+        	p_image->x = p_x->integer;
+		// Default
+		else
+			goto wrong_x_type;
+
+		// Set the y
+		if ( p_y->type == JSONinteger)
+        	p_image->y = p_y->integer;
+		// Default
+		else
+			goto wrong_y_type;
+			
+		// Set the width
+		if ( p_width->type == JSONinteger)
+        	p_image->width = p_width->integer;
+		// Default
+		else
+			goto wrong_width_type;
+
+		// Set the height
+		if ( p_height->type == JSONinteger)
+        	p_image->height = p_height->integer;
+		// Default
+		else
+			goto wrong_height_type;
+
         p_image->texture = t;
 	}
 	
@@ -121,7 +146,12 @@ int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 
 	// Success
 	return 1;
-
+	wrong_x_type:
+	wrong_y_type:
+	wrong_width_type:
+	wrong_height_type:
+		return 0;
+		
 	// Error handling
 	{
 

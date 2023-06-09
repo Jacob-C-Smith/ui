@@ -35,13 +35,13 @@ find_library(json  NAMES json  HINTS ${CMAKE_SOURCE_DIR}/extern/json/build/Debug
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
 
 # Add source to this project's executable.
-add_executable (ui_example "UI.c" "UIFileSelector.c" "UIWindow.c" "UIButton.c" "UIImage.c" "UICheckbox.c" "UIDropdown.c" "UIElement.c" "UIRadioButton.c" "UILabel.c" "UISlider.c" "UITable.c" "UITextInput.c" "main.c") #     
+add_executable (ui_example "UI.c" "UIFileSelector.c" "UIWindow.c" "UIButton.c" "UIImage.c" "UICheckbox.c" "UIDropdown.c" "UIElement.c" "UIRadioButton.c" "UILabel.c" "UISlider.c" "UITextInput.c" "main.c") #     
 add_dependencies(ui_example json array dict)
 target_include_directories(ui_example PUBLIC include ${CMAKE_SOURCE_DIR}/extern/json/include/ ${CMAKE_SOURCE_DIR}/extern/array/include/ ${CMAKE_SOURCE_DIR}/extern/dict/include/) 
 target_link_libraries(ui_example PUBLIC json array dict ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} PRIVATE SDL2_image::SDL2_image )
 
 # Add source to this project's library
-add_library    (ui SHARED "UI.c" "UIFileSelector.c" "UIWindow.c" "UIButton.c" "UIImage.c" "UICheckbox.c" "UIDropdown.c" "UIElement.c" "UIRadioButton.c" "UILabel.c" "UISlider.c" "UITextInput.c" "UITable.c") #      
+add_library    (ui SHARED "UI.c" "UIFileSelector.c" "UIWindow.c" "UIButton.c" "UIImage.c" "UICheckbox.c" "UIDropdown.c" "UIElement.c" "UIRadioButton.c" "UILabel.c" "UISlider.c" "UITextInput.c") #      
 add_dependencies(ui json array dict )
 target_include_directories(ui PUBLIC include ${CMAKE_SOURCE_DIR}/extern/json/include/ ${CMAKE_SOURCE_DIR}/extern/array/include/ ${CMAKE_SOURCE_DIR}/extern/dict/include/) 
 target_link_libraries(ui PRIVATE json array dict ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} PRIVATE SDL2_image::SDL2_image)

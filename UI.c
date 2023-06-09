@@ -53,7 +53,12 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                  *background       = 0;
     dict         *config_file_json = 0;
     size_t        config_file_len  = 0;
-    JSONValue_t  *p_value          = 0;
+    JSONValue_t  *p_value          = 0,
+                 *p_primary        = 0,
+                 *p_accent_1       = 0,
+                 *p_accent_2       = 0,
+                 *p_accent_3       = 0,
+                 *p_background     = 0;
 
     // Find a directory for the config file
     {
@@ -73,45 +78,41 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
     }
 
     // Error checking
-    {
-        if (appdata == 0)
-            goto no_app_data;
-    }
+    if (appdata == 0)
+        goto no_app_data;
 
     // Construct the path to the config file
     sprintf(config_path, "%s/%s", appdata, config_file_name);
 
-    created_config_file:
     // Load the config file
+    created_config_file:
     {
         config_file_len = ui_load_file(config_path, 0, false);
 
         // Error checking
-        {
-            if (config_file_len == 0)
-                goto no_config_file;
-        }
+        if ( config_file_len == 0 )
+            goto no_config_file;
 
         config_file_data = calloc(config_file_len, sizeof(u8));
         ui_load_file(config_path, config_file_data, false);
     }
 
     // Parse the config file into a dictionary
-    if (parse_json_value(config_file_data, 0, &p_value) == 0)
+    if ( parse_json_value(config_file_data, 0, &p_value) == 0 )
         goto failed_to_parse_json;
 
     // Get properties from the dictionary
-    if (p_value->type == JSONobject)
+    if ( p_value->type == JSONobject )
     {
 
         // Initialized data
         dict *p_dict = p_value->object;
 
-        primary    = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "primary"))   , JSONarray);
-        accent_1   = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "accent 1"))  , JSONarray);
-        accent_2   = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "accent 2"))  , JSONarray);
-        accent_3   = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "accent 3"))  , JSONarray);
-        background = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "background")), JSONarray);
+        p_primary    = dict_get(p_dict, "primary");
+        p_accent_1   = dict_get(p_dict, "accent 1");
+        p_accent_2   = dict_get(p_dict, "accent 2");
+        p_accent_3   = dict_get(p_dict, "accent 3");
+        p_background = dict_get(p_dict, "background");
     }
 
     // Construct the instance
@@ -121,12 +122,8 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
         p_instance = calloc(1, sizeof(UIInstance_t));
 
         // Error check
-        {
-            #ifndef NDEBUG
-                if (p_instance == (void *)0)
-                    goto no_mem;
-            #endif
-        }
+        if (p_instance == (void *)0)
+            goto no_mem;
 
         // Initialize SDL
         {
@@ -136,156 +133,185 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
             #endif
 
             // Initialize SDL
-            SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+            if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0 )
+                goto failed_to_init_sdl2;
         }
 
         // Set the theme colors
         {
 
             // Set the primary color
+            if ( p_primary->type == JSONarray )
             {
 
                 // Initialized data
                 size_t array_len = 0;
                 JSONValue_t *pp_array[3] = {0, 0, 0};
 
-                // Get the length of the array
-                array_get(primary, 0, &array_len);
+                // Get the array contents
+                {
 
-                // Check for a valid array length
-                if (array_len != 3)
-                    goto failed_primary;
+                    // Get the length of the array
+                    array_get(p_primary->list, 0, &array_len);
 
-                // Get the R, G, and B values
-                array_get(primary, pp_array, &array_len);
+                    // Check for a valid array length
+                    if ( array_len != 3 )
+                        goto failed_primary;
+
+                    // Get the R, G, and B values
+                    array_get(p_primary->list, pp_array, &array_len);
+                }
 
                 // Iterate over each color
                 for (size_t i = 0; i < array_len; i++)
-                {
 
                     // Set the color
                     p_instance->primary |= pp_array[i]->integer << (i * 8);
-                }
 
                 // Opaque
                 p_instance->primary |= 0xff000000;
             }
+            // Default
+            else
+                goto wrong_primary_type;
 
             // Set accent color 1
+            if ( p_accent_1->type == JSONarray )
             {
 
                 // Initialized data
                 size_t array_len = 0;
                 JSONValue_t *pp_array[3] = {0, 0, 0};
 
-                // Get the length of the array
-                array_get(accent_1, 0, &array_len);
+                // Get the contents of the array
+                {
 
-                // Check for a valid array length
-                if (array_len != 3)
-                    goto failed_accent_1;
+                    // Get the length of the array
+                    array_get(p_accent_1->list, 0, &array_len);
 
-                // Get the R, G, and B values
-                array_get(accent_1, pp_array, &array_len);
+                    // Check for a valid array length
+                    if ( array_len != 3 )
+                        goto failed_accent_1;
+
+                    // Get the R, G, and B values
+                    array_get(p_accent_1->list, pp_array, &array_len);
+                }
 
                 // Iterate over each color
                 for (size_t i = 0; i < array_len; i++)
-                {
 
                     // Set the color
                     p_instance->accent_1 |= pp_array[i]->integer << (i * 8);
-                }
 
                 // Opaque
                 p_instance->accent_1 |= 0xff000000;
             }
+            // Default
+            else
+                goto wrong_accent_1_type;
 
             // Set accent color 2
+            if ( p_accent_2->type == JSONarray )
             {
 
                 // Initialized data
                 size_t array_len = 0;
                 JSONValue_t *pp_array[3] = {0, 0, 0};
 
-                // Get the length of the array
-                array_get(accent_2, 0, &array_len);
+                // Get the contents of the array
+                {
+                    // Get the length of the array
+                    array_get(p_accent_2->list, 0, &array_len);
 
-                // Check for a valid array length
-                if (array_len != 3)
-                    goto failed_accent_2;
+                    // Check for a valid array length
+                    if ( array_len != 3 )
+                        goto failed_accent_2;
 
-                // Get the R, G, and B values
-                array_get(accent_2, pp_array, &array_len);
+                    // Get the R, G, and B values
+                    array_get(p_accent_2->list, pp_array, &array_len);
+                }
 
                 // Iterate over each color
                 for (size_t i = 0; i < array_len; i++)
-                {
 
                     // Set the color
                     p_instance->accent_2 |= pp_array[i]->integer << (i * 8);
-                }
 
                 // Opaque
                 p_instance->accent_2 |= 0xff000000;
             }
+            // Default
+            else
+                goto wrong_accent_2_type;
 
             // Set accent color 3
+            if( p_accent_3->type == JSONarray )
             {
 
                 // Initialized data
                 size_t array_len = 0;
                 JSONValue_t *pp_array[3] = {0, 0, 0};
 
-                // Get the length of the array
-                array_get(accent_3, 0, &array_len);
+                // Dump the contents of the array
+                {
+                    // Get the length of the array
+                    array_get(p_accent_3->list, 0, &array_len);
 
-                // Check for a valid array length
-                if (array_len != 3)
-                    goto failed_accent_3;
+                    // Check for a valid array length
+                    if ( array_len != 3 )
+                        goto failed_accent_3;
 
-                // Get the R, G, and B values
-                array_get(accent_3, pp_array, &array_len);
+                    // Get the R, G, and B values
+                    array_get(p_accent_3->list, pp_array, &array_len);
+                }
 
                 // Iterate over each color
                 for (size_t i = 0; i < array_len; i++)
-                {
 
                     // Set the color
                     p_instance->accent_3 |= pp_array[i]->integer << (i * 8);
-                }
 
                 // Opaque
                 p_instance->accent_3 |= 0xff000000;
             }
+            // Default
+            else
+                goto wrong_accent_3_type;
 
             // Set background
+            if ( p_background->type == JSONarray )
             {
 
                 // Initialized data
                 size_t array_len = 0;
                 JSONValue_t *pp_array[3] = {0, 0, 0};
 
-                // Get the length of the array
-                array_get(background, 0, &array_len);
+                // Dump the contents of the array
+                {
 
-                // Check for a valid array length
-                if (array_len != 3)
-                    goto failed_background;
+                    // Get the length of the array
+                    array_get(p_background->list, 0, &array_len);
 
-                // Get the R, G, and B values
-                array_get(background, pp_array, &array_len);
+                    // Check for a valid array length
+                    if ( array_len != 3 )
+                        goto failed_background;
+
+                    // Get the R, G, and B values
+                    array_get(p_background->list, pp_array, &array_len);
+                }
 
                 // Iterate over each color
                 for (size_t i = 0; i < array_len; i++)
-                {
 
                     // Set the color
                     p_instance->background |= pp_array[i]->integer << (i * 8);
-                }
 
                 // Opaque
                 p_instance->background |= 0xff000000;
             }
+            // Default
+            else
+                goto wrong_background_type;
         }
 
         // Set the running flag
@@ -323,7 +349,14 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
 
     // Success
     return 1;
-
+    
+    failed_to_init_sdl2:
+    wrong_primary_type:
+    wrong_accent_1_type:
+    wrong_accent_2_type:
+    wrong_accent_3_type:
+    wrong_background_type:
+        return 0;
     // Error handling
     {
 
@@ -1053,8 +1086,9 @@ int ui_exit ( UIInstance_t **pp_instance )
     // Initialized data
     UIInstance_t *p_instance = *pp_instance;
 
+    // TODO: Fix
     // Destroy the windows
-    dict_free_clear(p_instance->windows, destroy_window);
+    //dict_free_clear(p_instance->windows, destroy_window);
     dict_destroy(&p_instance->windows);
 
     // Free the instance
