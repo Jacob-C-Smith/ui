@@ -207,6 +207,7 @@ int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
 
 	UIInstance_t *instance = ui_get_active_instance();
 	SDL_Renderer *renderer = window->renderer;
+    SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_2, (u8)(instance->accent_2 >> 8), (u8)(instance->accent_2 >> 16), 0xff);
 
 	// Draw the text input
 	{

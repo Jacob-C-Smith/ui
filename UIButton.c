@@ -1,6 +1,6 @@
 #include <UI/UIButton.h>
 
-int           create_button               ( UIButton_t **pp_button )
+int create_button ( UIButton_t **pp_button )
 {
 	// Argument check
     {
@@ -52,7 +52,7 @@ int           create_button               ( UIButton_t **pp_button )
     }
 }
 
-int           load_button_as_json_value         ( UIButton_t **pp_button, JSONValue_t *p_value )
+int load_button_as_json_value ( UIButton_t **pp_button, JSONValue_t *p_value )
 {
 
     // Argument check
@@ -171,7 +171,7 @@ int           load_button_as_json_value         ( UIButton_t **pp_button, JSONVa
 	}
 }
 
-int           hover_button                ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
+int hover_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
 {
 
     // Argument check
@@ -211,7 +211,7 @@ int           hover_button                ( UIButton_t  *p_button, ui_mouse_stat
     }
 }
 
-int           click_button                ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
+int click_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
 {
     p_button->depressed = true;
 
@@ -231,7 +231,7 @@ int           click_button                ( UIButton_t  *p_button, ui_mouse_stat
     return 0;
 }
 
-int           release_button              ( UIButton_t  *p_button, ui_mouse_state_t mouse_state )
+int release_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state )
 {
     p_button->depressed = false;
 
@@ -250,7 +250,7 @@ int           release_button              ( UIButton_t  *p_button, ui_mouse_stat
     return 0;
 }
 
-int           add_click_callback_button   ( UIButton_t  *p_button, void(*callback)(UIButton_t*, ui_mouse_state_t))
+int add_click_callback_button ( UIButton_t  *p_button, void(*callback)(UIButton_t*, ui_mouse_state_t))
 {
     // TODO: Argument check
 
@@ -278,7 +278,7 @@ int           add_click_callback_button   ( UIButton_t  *p_button, void(*callbac
     // TODO: Error handling
 }
 
-int           add_hover_callback_button   ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
+int add_hover_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
 {
     // TODO: Argument check
 
@@ -319,7 +319,7 @@ int           add_hover_callback_button   ( UIButton_t  *button, void(*callback)
     // TODO: Error handling
 }
 
-int           add_release_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
+int add_release_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
 {
     // TODO: Argument check
 
@@ -360,7 +360,7 @@ int           add_release_callback_button ( UIButton_t  *button, void(*callback)
     // TODO: Error handling
 }
 
-int           draw_button                 ( UIWindow_t  *window, UIButton_t *button )
+int draw_button ( UIWindow_t  *window, UIButton_t *button )
 {
     UIInstance_t *instance = ui_get_active_instance();
     size_t        l        = strlen(button->label);
@@ -387,7 +387,7 @@ int           draw_button                 ( UIWindow_t  *window, UIButton_t *but
     return 0;
 }
 
-bool          button_in_bounds            ( UIButton_t  *button, ui_mouse_state_t mouse_state )
+bool button_in_bounds ( UIButton_t  *button, ui_mouse_state_t mouse_state )
 {
     // Initialized data
 	i32  x = button->x,
@@ -403,7 +403,7 @@ bool          button_in_bounds            ( UIButton_t  *button, ui_mouse_state_
 
 }
 
-int           destroy_button              ( UIButton_t  *p_button )
+int destroy_button ( UIButton_t  *p_button )
 {
 
     // Argument check

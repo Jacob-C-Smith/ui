@@ -345,19 +345,9 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 				return 0;
 		}
 
-		// Standard library errors
-		{
-			#ifndef NDEBUG
-				no_mem:
-					return 0;
-			#endif
-		}
-
 		// JSON type errors
 		{
 			#ifndef NDEBUG
-				failed_to_load_element:	
-				// TODO: Print an error for each branch
 				name_type_error:
 				return 0;
 				width_type_error:
@@ -383,7 +373,6 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 			#ifndef NDEBUG
 			// TODO: Print an error for each branch
 				no_elements:
-				failed_to_parse_json:
 				no_name:
 				empty_name:
 					return 0;
@@ -817,7 +806,7 @@ int click_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 
 	// Did the user click on the element on the iterator?
 	for (size_t i = 0; i < p_window->element_count; i++)
-		if (in_bounds(p_window->element_data[i], mouse_state))
+		if ( in_bounds(p_window->element_data[i], mouse_state) )
 			click_element(p_window->element_data[i], mouse_state);
 
 	// Close window?

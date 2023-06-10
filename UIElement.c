@@ -505,8 +505,13 @@ int add_hover_callback_element(UIElement_t* element, void(*callback)(UIElement_t
 
 int add_release_callback_element(UIElement_t* element, void(*callback)(UIElement_t*, ui_mouse_state_t))
 {
-    
-    return 0;
+    // TODO: Argument check
+
+    // Initialized data
+    bool (*add_release_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_release_lut, element->type);
+
+    // Call the element constructor for the specific type
+    return (*add_release_callback)((void*)element->label, callback);
 }
 
 bool in_bounds ( UIElement_t* element, ui_mouse_state_t mouse_state )

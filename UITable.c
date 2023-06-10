@@ -268,7 +268,7 @@ int load_table_as_json_value ( UITable_t **pp_table, JSONValue_t *p_value )
     }
 }
 
-int           hover_table                ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
+int hover_table ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
 {
 
     // Argument check
@@ -308,10 +308,10 @@ int           hover_table                ( UITable_t   *p_table , ui_mouse_state
     }
 }
  
-int           click_table                ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
+int click_table ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
 {
 
-    if (mouse_state.button & ( UI_M1 | UI_M2 ))
+    if (mouse_state.button & UI_M1 )
     {
 
         size_t last_x = 0,
@@ -348,7 +348,16 @@ int           click_table                ( UITable_t   *p_table , ui_mouse_state
             SDL_SetClipboardText(p_table->data[(p_table->last_y * p_table->max_columns + p_table->last_x)]);
         }
     }
+    else if (mouse_state.button & UI_M2 )
+    {
+        if ( p_table->last_x != -1 && p_table->last_y != -1)
+        {
+            SDL_SetClipboardText(get_table_cell(p_table, p_table->last_x, p_table->last_y));
+            p_table->last_x = -1;
+            p_table->last_y = -1;
+        }
 
+    }
     return 0;
 }
 
@@ -411,6 +420,25 @@ int           add_release_callback_table ( UITable_t  *p_table, void(*callback)(
 {
     // TODO: Argument check
 
+    // If this is the first callback, set the max to 1 and 
+    if (p_table->on_release_max == 0)
+    {
+        p_table->on_release_max = 1;
+        p_table->on_release = calloc(1, sizeof(void*));
+    }
+
+    // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
+    if (p_table->on_release_count + 1 > p_table->on_release_max)
+    {
+        // Double the max
+        p_table->on_release_max *= 2;
+
+        realloc(p_table->on_release, p_table->on_release_max);
+    }
+
+    // Increment the callback counter and install the new callback
+    p_table->on_release[p_table->on_release_count++] = callback;
+
     return 1;
 
     // TODO: Error handling
@@ -434,7 +462,7 @@ int set_table_cell(UITable_t* p_table, size_t x, size_t y, char* cell_text)
     return 1;
 }
 
-int           draw_table                 ( UIWindow_t  *window, UITable_t *table )
+int draw_table ( UIWindow_t  *window, UITable_t *table )
 {
     UIInstance_t *instance = ui_get_active_instance();
     SDL_Rect      r        = { table->x, table->y, 0, 13 };
