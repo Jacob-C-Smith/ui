@@ -24,7 +24,7 @@ void* load_callbacks[ELEMENT_COUNT] =
     load_label_as_json_value,
     load_radio_button_as_json_value,
     load_slider_as_json_value,
-    0,//load_table_as_json_value,
+    load_table_as_json_value,
     load_text_input_as_json_value
 };
 
@@ -37,7 +37,7 @@ void* click_callbacks[ELEMENT_COUNT] =
     click_label,
     click_radio_button,
     click_slider,
-    0,//click_table,
+    click_table,
     click_text_input
 };
 
@@ -50,7 +50,7 @@ void* hover_callbacks[ELEMENT_COUNT] =
     hover_label,
     hover_radio_button,
     hover_slider,
-    0,//hover_table,
+    hover_table,
     hover_text_input
 };
 
@@ -63,7 +63,7 @@ void* release_callbacks[ELEMENT_COUNT] =
     release_label,
     release_radio_button,
     release_slider,
-    0,//release_table,
+    release_table,
     release_text_input
 };
 
@@ -76,7 +76,7 @@ void* add_click_callbacks[ELEMENT_COUNT] =
     add_click_callback_label,
     add_click_callback_radio_button,
     add_click_callback_slider,
-    0,//add_click_callback_table,
+    add_click_callback_table,
     add_click_callback_text_input
 };
 
@@ -89,7 +89,7 @@ void* add_hover_callbacks[ELEMENT_COUNT] =
     add_hover_callback_label,
     add_hover_callback_radio_button,
     add_hover_callback_slider,
-    0,//add_hover_callback_table,
+    add_hover_callback_table,
     add_hover_callback_text_input
 };
 
@@ -102,7 +102,7 @@ void* add_release_callbacks[ELEMENT_COUNT] =
     add_release_callback_label,
     add_release_callback_radio_button,
     add_release_callback_slider,
-    0,//add_release_callback_table,
+    add_release_callback_table,
     add_release_callback_text_input
 };
 
@@ -115,7 +115,7 @@ void* draw_callback[ELEMENT_COUNT] =
     draw_label,
     draw_radio_button,
     draw_slider,
-    0,//draw_table,
+    draw_table,
     draw_text_input
 };
 
@@ -128,7 +128,7 @@ void* destructor_callback[ELEMENT_COUNT] =
     destroy_label,
     destroy_radio_button,
     destroy_slider,
-    0,//destroy_table,
+    destroy_table,
     destroy_text_input
 };
 
@@ -141,7 +141,7 @@ void* bounds_callback[ELEMENT_COUNT] =
     label_in_bounds,
     radio_button_in_bounds,
     slider_in_bounds,
-    0,//table_in_bounds,
+    table_in_bounds,
     text_input_in_bounds
 };
 

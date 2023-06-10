@@ -1,6 +1,6 @@
 #include <UI/UITable.h>
 
-int           create_table               ( UITable_t  **pp_table )
+int create_table ( UITable_t **pp_table )
 {
 	// Argument check
     {
@@ -52,7 +52,7 @@ int           create_table               ( UITable_t  **pp_table )
     }
 }
 
-int           load_table_as_json_value         ( UITable_t  **pp_table, JSONValue_t *p_value )
+int load_table_as_json_value ( UITable_t **pp_table, JSONValue_t *p_value )
 {
 
     // Argument errors
@@ -66,14 +66,12 @@ int           load_table_as_json_value         ( UITable_t  **pp_table, JSONValu
     }
 
     // Initialized data
-    UITable_t  *p_table     = 0;
-    char       *x           = 0,
-               *y           = 0,
-               *max_rows    = 0,
-               *max_columns = 0,
-               *file        = 0;
-
-
+    UITable_t   *p_table       = 0;
+    JSONValue_t *p_x           = 0,
+                *p_y           = 0,
+                *p_max_rows    = 0,
+                *p_max_columns = 0,
+                *p_file        = 0;
 
 	// Get properties from the json value
     if (p_value->type == JSONobject)
@@ -82,65 +80,82 @@ int           load_table_as_json_value         ( UITable_t  **pp_table, JSONValu
         // Initialized data
         dict *p_dict = p_value->object;
 
-        x           = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x"))          , JSONinteger);
-        y           = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y"))          , JSONinteger);
-        max_rows    = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "max rows"))   , JSONinteger);
-		max_columns = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "max columns")), JSONinteger);
-        file        = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "file"))       , JSONstring);
+        p_x           = dict_get(p_dict, "x");
+        p_y           = dict_get(p_dict, "y");
+        p_max_rows    = dict_get(p_dict, "max rows");
+		p_max_columns = dict_get(p_dict, "max columns");
+        p_file        = dict_get(p_dict, "file");
+        
+        // Check for missing properties
+        if ( ! ( p_x  && p_y ) )
+            goto missing_properties;
     }
-
-    // Is there enough information to construct the table?
-    {
-        #ifndef NDEBUG
-            if ( x == (void *) 0 )
-                goto no_x;
-            if ( y == (void *) 0 )
-                goto no_y;
-        #endif
-    }
-
-    // Allocate the table
-    create_table(pp_table);
-
-    // Return the table
-    p_table = *pp_table;
 
     // Construct the table
     {
+        // Allocate the table
+        create_table(pp_table);
 
-        // Set the tables position
-        p_table->x           = x;
-        p_table->y           = y;
+        // Return the table
+        p_table = *pp_table;
+
+        // Set the x
+        if ( p_x->type == JSONinteger)
+            p_table->x = p_x->integer;
+        // Default
+        else
+            goto wrong_x_type;
+        
+        // Set the y
+        if ( p_y->type == JSONinteger)
+            p_table->y = p_y->integer;
+        // Default
+        else
+            goto wrong_y_type;
+        
+        if ( p_file )
+            goto csv_parse;
+
+        // Set the max rows
+        if ( p_max_rows->type == JSONinteger)
+            p_table->max_rows = p_max_rows->integer;
+        // Default
+        else
+            goto wrong_max_rows_type;
+        
+        // Set the max columns
+        if ( p_max_columns->type == JSONinteger)
+            p_table->max_columns = p_max_columns->integer;
+        // Default
+        else
+            goto wrong_max_columns_type;
+
+        csv_parse_done:
+        p_table->data          = calloc(p_table->max_rows * p_table->max_columns, sizeof(void *) );
+        p_table->column_widths = calloc(p_table->max_columns, sizeof(size_t));
+
+        // Iterate over each column
+        for (size_t i = 0; i < p_table->max_columns; i++)
+
+            // Set the column width
+            p_table->column_widths[i] = 1;
     }
-
-    if (file)
-        goto csv_parse;
-
-    p_table->max_rows      = max_rows;
-    p_table->max_columns   = max_columns;
-
-    csv_parse_done:
-    p_table->data          = calloc(p_table->max_rows * p_table->max_columns, sizeof(void *) );
-    p_table->column_widths = calloc(p_table->max_columns, sizeof(size_t));
-    
-    for (size_t i = 0; i < p_table->max_columns; i++)
-        p_table->column_widths[i] = 1;
-
-    return 0;
+    // Succses
+    return 1;
 
     // Auxilary branches
     csv_parse:
     {
 
         // Initialized data
-        size_t  len          = ui_load_file(file, 0, false),
+        size_t  len          = ui_load_file(p_file->string, 0, false),
                 column_count = 0,
                 row_count    = 0;
         char   *buf          = calloc(len+1, sizeof(u8)), 
                *z_buf        = 0;
         
         // Load the CSV file
-        ui_load_file(file, buf, false);
+        ui_load_file(p_file->string, buf, false);
         
         z_buf = buf;
 
@@ -185,6 +200,14 @@ int           load_table_as_json_value         ( UITable_t  **pp_table, JSONValu
         printf("\n");
         goto csv_parse_done;
     }
+
+    wrong_x_type:
+    wrong_y_type:
+    wrong_max_rows_type:
+    wrong_max_columns_type:
+    missing_properties:
+        return 0;
+
     // Error handling
     {
 
