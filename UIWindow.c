@@ -318,6 +318,9 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 	wrong_name_type:
 	failed_to_allocate_window:
 	wrong_width_type:
+	failed_to_parse_json:
+	no_mem:
+	failed_to_load_element:
 	wrong_height_type:
 
 	// Error handling
