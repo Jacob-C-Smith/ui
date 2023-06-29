@@ -2,7 +2,7 @@
 
 int create_image ( UIImage_t **pp_image )
 {
-
+	/*
 	// Argument check
 	{
 		#ifndef NDEBUG
@@ -53,11 +53,13 @@ int create_image ( UIImage_t **pp_image )
 				return 0;
 		}
 	}
+	*/
+	return 0;
 }
 
 int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 {
-
+	/*
 	// Argument check
 	{
 		#ifndef NDEBUG
@@ -185,6 +187,8 @@ int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 				return 0;
 		}
 	}
+	*/
+	return 0;
 }
 
 int click_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
@@ -219,7 +223,7 @@ int hover_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 
 int draw_image ( UIWindow_t *p_window, UIImage_t *p_image )
 {
-
+	/*
 	// Argument check
 	{
 		#ifndef NDEBUG
@@ -265,10 +269,13 @@ int draw_image ( UIWindow_t *p_window, UIImage_t *p_image )
 				return 0;
 		}
 	}
+	*/
+	return 0;
 }
 
 bool image_in_bounds(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 {
+	/*
 	// Initialized data
 	i32  x = p_image->x,
 		 y = p_image->y,
@@ -278,13 +285,14 @@ bool image_in_bounds(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 	// Check for bounds
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
 		return true;
-
+	*/
 	return false;
 }
 
 int destroy_image(UIImage_t **pp_image)
 {
 	
+	/*
 	// Argument check
 	{
 		#ifndef NDEBUG
@@ -322,4 +330,7 @@ int destroy_image(UIImage_t **pp_image)
 				return 0;
 		}
 	}
+	*/
+
+	return 0;
 }

@@ -7,7 +7,6 @@
 #include <stdbool.h>
 
 #include <SDL.h>
-#include <SDL_image.h>
 
 #include <json/json.h>
 
