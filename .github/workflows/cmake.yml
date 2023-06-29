@@ -26,6 +26,13 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install libsdl2-dev libsdl2-image-dev cmake ninja-build
+        echo "set(prefix \"/usr\")" > /usr/lib/x86_64-linux-gnu/cmake/sdl2_image/sdl2_image-config.cmake
+        echo "set(exec_prefix \"${prefix}\")" >> /usr/lib/x86_64-linux-gnu/cmake/sdl2_image/sdl2_image-config.cmake
+        echo "set(libdir \"${prefix}/lib/x86_64-linux-gnu\")" >> /usr/lib/x86_64-linux-gnu/cmake/sdl2_image/sdl2_image-config.cmake
+        echo "set(SDL2_IMAGE_PREFIX \"/usr\")" >> /usr/lib/x86_64-linux-gnu/cmake/sdl2_image/sdl2_image-config.cmake
+        echo "set(SDL2_IMAGE_EXEC_PREFIX \"/usr\")" >> /usr/lib/x86_64-linux-gnu/cmake/sdl2_image/sdl2_image-config.cmake
+        echo "set(SDL2_IMAGE_INCLUDE_DIRS \"${prefix}/include/SDL2_image\")" >> /usr/lib/x86_64-linux-gnu/cmake/sdl2_image/sdl2_image-config.cmake
+        echo "set(SDL2_IMAGE_LIBRARIES \"-lSDL2_image\")"  >> /usr/lib/x86_64-linux-gnu/cmake/sdl2_image/sdl2_image-config.cmake
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
