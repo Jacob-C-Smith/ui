@@ -1,4 +1,4 @@
-name: CMake
+name: User Interface
 
 on:
   push:
