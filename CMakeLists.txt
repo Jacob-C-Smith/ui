@@ -6,16 +6,17 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
 set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/extern/)
 
 IF(WIN32)
-
+    find_package(SDL2_image REQUIRED CONFIG REQUIRED COMPONENTS SDL2_image)
 ELSEIF(LINUX)
-    set(SDL2_image_DIR cmake/)
+    set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+    find_package(SDL2_image REQUIRED)
 ELSEIF(APPLE)
 
 ENDIF(WIN32)
 
 find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
 find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
-find_package(SDL2_image REQUIRED CONFIG REQUIRED COMPONENTS SDL2_image)
+
 
 if ( NOT ("${HAS_JSON}"))
 	message("[G10] adding json project")
@@ -44,10 +45,24 @@ find_library(json  NAMES json  HINTS ${CMAKE_SOURCE_DIR}/extern/json/build/Debug
 add_executable (ui_example "UI.c" "UIFileSelector.c" "UIWindow.c" "UIButton.c" "UIImage.c" "UICheckbox.c" "UIDropdown.c" "UIElement.c" "UIRadioButton.c" "UILabel.c" "UISlider.c" "UITextInput.c" "UITable.c" "main.c") #     
 add_dependencies(ui_example json array dict)
 target_include_directories(ui_example PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/extern/json/include/ ${CMAKE_SOURCE_DIR}/extern/array/include/ ${CMAKE_SOURCE_DIR}/extern/dict/include/) 
-target_link_libraries(ui_example PUBLIC json array dict PRIVATE SDL2_image::SDL2_image ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+IF(WIN32)
+    target_link_libraries(ui_example PUBLIC json array dict PRIVATE SDL2_image::SDL2_image ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+ELSEIF(LINUX)
+    target_link_libraries(ui_example PUBLIC json array dict ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+ELSEIF(APPLE)
+
+ENDIF(WIN32)
+
 
 # Add source to this project's library
 add_library (ui SHARED "UI.c" "UIFileSelector.c" "UIWindow.c" "UIButton.c" "UIImage.c" "UICheckbox.c" "UIDropdown.c" "UIElement.c" "UIRadioButton.c" "UILabel.c" "UISlider.c" "UITextInput.c" "UITable.c") #      
 add_dependencies(ui json array dict )
 target_include_directories(ui PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/extern/json/include/ ${CMAKE_SOURCE_DIR}/extern/array/include/ ${CMAKE_SOURCE_DIR}/extern/dict/include/) 
-target_link_libraries(ui PUBLIC json array dict PRIVATE SDL2_image::SDL2_image ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+IF(WIN32)
+    target_link_libraries(ui PUBLIC json array dict PRIVATE SDL2_image::SDL2_image ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+ELSEIF(LINUX)
+    target_link_libraries(ui PUBLIC json array dict ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+ELSEIF(APPLE)
+
+ENDIF(WIN32)
+
