@@ -32,7 +32,7 @@ char *default_config = "{\n"                                             \
 char *config_file_name = "/ui_config.json";
 UIInstance_t *active_instance = 0;
 
-int ui_init(UIInstance_t **pp_instance, const char *path)
+int ui_init ( UIInstance_t **pp_instance, const char *path )
 {
 
     // Argument check
@@ -80,8 +80,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
     }
 
     // Error checking
-    if (appdata == 0)
-        goto no_app_data;
+    if ( appdata == 0 ) goto no_app_data;
 
     // Construct the path to the config file
     sprintf(config_path, "%s/%s", appdata, config_file_name);
@@ -92,16 +91,14 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
         config_file_len = ui_load_file(config_path, 0, false);
 
         // Error checking
-        if ( config_file_len == 0 )
-            goto no_config_file;
+        if ( config_file_len == 0 ) goto no_config_file;
 
         config_file_data = calloc(config_file_len, sizeof(u8));
         ui_load_file(config_path, config_file_data, false);
     }
 
     // Parse the config file into a dictionary
-    if ( parse_json_value(config_file_data, 0, &p_value) == 0 )
-        goto failed_to_parse_json;
+    if ( parse_json_value(config_file_data, 0, &p_value) == 0 ) goto failed_to_parse_json;
 
     // Get properties from the dictionary
     if ( p_value->type == JSON_VALUE_OBJECT )
@@ -124,8 +121,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
         p_instance = calloc(1, sizeof(UIInstance_t));
 
         // Error check
-        if (p_instance == (void *)0)
-            goto no_mem;
+        if ( p_instance == (void *) 0 ) goto no_mem;
 
         // Initialize SDL
         {
@@ -135,8 +131,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
             #endif
 
             // Initialize SDL
-            if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0 )
-                goto failed_to_init_sdl2;
+            if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0 ) goto failed_to_init_sdl2;
         }
 
         // Set the theme colors
@@ -157,8 +152,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                     array_get(p_primary->list, 0, &array_len);
 
                     // Check for a valid array length
-                    if ( array_len != 3 )
-                        goto failed_primary;
+                    if ( array_len != 3 ) goto failed_primary;
 
                     // Get the R, G, and B values
                     array_get(p_primary->list, pp_array, &array_len);
@@ -192,8 +186,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                     array_get(p_accent_1->list, 0, &array_len);
 
                     // Check for a valid array length
-                    if ( array_len != 3 )
-                        goto failed_accent_1;
+                    if ( array_len != 3 ) goto failed_accent_1;
 
                     // Get the R, G, and B values
                     array_get(p_accent_1->list, pp_array, &array_len);
@@ -226,8 +219,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                     array_get(p_accent_2->list, 0, &array_len);
 
                     // Check for a valid array length
-                    if ( array_len != 3 )
-                        goto failed_accent_2;
+                    if ( array_len != 3 ) goto failed_accent_2;
 
                     // Get the R, G, and B values
                     array_get(p_accent_2->list, pp_array, &array_len);
@@ -260,8 +252,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                     array_get(p_accent_3->list, 0, &array_len);
 
                     // Check for a valid array length
-                    if ( array_len != 3 )
-                        goto failed_accent_3;
+                    if ( array_len != 3 ) goto failed_accent_3;
 
                     // Get the R, G, and B values
                     array_get(p_accent_3->list, pp_array, &array_len);
@@ -295,8 +286,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                     array_get(p_background->list, 0, &array_len);
 
                     // Check for a valid array length
-                    if ( array_len != 3 )
-                        goto failed_background;
+                    if ( array_len != 3 ) goto failed_background;
 
                     // Get the R, G, and B values
                     array_get(p_background->list, pp_array, &array_len);
@@ -478,12 +468,7 @@ size_t ui_load_file(const char *path, void *buffer, bool binary)
 {
     
     // Argument checking
-    {
-        #ifndef NDEBUG
-            if (path == 0)
-                goto no_path;
-        #endif
-    }
+    if ( path == 0 ) goto no_path;
 
     // Initialized data
     size_t ret = 0;
@@ -538,12 +523,7 @@ int ui_print_error(const char *const format, ...)
 {
     
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( format == (void *) 0 )
-                goto no_format;
-        #endif
-    }
+    if ( format == (void *) 0 ) goto no_format;
 
     // Varadic argument list for vprintf
     va_list aList;
@@ -582,12 +562,7 @@ int ui_print_warning(const char *const format, ...)
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( format == (void *) 0 )
-                goto no_format;
-        #endif
-    }
+    if ( format == (void *) 0 ) goto no_format;
 
     // Varadic argument list for vprintf
     va_list aList;
@@ -624,12 +599,7 @@ int ui_print_log(const char *const format, ...)
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( format == (void *) 0 )
-                goto no_format;
-        #endif
-    }
+    if ( format == (void *) 0 ) goto no_format;
 
     // Varadic argument list for vprintf
     va_list aList;
@@ -666,14 +636,8 @@ int ui_append_window(UIInstance_t *p_instance, UIWindow_t *p_window)
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if (p_instance == (void *)0)
-                goto no_instance;
-            if (p_window == (void *)0)
-                goto no_window;
-        #endif
-    }
+    if ( p_instance == (void *) 0 ) goto no_instance;
+    if ( p_window   == (void *) 0 ) goto no_window;
 
     // Add the window to the dictionary
     dict_add(p_instance->windows, p_window->name, p_window);
@@ -715,16 +679,9 @@ UIWindow_t *ui_remove_window(UIInstance_t *p_instance, const char *name)
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if (p_instance == (void *)0)
-                goto no_instance;
-            if (name == (void *)0)
-                goto no_name;
-            if (strlen(name) == 0)
-                goto empty_name;
-        #endif
-    }
+    if ( p_instance   == (void *) 0 ) goto no_instance;
+    if ( name         == (void *) 0 ) goto no_name;
+    if ( strlen(name) ==          0 ) goto empty_name;
 
     // Initialized data
     size_t      window_count = 0;
@@ -738,7 +695,7 @@ UIWindow_t *ui_remove_window(UIInstance_t *p_instance, const char *name)
 
     p_instance->active_window = 0;
 
-    if (window_count==0)
+    if ( window_count == 0 ) 
         p_instance->running = false;
 
     // Return the window (for deallocation)
@@ -746,11 +703,11 @@ UIWindow_t *ui_remove_window(UIInstance_t *p_instance, const char *name)
 
     // Error handling
     {
-    no_instance:
-    no_name:
-    empty_name:
-    empty_window_name:
-        return 0;
+        no_instance:
+        no_name:
+        empty_name:
+        empty_window_name:
+            return 0;
     }
 }
 
@@ -758,12 +715,7 @@ int ui_process_input ( UIInstance_t *p_instance )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if (p_instance == (void *)0)
-                goto no_instance;
-        #endif
-    }
+    if ( p_instance == (void *) 0 ) goto no_instance;
 
     // Initialized data
     size_t window_count = dict_values(p_instance->windows, 0);
@@ -822,12 +774,7 @@ int ui_draw ( UIInstance_t *p_instance )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if (p_instance == (void *)0)
-                goto no_instance;
-        #endif
-    }
+    if ( p_instance == (void *)0 ) goto no_instance;
 
     // Allocate for a list of element pointers
     size_t window_count = dict_values(p_instance->windows, 0);
@@ -866,14 +813,8 @@ int ui_draw_format_text ( const char *const format, UIWindow_t *p_window, int x,
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_window == (void *) 0 )
-                goto no_window;
-            if ( format == (void *) 0 )
-                goto no_format; 
-        #endif
-    }
+    if ( p_window == (void *) 0 ) goto no_window;
+    if ( format   == (void *) 0 ) goto no_format; 
 
     // We use the varadic argument list in vprintf
     va_list aList;
@@ -921,13 +862,9 @@ int ui_draw_format_text ( const char *const format, UIWindow_t *p_window, int x,
 
 void ui_draw_char(char c, UIWindow_t *p_window, int x, int y, int size)
 {
+
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_window == (void *) 0 )
-                goto no_window;
-        #endif
-    }
+    if ( p_window == (void *) 0 ) goto no_window;
 
     // Initialized data
     u64 glyph = font[(u8)c];
@@ -974,12 +911,7 @@ int ui_draw_text(const char *const text, UIWindow_t *p_window, int x, int y, int
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_window == (void *) 0 )
-                goto no_window;
-        #endif
-    }
+    if ( p_window == (void *) 0 ) goto no_window;
 
     size_t len = strlen(text);
 
@@ -1012,12 +944,7 @@ int ui_draw_circle(int radius, UIWindow_t *p_window, int x_center, int y_center)
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_window == (void *) 0 )
-                goto no_window;
-        #endif
-    }
+    if ( p_window == (void *) 0 ) goto no_window;
     
     // Initialized data
     i32 diameter = (radius * 2),
@@ -1078,12 +1005,7 @@ int ui_exit ( UIInstance_t **pp_instance )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( pp_instance == (void *)0 )
-                goto no_instance;
-        #endif
-    }
+    if ( pp_instance == (void *)0 ) goto no_instance;
 
     // Initialized data
     UIInstance_t *p_instance = *pp_instance;

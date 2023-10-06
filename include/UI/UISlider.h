@@ -43,9 +43,9 @@ struct UISlider_s
   *  
   *  @sa destroy_slider
   *  
-  *  @return 0 on success, -1 on error.  
+  *  @return 1 on success, 0 on error.  
   */
-DLLEXPORT int           create_slider               ( UISlider_t  **pp_slider );
+DLLEXPORT int create_slider ( UISlider_t **pp_slider );
 
 // Constructors
  /** !
@@ -56,9 +56,9 @@ DLLEXPORT int           create_slider               ( UISlider_t  **pp_slider );
   * 
   *  @sa load_element_as_json_value 
   *  
-  *  @return 0 on success, -1 on error.  
+  *  @return 1 on success, 0 on error.  
   */
-DLLEXPORT int           load_slider_as_json_value         ( UISlider_t **pp_slider, json_value *p_value );
+DLLEXPORT int load_slider_as_json_value ( UISlider_t **pp_slider, json_value *p_value );
 
 // Callbacks
 
@@ -71,9 +71,9 @@ DLLEXPORT int           load_slider_as_json_value         ( UISlider_t **pp_slid
   *  @sa click_slider
   *  @sa release_slider
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           hover_slider                ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state );
+DLLEXPORT int hover_slider ( UISlider_t *p_slider, ui_mouse_state_t mouse_state );
 
 /** !
   *  Fire each click callback. 
@@ -84,9 +84,9 @@ DLLEXPORT int           hover_slider                ( UISlider_t     *p_slider ,
   *  @sa hover_slider
   *  @sa release_slider
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           click_slider                ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state );
+DLLEXPORT int click_slider ( UISlider_t *p_slider, ui_mouse_state_t mouse_state );
 
 /** !
   *  Fire each release callback. 
@@ -97,9 +97,9 @@ DLLEXPORT int           click_slider                ( UISlider_t     *p_slider ,
   *  @sa click_slider
   *  @sa hover_slider
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           release_slider              ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state );
+DLLEXPORT int release_slider ( UISlider_t *p_slider, ui_mouse_state_t mouse_state );
 
 // Add callbacks
 
@@ -112,9 +112,9 @@ DLLEXPORT int           release_slider              ( UISlider_t     *p_slider ,
   *  @sa add_hover_callback_slider
   *  @sa add_release_callback_slider
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           add_click_callback_slider   ( UISlider_t     *p_slider , void (*callback) ( UISlider_t*, ui_mouse_state_t ) );
+DLLEXPORT int add_click_callback_slider ( UISlider_t *p_slider, void (*callback) ( UISlider_t*, ui_mouse_state_t ) );
 
 /** !
   *  Add a hover callback.
@@ -125,9 +125,9 @@ DLLEXPORT int           add_click_callback_slider   ( UISlider_t     *p_slider ,
   *  @sa add_click_callback_slider
   *  @sa add_release_callback_slider
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           add_hover_callback_slider   ( UISlider_t     *p_slider , void (*callback) ( UISlider_t*, ui_mouse_state_t ) );
+DLLEXPORT int add_hover_callback_slider ( UISlider_t *p_slider, void (*callback) ( UISlider_t*, ui_mouse_state_t ) );
 
 /** !
   *  Add a release callback.
@@ -138,9 +138,9 @@ DLLEXPORT int           add_hover_callback_slider   ( UISlider_t     *p_slider ,
   *  @sa add_click_callback_slider
   *  @sa add_hover_callback_slider
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           add_release_callback_slider ( UISlider_t     *p_slider , void (*callback) ( UISlider_t*, ui_mouse_state_t ) );
+DLLEXPORT int add_release_callback_slider ( UISlider_t *p_slider, void (*callback) ( UISlider_t*, ui_mouse_state_t ) );
 
 // Drawing
 /** !
@@ -151,11 +151,11 @@ DLLEXPORT int           add_release_callback_slider ( UISlider_t     *p_slider ,
   *
   *  @sa draw_element
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           draw_slider                 ( UIWindow_t   *window   , UISlider_t *p_slider );
+DLLEXPORT int draw_slider ( UIWindow_t *window, UISlider_t *p_slider );
 
-// Collision
+// Bounds
 /** !
   *  Checks for pointer slider overlap
   * 
@@ -164,7 +164,7 @@ DLLEXPORT int           draw_slider                 ( UIWindow_t   *window   , U
   *
   *  @return true if cursor is on the slider, and false otherwise
   */
-DLLEXPORT bool          slider_in_bounds            ( UISlider_t     *p_slider , ui_mouse_state_t mouse_state );
+DLLEXPORT bool slider_in_bounds ( UISlider_t *p_slider, ui_mouse_state_t mouse_state );
 
 // Deallocators
 /** !
@@ -173,4 +173,4 @@ DLLEXPORT bool          slider_in_bounds            ( UISlider_t     *p_slider ,
   *
   *  @return 
   */
-DLLEXPORT int           destroy_slider              ( UISlider_t     *p_slider );
+DLLEXPORT int destroy_slider ( UISlider_t *p_slider );

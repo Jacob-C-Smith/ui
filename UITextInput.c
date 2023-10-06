@@ -1,18 +1,60 @@
 #include <UI/UITextInput.h>
 
-int create_text_input(UITextInput_t** pp_text_input)
+int create_text_input ( UITextInput_t **pp_text_input )
 {
+
+	// Argument check
+	if ( pp_text_input == (void *) 0 ) goto no_text_input;
+
+	// Initialized data
 	UITextInput_t** p_text_input = 0;
 
+	// Allocate a text input
 	p_text_input = calloc(1, sizeof(UITextInput_t));
 
+	// Error check
+	if ( p_text_input == (void *) 0 ) goto no_mem;
+
+	// Return a pointer to the caller
 	*pp_text_input = p_text_input;
 
-	return 0;
+	// Success
+	return 1;
+
+	// Error handling
+	{
+
+		// Argument errors
+		{
+			no_text_input:
+				#ifndef NDEBUG
+
+				#endif
+
+				// Error
+				return 0;
+		}
+
+		// Standard library errors
+		{
+			no_mem:
+				#ifndef NDEBUG
+
+				#endif
+
+				// Error
+				return 0;
+		}
+	}
 }
 
 int load_text_input_as_json_value ( UITextInput_t **pp_text_input, json_value *p_value )
 {
+
+	// TODO: Argument check
+	//
+
+	// Initialized data 
 	json_value *p_placeholder = 0,
 		        *p_text        = 0,
 		        *p_x           = 0,
@@ -22,6 +64,7 @@ int load_text_input_as_json_value ( UITextInput_t **pp_text_input, json_value *p
 	// Parse JSON
 	{
 
+		// Initialized data
 		dict *p_dict = p_value->object;
 
 		p_placeholder = dict_get(p_dict, "placeholder");
@@ -79,27 +122,36 @@ int load_text_input_as_json_value ( UITextInput_t **pp_text_input, json_value *p
 		else
 			goto wrong_buffer_len_type;
 
-		if ( construct_text_input(pp_text_input, placeholder, text, x, y, buffer_len) == 0 ) 
-			goto failed_to_construct_text_input;
+		// Construct a text input
+		if ( construct_text_input(pp_text_input, placeholder, text, x, y, buffer_len) == 0 ) goto failed_to_construct_text_input;
 	}
 
+	// Success
 	return 1;
-wrong_placeholder_type:
-wrong_text_type:
-wrong_x_type:
-wrong_y_type:
-wrong_buffer_len_type:
-failed_to_construct_text_input:
+		wrong_placeholder_type:
+		wrong_text_type:
+		wrong_x_type:
+		wrong_y_type:
+		wrong_buffer_len_type:
+		failed_to_construct_text_input:
+
+	// Error
 	return 0;
 }
 
 int construct_text_input(UITextInput_t** pp_text_input, char* placeholder, char* text, i32 x, i32 y, size_t buffer_len)
 {
+
+	// Argument check
+	if ( pp_text_input == (void *) 0 ) goto no_text_input;
+
+	// Initialized data
 	UITextInput_t *p_text_input = 0;
 
-	create_text_input(pp_text_input);
-	p_text_input = *pp_text_input;
+	// Allocate a text input
+	if ( create_text_input(&p_text_input) == 0 ) goto failed_to_create_text_input;
 
+	// Set the width and the height
 	p_text_input->width = 8;
 	p_text_input->height = 15;
 
@@ -126,46 +178,97 @@ int construct_text_input(UITextInput_t** pp_text_input, char* placeholder, char*
 
 	}
 
-	return 0;
+	// Return a pointer to the caller
+	*pp_text_input = p_text_input;
+
+	// Success
+	return 1;
+
+	// Error handling
+	{
+
+		// Argument errors
+		{
+			no_text_input:
+				#ifndef NDEBUG
+					// TODO: 
+				#endif
+
+				// Error
+				return 0;
+		}
+
+		// UI errors
+		{
+			failed_to_create_text_input:	
+				#ifndef NDEBUG
+					// TODO: 
+				#endif
+
+				// Error
+				return 0;
+		}
+	}
 }
 
 int hover_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
 {
+	
+	// TODO: Argument check
+	//
+
 	// Iterate through callbacks
     for (size_t i = 0; i < text_input->on_hover_count; i++)
     {
-        // Define the callback function
+
+        // Initialized data
         void (*callback)(UITextInput_t*, ui_mouse_state_t) = text_input->on_hover[i];
 
         // Call the callback function
-        (*callback)(text_input, mouse_state);
+        if ( callback )
+			(*callback)(text_input, mouse_state);
 
     }
 
+	// Success
+	return 1;
 }
 
 int click_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
 {
 
+	// TODO:
+
+	// Error
 	return 0;
 }
 
 int release_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
 {
+
+	// TODO:
+
+	// Error
 	return 0;
 }
 
 int add_click_callback_text_input(UITextInput_t* text_input, void(*callback)(UITextInput_t*, ui_mouse_state_t))
 {
+	
+	// TODO: 
+
+	// Error
 	return 0;
 }
 
 int add_hover_callback_text_input(UITextInput_t* text_input, void(*callback)(UITextInput_t*, ui_mouse_state_t))
 {
+
 	// TODO: Argument check
+	//
 
     // If this is the first callback, set the max to 1 and 
-    if (text_input->on_hover_max == 0)
+    if ( text_input->on_hover_max == 0 )
     {
 		text_input->on_hover_max = 1;
 		text_input->on_hover = calloc(1, sizeof(void*));
@@ -183,30 +286,32 @@ int add_hover_callback_text_input(UITextInput_t* text_input, void(*callback)(UIT
     // Increment the callback counter and install the new callback
 	text_input->on_hover[text_input->on_hover_count++] = callback;
 
-    return 0;
+	// Success
+    return 1;
 
     // TODO: Error handling
 }
 
 int add_release_callback_text_input(UITextInput_t* text_input, void(*callback)(UITextInput_t*, ui_mouse_state_t))
 {
+
+	// TODO:
+
+	// Error
 	return 0;
 }
 
 int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
 {
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if(window == (void *)0)
-				goto no_window;
-			if(text_input == (void *)0)
-				goto no_text_input;
-		#endif
-	}
+	if ( window     == (void *) 0 ) goto no_window;
+	if ( text_input == (void *) 0 ) goto no_text_input;
 
+	// Initialized data
 	UIInstance_t *instance = ui_get_active_instance();
 	SDL_Renderer *renderer = window->renderer;
+
+	// Set the renderer color
     SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_2, (u8)(instance->accent_2 >> 8), (u8)(instance->accent_2 >> 16), 0xff);
 
 	// Draw the text input
@@ -258,7 +363,8 @@ int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
 		}
 	}
 
-	return 0;
+	// Success
+	return 1;
 
 	// Error handling
 	{
@@ -266,12 +372,15 @@ int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
 		no_text_input:
 			return 0;
 	}
-
-	return 0;
 }
 
 int  set_text_input_text ( UITextInput_t *p_text_input, char *text )
 {
+
+	// TODO: Argument check
+	//
+
+	// Initialized data
 	size_t len = strlen(text);
 
 	if(len > p_text_input->max_chars)
@@ -280,16 +389,25 @@ int  set_text_input_text ( UITextInput_t *p_text_input, char *text )
 		p_text_input->max_chars = len;
 	}
 
+	// Copy the text into the text input
 	strncpy(p_text_input->text, text, len+1);
 
-
+	// Compute and store the new width
 	p_text_input->width = 8 + (8 * len);
 
+	// Success
 	return 1;
+
+	// TODO: Error handling
 }
 
 bool text_input_in_bounds(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
 {
+
+	// TODO: Argument check
+	//
+
+	// Initialized data
 	i32  x = text_input->x,
 		 y = text_input->y,
 		 w = text_input->width,
@@ -297,12 +415,19 @@ bool text_input_in_bounds(UITextInput_t* text_input, ui_mouse_state_t mouse_stat
 	
 	// Check for bounds
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
+
+		// In bounds
 		return true;
 
+	// Out of bounds
 	return false;
 }
 
 int destroy_text_input(UITextInput_t* text_input)
 {
+
+	// TODO: 
+
+	// Error
 	return 0;
 }

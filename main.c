@@ -2,6 +2,7 @@
  *  UI library example
  * 
  *  @author Jacob Smith
+ * 
  *  @file main.c
 */
 #include <UI/UI.h>

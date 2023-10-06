@@ -1,21 +1,21 @@
 #include <UI/UIDropdown.h>
 
-int create_dropdown              ( UIDropdown_t **pp_dropdown )
+int create_dropdown ( UIDropdown_t **pp_dropdown )
 {
-
+    
+    // TODO: Argument check
+	//
+    
     // Initialized data
     UIDropdown_t *p_dropdown = calloc(1, sizeof(UIDropdown_t));
     
     // Check memory
-    {
-        #ifndef NDEBUG
-            if ( p_dropdown == (void *)0 )
-                goto no_mem;
-        #endif
-    }
+    if ( p_dropdown == (void *)0 ) goto no_mem;
 
+    // Return a pointer to the caller
     *pp_dropdown = p_dropdown;
 
+    // Success
     return 1;
     
     // Error handling
@@ -28,26 +28,20 @@ int create_dropdown              ( UIDropdown_t **pp_dropdown )
     }
 }
 
-int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, json_value *p_value )
+int load_dropdown_as_json_value ( UIDropdown_t** pp_dropdown, json_value *p_value )
 {
 
     // Argument check
-	{
-		#ifndef NDEBUG
-			if(pp_dropdown == (void *)0)
-				goto no_dropdown;
-			if (p_value == (void*)0)
-				goto no_value;
-		#endif
-	}
+    if ( pp_dropdown == (void *) 0 ) goto no_dropdown;
+	if ( p_value     == (void *) 0 ) goto no_value;
 
 	// Initialized data
-	UIDropdown_t *p_dropdown = 0;
-    json_value **pp_options = 0,
-                 *p_options  = 0,
-                 *p_x        = 0,
-                 *p_y        = 0,
-                 *p_index    = 0;
+	UIDropdown_t  *p_dropdown = 0;
+    json_value   **pp_options = 0,
+                  *p_options  = 0,
+                  *p_x        = 0,
+                  *p_y        = 0,
+                  *p_index    = 0;
 
 	// Get properties from the dictionary
     if ( p_value->type == JSON_VALUE_OBJECT )
@@ -66,11 +60,10 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, json_value 
 	{
 
 		// Allocate a dropdown
-		if ( create_dropdown(&p_dropdown) == 0)
-			goto failed_to_allocate_label;
+		if ( create_dropdown(&p_dropdown) == 0 ) goto failed_to_allocate_label;
 
         // Set the options
-        if ( p_options->type == JSON_VALUE_ARRAY)
+        if ( p_options->type == JSON_VALUE_ARRAY )
         {
 
             // Initialized data
@@ -133,15 +126,20 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, json_value 
         p_dropdown->collapsed = true;
 	}
 
-	// Return
+	// Return a pointer to the caller
 	*pp_dropdown = p_dropdown;
 
 	// Success
 	return 1;
+
+    // TODO: Categorize
     wrong_x_type:
     wrong_y_type:
     wrong_index_type:
+
+        // Error
         return 0;
+
 	// Error handling
 	{
 
@@ -154,6 +152,7 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, json_value 
 
 				// Error
 				return 0;
+
 			no_value:
 				#ifndef NDEBUG
 					ui_print_error("[UI] [Dropdown] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
@@ -177,26 +176,29 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, json_value 
 	}
 }
 
-int construct_dropdown(UIDropdown_t** pp_dropdown, char** options, i32 x, i32 y, i32 index)
+int construct_dropdown ( UIDropdown_t **pp_dropdown, char** options, i32 x, i32 y, i32 index )
 {
 
-    UIDropdown_t *dropdown = 0;
-    create_dropdown(pp_dropdown);
+    // TODO: Argument check
+	//
 
-    dropdown = *pp_dropdown;
+    // Initialized data
+    UIDropdown_t *p_dropdown = 0;
 
+    // Allocate a dropdown
+    if ( create_dropdown(&p_dropdown) == 0 ) goto no_mem;
 
     // Construct the dropdown
     {
 
         // Copy position
         {
-            dropdown->x = x;
-            dropdown->y = y;
+            p_dropdown->x = x;
+            p_dropdown->y = y;
         }
 
         // Copy index 
-        dropdown->index = index;
+        p_dropdown->index = index;
 
         // Copy options
         {
@@ -208,10 +210,10 @@ int construct_dropdown(UIDropdown_t** pp_dropdown, char** options, i32 x, i32 y,
             // Count each option
             while (options[++option_count]);
 
-            dropdown->options_count = option_count;
+            p_dropdown->options_count = option_count;
 
             // Allocate options
-            dropdown->options = calloc(option_count, sizeof(char *));
+            p_dropdown->options = calloc(option_count, sizeof(char *));
 
             // TOOD: Memory check
 
@@ -234,35 +236,59 @@ int construct_dropdown(UIDropdown_t** pp_dropdown, char** options, i32 x, i32 y,
                 // Copy the option string
                 strncpy(i_option, option, option_len);
 
-                dropdown->options[i] = i_option;
+                p_dropdown->options[i] = i_option;
             }
 
-            dropdown->longest_option = longest_option;
+            p_dropdown->longest_option = longest_option;
         }
 
         // Set collapsed status
-        dropdown->collapsed = true;
+        p_dropdown->collapsed = true;
     }
 
     // Error detection
-    if (dropdown->index >= dropdown->options_count || dropdown->index < 0)
-        dropdown->index = 0;
+    if ( p_dropdown->index >= p_dropdown->options_count || p_dropdown->index < 0 )
+        p_dropdown->index = 0;
 
-
+    // Success
     return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            
+        }
+
+        // Standard library errors
+        {
+            no_mem:
+                #ifndef NDEBUG
+                    // TODO: 
+                #endif
+
+                // Error
+                return 0;
+        }
+    }
 }
  
-int hover_dropdown               ( UIDropdown_t* dropdown, ui_mouse_state_t mouse_state)
+int hover_dropdown ( UIDropdown_t* dropdown, ui_mouse_state_t mouse_state )
 {
+
+    // TODO: Argument check
+	//
+
     if ( dropdown->collapsed == false )
     {
         s32 x = mouse_state.x - dropdown->x,
             y = mouse_state.y - dropdown->y-12;
 
-        if (y >= 0)
+        if ( y >= 0 )
         {
             dropdown->hover_index = y / 11;
-            if (dropdown->hover_index >= dropdown->options_count)
+            if ( dropdown->hover_index >= dropdown->options_count )
                 dropdown->hover_index = dropdown->options_count-1;
             dropdown->index = dropdown->hover_index;
         }
@@ -275,47 +301,68 @@ int hover_dropdown               ( UIDropdown_t* dropdown, ui_mouse_state_t mous
     // Iterate through callbacks
     for (size_t i = 0; i < dropdown->on_hover_count; i++)
     {
-        // Define the callback function
+
+        // Initialized data
         void (*callback)(UIDropdown_t*, ui_mouse_state_t) = dropdown->on_hover;
 
         // Call the callback function
-        (*callback)(dropdown, mouse_state);
+        if ( callback )
+            (*callback)(dropdown, mouse_state);
 
     }
 
-    return 0;
+    // Success
+    return 1;
 
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int release_dropdown(UIDropdown_t* p_dropdown, ui_mouse_state_t mouse_state)
+int release_dropdown ( UIDropdown_t* p_dropdown, ui_mouse_state_t mouse_state )
 {
+
+    // TODO: Argument check
+	//
+
     // Iterate through callbacks
     for (size_t i = 0; i < p_dropdown->on_release_count; i++)
     {
-        // Define the callback function
+
+        // Initialized data
         void (*callback)(UIDropdown_t*, ui_mouse_state_t) = p_dropdown->on_release[i];
 
         // Call the callback function
-        (*callback)(p_dropdown, mouse_state);
+        if ( callback )
+            (*callback)(p_dropdown, mouse_state);
 
     }
 
-    return 0;
+    // Success
+    return 1;
+
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int add_click_callback_dropdown(UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t))
+int add_click_callback_dropdown ( UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t) )
 {
+
     // TODO: Argument check
+    //
 
     // If this is the first callback, set the max to 1 and 
-    if (p_dropdown->on_click_max == 0)
+    if ( p_dropdown->on_click_max == 0 )
     {
         p_dropdown->on_click_max = 1;
         p_dropdown->on_click = calloc(1, sizeof(void*));
     }
 
     // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
-    if (p_dropdown->on_click_count + 1 > p_dropdown->on_click_max)
+    if ( p_dropdown->on_click_count + 1 > p_dropdown->on_click_max )
     {
         // Double the max
         p_dropdown->on_click_max *= 2;
@@ -326,28 +373,49 @@ int add_click_callback_dropdown(UIDropdown_t* p_dropdown, void(*callback)(UIDrop
     // Increment the callback counter and install the new callback
     p_dropdown->on_click[p_dropdown->on_click_count++] = callback;
 
-    return 0;
+    // Success
+    return 1;
+
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int add_hover_callback_dropdown(UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t))
+int add_hover_callback_dropdown ( UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t) )
 {
-    return 0;
-}
 
-int add_release_callback_dropdown(UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t))
-{
     // TODO: Argument check
+	//
+
+    // TODO:
+
+    // Error
+    return 0;
+
+    // TODO: Error handling
+    {
+
+    }
+}
+
+int add_release_callback_dropdown ( UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t) )
+{
+    
+    // TODO: Argument check
+	//
 
     // If this is the first callback, set the max to 1 and 
-    if (p_dropdown->on_release_max == 0)
+    if ( p_dropdown->on_release_max == 0 )
     {
         p_dropdown->on_release_max = 1;
         p_dropdown->on_release = calloc(1, sizeof(void*));
     }
 
     // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
-    if (p_dropdown->on_release_count + 1 > p_dropdown->on_release_max)
+    if ( p_dropdown->on_release_count + 1 > p_dropdown->on_release_max )
     {
+
         // Double the max
         p_dropdown->on_release_max *= 2;
 
@@ -357,11 +425,19 @@ int add_release_callback_dropdown(UIDropdown_t* p_dropdown, void(*callback)(UIDr
     // Increment the callback counter and install the new callback
     p_dropdown->on_release[p_dropdown->on_release_count++] = callback;
 
-    return 0;
+    // Success
+    return 1;
+
+    // TODO: Error handling    
 }
 
-bool dropdown_in_bounds(UIDropdown_t* p_dropdown, ui_mouse_state_t mouse_state)
+bool dropdown_in_bounds ( UIDropdown_t *p_dropdown, ui_mouse_state_t mouse_state )
 {
+    
+    // TODO: Argument check
+	//
+
+    // Initialized data
     i32 x = p_dropdown->x,
         y = p_dropdown->y,
         w = p_dropdown->width,
@@ -370,13 +446,25 @@ bool dropdown_in_bounds(UIDropdown_t* p_dropdown, ui_mouse_state_t mouse_state)
 
     // Check for bounds
     if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
+
+        // In bounds
         return true;
 
+    // Out of bounds
     return false;
+
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int click_dropdown               ( UIDropdown_t *dropdown, ui_mouse_state_t mouse_state )
+int click_dropdown ( UIDropdown_t *dropdown, ui_mouse_state_t mouse_state )
 {
+
+    // TODO: Argument check
+	//
+
     // Initialized data
     UIInstance_t *instance = ui_get_active_instance();
     
@@ -394,26 +482,27 @@ int click_dropdown               ( UIDropdown_t *dropdown, ui_mouse_state_t mous
 
     }
 
-    return 0;
+    // Success
+    return 1;
+
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int destroy_dropdown             ( UIDropdown_t* dropdown)
-{
-    free(dropdown);
-    return 0;
-}
 
 int draw_dropdown                ( UIWindow_t* window, UIDropdown_t* dropdown)
 {
+    
     // TODO: Argument check
+    //
 
     // Initialized data
     size_t   longest_option_len = 0,
              current_len        = 0;
-
-    SDL_Rect r                  = { 0, 0, 0, 0 };
-
-    UIInstance_t *instance = ui_get_active_instance();
+    SDL_Rect      r             = { 0, 0, 0, 0 };
+    UIInstance_t *instance      = ui_get_active_instance();
 
     // 16 pixels of box drawings plus the string
     r.x = dropdown->x,
@@ -467,5 +556,28 @@ int draw_dropdown                ( UIWindow_t* window, UIDropdown_t* dropdown)
     {
         ui_draw_text("\202", window, r.x + r.w - 10, r.y + 1, 1);
     }
-    return 0;
+
+    // Success
+    return 1;
+
+    // TODO: Error handling
+}
+
+
+int destroy_dropdown ( UIDropdown_t* dropdown )
+{
+
+    // TODO: Argument check
+    // 
+
+    // Free the dropdown
+    free(dropdown);
+
+    // Success
+    return 1;
+
+    // TODO: Error handling
+    {
+
+    }
 }

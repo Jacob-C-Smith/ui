@@ -2,20 +2,15 @@
 
 int create_window ( UIWindow_t **pp_window )
 {
+
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if(pp_window == (void *)0)
-				goto no_window;
-		#endif
-	}
+	if ( pp_window == (void *) 0 ) goto no_window;
 
 	// Initialized data
 	UIWindow_t *p_window = calloc(1, sizeof(UIWindow_t));
 
 	// Check memory
-	if ( p_window == (void *) 0 )
-		goto no_mem;
+	if ( p_window == (void *) 0 ) goto no_mem;
 
 	// Return a pointer to the caller
 	*pp_window = p_window;
@@ -56,27 +51,21 @@ int load_window ( UIWindow_t **pp_window, const char *path )
 {
 
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if( path      == (void *) 0 ) goto no_path;
-			if( pp_window == (void *) 0 ) goto no_window;
-		#endif
-	}
+	if( path      == (void *) 0 ) goto no_path;
+	if( pp_window == (void *) 0 ) goto no_window;
 
 	// Initialized data
 	size_t  len  = ui_load_file(path, 0, false);
 	char   *data = calloc(len, sizeof(u8));
 
 	// Error checking
-	if ( data == (void *) 0 )
-		goto no_mem;
+	if ( data == (void *) 0 ) goto no_mem;
 
-	if ( ui_load_file(path, data, false) == 0 ) 
-		goto failed_to_load_file;
+	// Load the file
+	if ( ui_load_file(path, data, false) == 0 ) goto failed_to_load_file;
 	
 	// Load the window as JSON text
-	if ( load_window_as_json(pp_window, data) == 0 )
-		goto failed_to_load_window;
+	if ( load_window_as_json(pp_window, data) == 0 ) goto failed_to_load_window;
 	
 	// Clean the scope
 	free(data);
@@ -100,6 +89,7 @@ int load_window ( UIWindow_t **pp_window, const char *path )
 
 				// Error
 				return 0;
+
 			no_path:
 				#ifndef NDEBUG
 					ui_print_error("[UI] [Window] Null pointer provided for \"path\" in call to function \"%s\"\n", __FUNCTION__);
@@ -107,6 +97,7 @@ int load_window ( UIWindow_t **pp_window, const char *path )
 
 				// Error
 				return 0;
+
 		}
 
 		// Standard library errors
@@ -126,15 +117,13 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 {
 
 	// Argument check
-	{
-		if ( pp_window == (void *) 0 ) goto no_window;
-		if ( text      == (void *) 0 ) goto no_text;
-	}
+	if ( pp_window == (void *) 0 ) goto no_window;
+	if ( text      == (void *) 0 ) goto no_text;
 
 	// Initialized data
 	UIInstance_t *p_instance    = ui_get_active_instance();
 	UIWindow_t   *p_window      = 0;
-    json_value  *p_value       = 0,
+    json_value   *p_value       = 0,
 	             *p_name        = 0,
 	             *p_title       = 0,
 	             *p_width       = 0,
@@ -142,22 +131,20 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 	             *p_elements    = 0;
 
     // Parse the window file into a JSONValue
-    if ( parse_json_value(text, 0, &p_value) == 0 )
-        goto failed_to_parse_json;
+    if ( parse_json_value(text, 0, &p_value) == 0 ) goto failed_to_parse_json;
 
     // Is the JSONValue the right type?
     if ( p_value->type == JSON_VALUE_OBJECT )
 	{
 		
-        p_name = dict_get(p_value->object, "name");
-        p_title = dict_get(p_value->object, "title");
-        p_width = dict_get(p_value->object, "width");
-        p_height = dict_get(p_value->object, "height");
+        p_name     = dict_get(p_value->object, "name");
+        p_title    = dict_get(p_value->object, "title");
+        p_width    = dict_get(p_value->object, "width");
+        p_height   = dict_get(p_value->object, "height");
         p_elements = dict_get(p_value->object, "elements");
 		
 		// Check for missing parameters
-		if ( ! ( p_name && p_title && p_width && p_height && p_elements ) ) 
-			goto missing_elements;
+		if ( ! ( p_name && p_title && p_width && p_height && p_elements ) ) goto missing_elements;
     }
 
 	// Construct the window
@@ -176,8 +163,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 		UIElement_t *element_data = 0;
 
 		// Allocate memory for a UI window
-		if ( create_window(&p_window) == 0 ) 
-			goto failed_to_allocate_window;
+		if ( create_window(&p_window) == 0 ) goto failed_to_allocate_window;
 
 		// Set the name
 		if ( p_name->type == JSON_VALUE_STRING )
@@ -190,8 +176,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 			name = calloc(name_len + 1, sizeof(u8));
 
 			// Error checking
-			if ( name == (void *) 0 )
-				goto no_mem;
+			if ( name == (void *) 0 ) goto no_mem;
 
 			// Copy the name
 			strncpy(name, p_name->string, name_len);
@@ -223,8 +208,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 			title = calloc(title_len + 1, sizeof(u8));
 
 			// Error checking
-			if ( title == (void *) 0 )
-				goto no_mem;
+			if ( title == (void *) 0 ) goto no_mem;
 
 			// Copy the title
 			strncpy(title, p_title->string, title_len);
@@ -242,16 +226,16 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 
 		*p_window = (UIWindow_t)
 		{
-			.is_open = true,
-			.drag = false,
-			.name = name,
-			.title = title,
-			.width = width,
-			.height = height,
-			.rx = 0,
-			.ry = 0,
-			.last = 0,
-			.window = window,
+			.is_open  = true,
+			.drag     = false,
+			.name     = name,
+			.title    = title,
+			.width    = width,
+			.height   = height,
+			.rx       = 0,
+			.ry       = 0,
+			.last     = 0,
+			.window   = window,
 			.renderer = renderer
 		};
 
@@ -291,8 +275,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 				json_value *p_element = pp_elements[i];
 				UIElement_t *constructed_element = 0;
 
-				if ( load_element_as_json_value(&constructed_element, p_element) == 0)
-					goto failed_to_load_element;
+				if ( load_element_as_json_value(&constructed_element, p_element) == 0) goto failed_to_load_element;
 
 				append_element_to_window(p_window, constructed_element);
 				
@@ -349,14 +332,12 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 		{
 			#ifndef NDEBUG
 				name_type_error:
-				return 0;
 				width_type_error:
-					return 0;
 				height_type_error:
-					return 0;
 				element_type_error:
+
+					// Error
 					return 0;
-				return 0;
 			#endif
 		}
 
@@ -409,15 +390,27 @@ int append_element_to_window ( UIWindow_t *p_window, UIElement_t *element )
 
 UIElement_t *find_element ( UIWindow_t *p_window, char *name )
 {
+
+	// TODO: Argument check
+	//
+
+	// Initialized data
 	UIElement_t *ret = dict_get(p_window->elements, name);
 	
+	// Return
 	return ret;
 }
 
 int resize_window ( UIWindow_t *p_window )
 {
+	
+	// TODO: Argument check
+	//
+
+	// Set the window size
 	SDL_SetWindowSize(p_window->window, p_window->width, p_window->height);
 
+	// Success
 	return 1;
 }
 
@@ -425,12 +418,8 @@ int set_file_drop_operation ( UIWindow_t *p_window, int (*callback_function)(UIW
 {
 
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if ( p_window          == (void *) 0 ) goto no_window;
-			if ( callback_function == (void *) 0 ) goto no_callback_function;
-		#endif
-	}
+	if ( p_window          == (void *) 0 ) goto no_window;
+	if ( callback_function == (void *) 0 ) goto no_callback_function;
 
 	// Set the path drop function
 	p_window->path_drop_function = callback_function;
@@ -467,13 +456,13 @@ int draw_window ( UIWindow_t *p_window )
 {
 
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if ( p_window == (void *)0 ) goto no_window;
-			if ( p_window->drag )
-				return 0;
-		#endif
-	}
+	if ( p_window == (void *)0 ) goto no_window;
+
+	// State check
+	if ( p_window->drag )
+
+		// Success
+		return 1;
 
 	// Initialized data
 	UIInstance_t *instance = ui_get_active_instance();
@@ -576,11 +565,7 @@ int process_window_input ( UIWindow_t *p_window )
 {
 
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if ( p_window == (void *) 0 ) goto no_window;
-		#endif
-	}
+	if ( p_window == (void *) 0 ) goto no_window;
 
 	// Initialized data
 	UIInstance_t *instance = ui_get_active_instance();
@@ -799,10 +784,14 @@ int process_window_input ( UIWindow_t *p_window )
 
 int click_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 {
+
+	// TODO: Argument check
+	//
+
+	// Initialized data
 	dict          *elements = p_window->elements;
 	void         **values   = 0;
 	UIInstance_t  *instance = ui_get_active_instance();
-
 
 	// Did the user click on the element on the iterator?
 	for (size_t i = 0; i < p_window->element_count; i++)
@@ -848,11 +837,19 @@ int click_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 		}
 	}
 
-	return 0;
+	// Success
+	return 1;
+
+	// TODO: Error handling
 }
 
 int hover_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 {
+
+	// TODO: Argument check
+	//
+
+	// Initialized data
 	dict         *elements = p_window->elements;
 	UIInstance_t *instance = ui_get_active_instance();
 
@@ -866,17 +863,21 @@ int hover_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 		if (in_bounds(p_window->element_data[i], mouse_state))
 			hover_element(p_window->element_data[i], mouse_state);
 
-	
-
-	return 0;
+	// Success
+	return 1;
 }
 
 int release_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 {
+
+	// TODO: Argument check
+	//
+
+	// Initialized data
 	dict* elements = p_window->elements;
 	UIInstance_t* instance = ui_get_active_instance();
 
-	if (p_window->drag)
+	if (p_window->drag) 
 		p_window->drag = false;
 
 	// Iterate over elements
@@ -886,19 +887,17 @@ int release_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 		if (in_bounds(p_window->element_data[i], mouse_state))
 			release_element(p_window->element_data[i], mouse_state);
 
-	return 0;
+	// Success
+	return 1;
+
+	// TODO: Error handling
 }
 
 int destroy_window ( UIWindow_t *p_window )
 {
 
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if ( p_window == (void *) 0 )
-				goto no_window;
-		#endif
-	}
+	if ( p_window == (void *) 0 ) goto no_window;
 
 	// Close the window
 	p_window->is_open = false;

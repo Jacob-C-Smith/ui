@@ -1,9 +1,9 @@
-/*
- * UI.h
+/** !
+ * Main header for UI library
+
+ * @file UI/UI.h
  * 
- * - Main header file. UI Instance functions
- * 
- * Copyright (c) Jacob Smith, 2022
+ * @author Jacob Smith,
  */
 
 // Includes
@@ -100,7 +100,7 @@ DLLEXPORT int ui_print_log ( const char* const format, ... );
   *  @sa ui_print_log
   *  @sa ui_print_error
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int ui_print_warning ( const char* const format, ... );
 
@@ -146,7 +146,7 @@ DLLEXPORT int ui_draw_format_text ( const char* const format, UIWindow_t *p_wind
   *
   *  @sa ui_draw_format_text
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int ui_draw_text ( const char* const text, UIWindow_t *p_window, int x, int y, int size );
 
@@ -158,7 +158,7 @@ DLLEXPORT int ui_draw_text ( const char* const text, UIWindow_t *p_window, int x
   *  @param x      : The x offset in pixels
   *  @param y      : The y offset in pixels
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int ui_draw_circle ( int radius, UIWindow_t *p_window, int x, int y );
 
@@ -169,7 +169,7 @@ DLLEXPORT int ui_draw_circle ( int radius, UIWindow_t *p_window, int x, int y );
   *  @param instance : Pointer to instance
   *  @param window   : The window to append
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int ui_append_window ( UIInstance_t *p_instance, UIWindow_t *p_window );
 
@@ -179,7 +179,7 @@ DLLEXPORT int ui_append_window ( UIInstance_t *p_instance, UIWindow_t *p_window 
   *  @param instance : Pointer to instance
   *  @param name     : The name of the window
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT UIWindow_t *ui_remove_window ( UIInstance_t *p_instance, const char *name );
 
@@ -188,7 +188,7 @@ DLLEXPORT UIWindow_t *ui_remove_window ( UIInstance_t *p_instance, const char *n
   *
   *  @param instance : Pointer to instance
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int ui_process_input ( UIInstance_t *p_instance );
 
@@ -197,7 +197,7 @@ DLLEXPORT int ui_process_input ( UIInstance_t *p_instance );
   *
   *  @param instance : Pointer to instance
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int ui_draw ( UIInstance_t *p_instance );
 
@@ -217,7 +217,7 @@ DLLEXPORT UIInstance_t *ui_get_active_instance ( void );
   *  @param buffer : Pointer to buffer 
   *  @param binary : fopen mode is "rb" if true else "r"
   * 
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT size_t ui_load_file ( const char *path, void *buffer, bool binary );
 
@@ -227,6 +227,6 @@ DLLEXPORT size_t ui_load_file ( const char *path, void *buffer, bool binary );
   *
   *  @param instance : Pointer to instance
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int ui_exit ( UIInstance_t **pp_instance );

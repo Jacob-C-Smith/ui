@@ -1,43 +1,44 @@
 #include <UI/UICheckbox.h>
 
-int create_checkbox              ( UICheckbox_t **pp_checkbox )
+int create_checkbox ( UICheckbox_t **pp_checkbox )
 {
-    // Argument check
-    {
-        #ifndef NDEBUG
-            if(pp_checkbox == (void *)0)
-                goto no_checkbox;
-        #endif
-    }
 
-    // Allocate for a checkbox
+    // Argument check
+    if ( pp_checkbox == (void *) 0 ) goto no_checkbox;
+
+    // Initialized data
     UICheckbox_t* p_checkbox = calloc(1, sizeof(UICheckbox_t));
 
-    // Check memory
-    {
-        if(p_checkbox == (void *)0)
-            goto no_mem;
-    }
+    // Error check
+    if( p_checkbox == (void *) 0 ) goto no_mem;
 
+    // Return a pointer to the caller
     *pp_checkbox = p_checkbox;
 
+    // Success
     return 1;
 
-    // TODO: Error handling
+    // Error handling
     {
         // Argument errors
         {
             no_checkbox:
                 #ifndef NDEBUG
-
+                    // TODO: 
                 #endif
+
+                // Error
                 return 0;
         }
 
         // Standard library errors
         {
             no_mem:
-                ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
+                #ifndef NDEBUG
+                    ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
+                #endif
+
+                // Error
                 return 0;
         }
     }
@@ -47,18 +48,12 @@ int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, json_value *p_valu
 {
 
     // Argument check
-	{
-		#ifndef NDEBUG
-			if(pp_checkbox == (void *)0)
-				goto no_checkbox;
-			if (p_value == (void*)0)
-				goto no_value;
-		#endif
-	}
+    if ( pp_checkbox == (void *) 0 ) goto no_checkbox;
+    if ( p_value     == (void *) 0 ) goto no_value;
 
 	// Initialized data
 	UICheckbox_t *p_checkbox = 0;
-	json_value  *p_labels   = 0,
+	json_value   *p_labels   = 0,
                  *p_checked  = 0,
                 **pp_labels  = 0,
                 **pp_checked = 0,
@@ -76,19 +71,15 @@ int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, json_value *p_valu
         p_checked = dict_get(p_dict, "checked");
         p_x       = dict_get(p_dict, "x");
 		p_y       = dict_get(p_dict, "y");
-    }
 
-	// Error checking
-	{
-		// TODO
-	}
+        // TODO: Error checking
+    }
 
 	// Construct the checkbox
 	{
 
 		// Allocate a checkbox
-		if ( create_checkbox(&p_checkbox) == 0)
-			goto failed_to_allocate_label;
+		if ( create_checkbox(&p_checkbox) == 0 ) goto failed_to_allocate_label;
 
         // Set the labels and checks
         if ( p_labels->type == JSON_VALUE_ARRAY)
@@ -193,19 +184,17 @@ int load_checkbox_as_json_value ( UICheckbox_t **pp_checkbox, json_value *p_valu
 	}
 }
 
-int construct_checkbox(UICheckbox_t** checkbox, char** labels, bool* checked, i32 x, i32 y)
+int construct_checkbox ( UICheckbox_t** pp_checkbox, char** labels, bool* checked, i32 x, i32 y )
 {
-    // TODO: Argument check
-    {
 
-    }
+    // TODO: Argument check
+    //
 
     // Initialized data
-    UICheckbox_t *i_checkbox = 0;
+    UICheckbox_t *p_checkbox = 0;
 
-    create_checkbox(checkbox);
-    
-    i_checkbox = *checkbox;
+    // Allocate a checkbox
+    if ( create_checkbox(pp_checkbox) == (void *) 0 ) goto failed_to_allocate_checkbox;
 
     // Construct the checkbox
     {
@@ -217,131 +206,227 @@ int construct_checkbox(UICheckbox_t** checkbox, char** labels, bool* checked, i3
         // Count labels
         while (labels[++label_count]);
 
-        i_checkbox->label_count = label_count;
+        // Store the quantity of labels
+        p_checkbox->label_count = label_count;
+        
+        // Allocate memory for checks
+        p_checkbox->checks = calloc(label_count, sizeof(bool));
 
-        dict_construct(&i_checkbox->labels, label_count, 0);
+        // Error check
+        if ( p_checkbox->checks == (void *) 0 ) goto no_mem;
+
+        // Construct a dictionary for the checkbox labels
+        if ( dict_construct(&p_checkbox->labels, label_count, 0) == 0 ) goto failed_to_construct_dict;
 
         // Allocate for and copy labels, check states
         for (size_t i = 0; i < label_count; i++)
         {
 
             // Initialized data
-            char   *label   = labels[i],
-                   *i_label = 0;
+            char   *label    = labels[i],
+                   *i_label  = 0;
             size_t  i_length = strlen(label);
 
-            
+            // Find the longest label
             longest_label = (i_length > longest_label) ? i_length : longest_label;
-
 
             // Allocate for the option
             i_label = calloc(i_length + 1, sizeof(char));
 
             // TOOD: Memory check
+            if ( i_label == (void *) 0 ) goto no_mem;
 
             // Copy the option string
             strncpy(i_label, label, i_length);
 
-            i_checkbox->labels[i] = i_label;
+            // Store the label in the checkbox struct
+            p_checkbox->labels[i] = i_label;
 
         }
 
-        i_checkbox->longest_label = longest_label;
-        i_checkbox->checks        = calloc(label_count, sizeof(bool));
+        // Store the length of the longest label
+        p_checkbox->longest_label = longest_label;
 
         // Set x
-        i_checkbox->x = x;
+        p_checkbox->x = x;
 
         // Set y
-        i_checkbox->y = y;
+        p_checkbox->y = y;
 
     }
 
+    // Return a pointer to the caller
+    *pp_checkbox = p_checkbox;
+    
+    // Success
     return 1;
 
-    // TODO: Error handling
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            
+        }
+
+        // dict errors
+        {
+            failed_to_construct_dict:;
+        }
+
+        // Standard library errors
+        {
+            no_mem:;
+        }
+
+        // UI errors
+        {
+            failed_to_allocate_checkbox:;
+        }
+
+        // TODO: remove
+
+        // Error
+        return 0;
+    }
 
 }
 
-int           hover_checkbox               ( UICheckbox_t *checkbox, ui_mouse_state_t mouse_state)
+int hover_checkbox ( UICheckbox_t *p_checkbox, ui_mouse_state_t mouse_state )
 {
-    s32 x = mouse_state.x - checkbox->x,
-        y = mouse_state.y - checkbox->y;
 
-    if (y >= 0)
+    // TODO: Argument check
+	//
+
+    // Initialized data
+    s32 x = mouse_state.x - p_checkbox->x,
+        y = mouse_state.y - p_checkbox->y;
+
+    if ( y >= 0 )
     {
-        checkbox->hover_index = (y / 15) ;
-        if (checkbox->hover_index > checkbox->label_count)
-            checkbox->hover_index = checkbox->label_count - 1;
+        p_checkbox->hover_index = (y / 15) ;
+        if (p_checkbox->hover_index > p_checkbox->label_count)
+            p_checkbox->hover_index = p_checkbox->label_count - 1;
     }
     else
     {
-        checkbox->hover_index = -1;
+        p_checkbox->hover_index = -1;
     }
 
-    
-    return 0;
+    // Success
+    return 1;
+
+    // TODO: Error handling
 }
 
-int           click_checkbox               ( UICheckbox_t *checkbox, ui_mouse_state_t mouse_state)
+int click_checkbox ( UICheckbox_t *p_checkbox, ui_mouse_state_t mouse_state)
 {
-    if(checkbox->hover_index != -1)
-        checkbox->checks[checkbox->hover_index] ^= true;
+    
+    // TODO: Argument check
+	//
+
+    if(p_checkbox->hover_index != -1)
+        p_checkbox->checks[p_checkbox->hover_index] ^= true;
 
     // Iterate through callbacks
-    for (size_t i = 0; i < checkbox->on_click_count; i++)
+    for (size_t i = 0; i < p_checkbox->on_click_count; i++)
     {
         // Define the callback function
-        void (*callback)(UICheckbox_t*, ui_mouse_state_t) = checkbox->on_click[i];
+        void (*callback)(UICheckbox_t*, ui_mouse_state_t) = p_checkbox->on_click[i];
 
         // Call the callback function
-        (*callback)(checkbox, mouse_state);
+        (*callback)(p_checkbox, mouse_state);
 
     }
 
+    // Success
     return 1;
+
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int           release_checkbox              ( UICheckbox_t *checkbox, ui_mouse_state_t mouse_state )
+int release_checkbox ( UICheckbox_t *p_checkbox, ui_mouse_state_t mouse_state )
 {
+
+    // TODO: Argument check
+	//
+
     // Iterate through callbacks
-    for (size_t i = 0; i < checkbox->on_release_count; i++)
+    for (size_t i = 0; i < p_checkbox->on_release_count; i++)
     {
         // Define the callback function
-        void (*callback)(UICheckbox_t*, ui_mouse_state_t) = checkbox->on_release[i];
+        void (*callback)(UICheckbox_t*, ui_mouse_state_t) = p_checkbox->on_release[i];
 
 
         // Call the callback function
         if (callback)
-            (*callback)(checkbox, mouse_state);
+            (*callback)(p_checkbox, mouse_state);
 
     }
 
-    return 0;
+    // Success
+    return 1;
 }
 
-int add_click_callback_checkbox(UICheckbox_t* checkbox, void(*callback)(UICheckbox_t*, ui_mouse_state_t))
+int add_click_callback_checkbox(UICheckbox_t *p_checkbox, void(*callback)(UICheckbox_t*, ui_mouse_state_t))
 {
+
+    // TODO: Argument check
+	//
+
     // TODO:
-    return 0;
+    // Success
+    return 1;
+
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int add_hover_callback_checkbox(UICheckbox_t* checkbox, void(*callback)(UICheckbox_t*, ui_mouse_state_t))
+int add_hover_callback_checkbox ( UICheckbox_t *p_checkbox, void(*callback)(UICheckbox_t*, ui_mouse_state_t) )
 {
+    
+    // TODO: Argument check
+	//
+
     // TODO:
-    return 0;
+    // Success
+    return 1;
+
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int add_release_callback_checkbox(UICheckbox_t* checkbox, void(*callback)(UICheckbox_t*, ui_mouse_state_t))
+int add_release_callback_checkbox ( UICheckbox_t *p_checkbox, void(*callback)(UICheckbox_t*, ui_mouse_state_t) )
 {
-    // TODO:
-    return 0;
+
+    // TODO: Argument check
+	//
+
+    // Success
+    return 1;
+
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int           draw_checkbox                ( UIWindow_t   *window  , UICheckbox_t *checkbox )
+int draw_checkbox ( UIWindow_t *window, UICheckbox_t *checkbox )
 {
-    UIInstance_t* instance = ui_get_active_instance();
-    SDL_Rect r = { checkbox->x, checkbox->y, 12, 12 };
+
+    // TODO: Argument check
+	//
+
+    // Initialized data
+    UIInstance_t *instance = ui_get_active_instance();
+    SDL_Rect      r        = { checkbox->x, checkbox->y, 12, 12 };
 
     checkbox->width  = 12,
     checkbox->height = 18*checkbox->label_count;
@@ -361,13 +446,22 @@ int           draw_checkbox                ( UIWindow_t   *window  , UICheckbox_
         r.y += 15;
     }
 
-    return 0;
+    // Success
+    return 1;
 
+    // TODO: Error handling
+    {
+
+    }
 }
 
 
-bool       checkbox_in_bounds  ( UICheckbox_t  *checkbox, ui_mouse_state_t mouse_state)
+bool checkbox_in_bounds ( UICheckbox_t  *checkbox, ui_mouse_state_t mouse_state)
 {
+
+    // TODO: Argument check
+	//
+
 	// Initialized data
 	i32  x = checkbox->x,
 		 y = checkbox->y,
@@ -376,15 +470,35 @@ bool       checkbox_in_bounds  ( UICheckbox_t  *checkbox, ui_mouse_state_t mouse
 	
 	// Check for bounds
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
+
+        // In bounds
 		return true;
 
+    // Out of bounds
 	return false;
 
+    // TODO: Error handling
+    {
+
+    }
 }
 
 
-int           destroy_checkbox             ( UICheckbox_t *checkbox )
+int destroy_checkbox ( UICheckbox_t *checkbox )
 {
+    // TODO: Argument check
+    // 
+
+    // TODO: 
+
+    // Free the checkbox struct
     free(checkbox);
-    return 0;
+
+    // Success
+    return 1;
+
+    // TODO: Error handling
+    {
+
+    }
 }

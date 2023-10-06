@@ -188,31 +188,23 @@ int init_element ( void )
         dict_add(destructor_lut , element_names[i], destructor_callback[i]);
     }
 
+    // Success
     return 1;
 }
 
 int create_element ( UIElement_t **pp_element )
 {
+
     // Argument check
-    {
-        #ifndef NDEBUG
-            if (pp_element == (void *)0)
-                goto no_element;
-        #endif
-    }
+    if ( pp_element == (void *) 0 ) goto no_element;
 
     // Initialized data
     UIElement_t *p_element = calloc(1, sizeof(UIElement_t));
     
-    // Check memory
-    {
-        #ifndef NDEBUG
-            if (p_element == (void*)0)
-                goto out_of_memory;
-        #endif
-    }
+    // Error check
+    if ( p_element == (void *) 0 ) goto no_mem;
 
-    // Return
+    // Return a pointer to the caller
     *pp_element = p_element;
 
     // Success
@@ -234,9 +226,9 @@ int create_element ( UIElement_t **pp_element )
 
         // Standard library errors
         {
-            out_of_memory:
+            no_mem:
                 #ifndef NDEBUG
-                    ui_print_error("[Standard library] Out of memory in call to function \"%s\"\n",__FUNCTION__);
+                    ui_print_error("[Standard library] Failed to allocate memory in call to function \"%s\"\n",__FUNCTION__);
                 #endif
 
                 // Error
@@ -249,16 +241,11 @@ int load_element_as_json_value(UIElement_t **pp_element, json_value *p_value)
 {
     
     // Argument check
-    {
-        #ifndef NDEBUG
-            if(p_value == (void *)0)
-                goto no_value;
-        #endif  
-    }
+    if ( p_value == (void *) 0 ) goto no_value;
 
     // Initialized data
     json_value *p_type = 0,
-                *p_name = 0;
+               *p_name = 0;
 
     // Get properties from the dictionary
     if ( p_value->type == JSON_VALUE_OBJECT )
@@ -283,12 +270,7 @@ int load_element_as_json_value(UIElement_t **pp_element, json_value *p_value)
         int (*constructor)(void*, void*) = dict_get(load_lut, p_type->string);
 
         // Error checking
-        {
-            #ifndef NDEBUG
-                if (constructor == (void *)0)
-                    goto not_implemented;
-            #endif
-        }
+        if ( constructor == (void *) 0 ) goto not_implemented;
 
         // Call the element constructor for the specific type
         (*constructor)((void*) &p_value, p_value);
@@ -349,21 +331,13 @@ int construct_element(UIElement_t **pp_element, char *p_name, char *p_type, void
 {
     
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( element_data == (void *) 0 ) goto no_element_data;
-        #endif
-    }
+    if ( element_data == (void *) 0 ) goto no_element_data;
 
     // Initialized data
     UIElement_t *p_element = 0;
     
     // Allocate memory for an element
-    if ( create_element(pp_element) == 0 )
-        goto failed_to_allocate_element;
-    
-    // Get a pointer to the element memory
-    p_element = *pp_element;
+    if ( create_element(&p_element) == 0 ) goto failed_to_allocate_element;
 
     // Construct the element
     {
@@ -382,8 +356,7 @@ int construct_element(UIElement_t **pp_element, char *p_name, char *p_type, void
             name = calloc(len + 1, sizeof(u8));
 
             // Error handling
-            if ( name == (void *) 0 )
-                goto no_mem;
+            if ( name == (void *) 0 ) goto no_mem;
 
             // Copy the name
             strncpy(name, p_name, len);
@@ -399,8 +372,7 @@ int construct_element(UIElement_t **pp_element, char *p_name, char *p_type, void
             type = calloc(len + 1, sizeof(u8));
 
             // Error handling
-            if ( type == (void *) 0 )
-                goto no_mem;
+            if ( type == (void *) 0 ) goto no_mem;
 
             // Copy the type
             strncpy(type, p_type, len);
@@ -412,11 +384,12 @@ int construct_element(UIElement_t **pp_element, char *p_name, char *p_type, void
             .name = name,
             .type = type,
             .draw = true,
-
-            // Not really a button. Rather, a pointer to the element 
-            .button = element_data
+            .button = element_data // Not really a button. Rather, a pointer to the element 
         };
     }
+
+    // Return a pointer to the caller 
+    *pp_element = p_element;
 
     // Success
     return 1;
@@ -435,104 +408,142 @@ int construct_element(UIElement_t **pp_element, char *p_name, char *p_type, void
     }
 }
 
-int click_element(UIElement_t* element, ui_mouse_state_t mouse_state)
+int click_element ( UIElement_t* element, ui_mouse_state_t mouse_state )
 {
-    UIInstance_t *instnace = ui_get_active_instance();
-    
+
+    // TODO: Argument check
+	//
+
     // Initialized data
+    UIInstance_t *instanace = ui_get_active_instance();
     int (*click)(void*, ui_mouse_state_t) = dict_get(click_lut, element->type);
 
-    (*click)((void*)element->label, mouse_state); // Call the element constructor for the specific type
+    // Set the last element
+    instanace->active_window->last = element;
     
-    // Set last
-    instnace->active_window->last = element;
+    // Call the element click function for the element type
+    return (*click)((void*)element->label, mouse_state); 
 
-    return 0;
+    // TODO: Error handling
+    {
+
+    }
 }
 
-int hover_element(UIElement_t* element, ui_mouse_state_t mouse_state)
+int hover_element ( UIElement_t* element, ui_mouse_state_t mouse_state )
 {
+
+    // TODO: Argument check
+	//
+
     // Initialized data
     int (*hover)(void*, ui_mouse_state_t) = dict_get(hover_lut, element->type);
 
-    // Call the element constructor for the specific type
-    (*hover)((void*)element->label, mouse_state);
+    // Call the element hover function for the specific type
+    return (*hover)((void*)element->label, mouse_state);
 
+    // TODO: Error handling
+    {
 
-    return 0;
+    }
 }
 
-int release_element(UIElement_t* element, ui_mouse_state_t mouse_state)
+int release_element ( UIElement_t* element, ui_mouse_state_t mouse_state )
 {
+
     // TODO: Argument check
+	//
 
     // Initialized data
-    bool (*release)(void*, ui_mouse_state_t) = dict_get(release_lut, element->type);
+    UIInstance_t *instanace = ui_get_active_instance();
+    int (*release)(void*, ui_mouse_state_t) = dict_get(release_lut, element->type);
 
-    // Call the element constructor for the specific type
+    // Set the last element
+    instanace->active_window->last = element;
+
+    // Call the element release function for the specific type
     return (*release)((void*)element->label, mouse_state);
 
+    // TODO: Error handling
+    {
 
-    return 0;
+    }
 }
 
 int add_click_callback_element(UIElement_t* element, void(*callback)(UIElement_t*, ui_mouse_state_t))
 {
+
     // TODO: Argument check
+    //
 
     // Initialized data
     int (*add_click_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_click_lut, element->type);
 
-    // Call the element constructor for the specific type
+    // Call the element add click function for the specific type
     return (*add_click_callback)((void*)element->label, callback);
 
-
-    return 0;
+    // TODO: Error handling
 }
 
 int add_hover_callback_element(UIElement_t* element, void(*callback)(UIElement_t*, ui_mouse_state_t))
 {
+
     // TODO: Argument check
+    //
 
     // Initialized data
-    bool (*add_hover_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_hover_lut, element->type);
+    int (*add_hover_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_hover_lut, element->type);
 
-    // Call the element constructor for the specific type
+    // Call the element add hover function for the specific type
     return (*add_hover_callback)((void*)element->label, callback);
 
-    return 0;
+    // TODO: Error handling
+    {
+
+    }
 }
 
 int add_release_callback_element(UIElement_t* element, void(*callback)(UIElement_t*, ui_mouse_state_t))
 {
+
     // TODO: Argument check
+    //
 
     // Initialized data
-    bool (*add_release_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_release_lut, element->type);
+    int (*add_release_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_release_lut, element->type);
 
-    // Call the element constructor for the specific type
+    // Call the element add release function for the specific type
     return (*add_release_callback)((void*)element->label, callback);
+
+    // TODO: Error handling
+    {
+
+    }
 }
 
 bool in_bounds ( UIElement_t* element, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
-    bool ret = false;
+    //
+
     // Initialized data
     bool (*bounds)(void*, ui_mouse_state_t) = dict_get(bounds_lut, element->type);
 
-    // Call the element constructor for the specific type
-    if(bounds)
-        ret = (*bounds)((void*)element->label, mouse_state);
+    // Call the element in bounds function for the specific type
+    return (*bounds)((void*)element->label, mouse_state);
 
-    return ret;
+    // TODO: Error handling
+    {
 
+    }
 }
 
 int draw_element( UIWindow_t *window, UIElement_t* element )
 {
+
     // TODO: Argument check
+    //
 
     // Construct the element
     if ( element->draw )
@@ -542,7 +553,7 @@ int draw_element( UIWindow_t *window, UIElement_t* element )
         int (*drawer)(void*, void*) = dict_get(draw_lut, element->type);
 
         // Call the element constructor for the specific type
-        (*drawer)((void*)window, element->label);
+        return (*drawer)((void*)window, element->label);
 
     }
 
@@ -556,12 +567,7 @@ int destroy_element(UIElement_t **pp_element)
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( pp_element == (void *) 0 ) 
-                goto no_element;
-        #endif
-    }
+    if ( pp_element == (void *) 0 ) goto no_element;
     
     // Initialized data
     UIElement_t *p_element = *pp_element;

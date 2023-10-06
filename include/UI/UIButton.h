@@ -44,7 +44,7 @@ struct UIButton_s
   *  
   *  @sa destroy_button
   *  
-  *  @return 0 on success, -1 on error.  
+  *  @return 1 on success, 0 on error.  
   */
 DLLEXPORT int create_button ( UIButton_t **pp_button );
 
@@ -57,7 +57,7 @@ DLLEXPORT int create_button ( UIButton_t **pp_button );
   * 
   *  @sa load_element_as_json 
   *  
-  *  @return 0 on success, -1 on error.  
+  *  @return 1 on success, 0 on error.  
   */
 DLLEXPORT int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value );
 
@@ -72,7 +72,7 @@ DLLEXPORT int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_
   *  @sa click_button
   *  @sa release_button
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int hover_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state );
 
@@ -85,7 +85,7 @@ DLLEXPORT int hover_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state
   *  @sa hover_button
   *  @sa release_button
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int click_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state );
 
@@ -98,7 +98,7 @@ DLLEXPORT int click_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state
   *  @sa click_button
   *  @sa hover_button
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int release_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state );
 
@@ -113,7 +113,7 @@ DLLEXPORT int release_button ( UIButton_t *p_button , ui_mouse_state_t mouse_sta
   *  @sa add_hover_callback_button
   *  @sa add_release_callback_button
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int add_click_callback_button ( UIButton_t *p_button , void (*callback) ( UIButton_t*, ui_mouse_state_t ) );
 
@@ -126,7 +126,7 @@ DLLEXPORT int add_click_callback_button ( UIButton_t *p_button , void (*callback
   *  @sa add_click_callback_button
   *  @sa add_release_callback_button
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int add_hover_callback_button ( UIButton_t *p_button , void (*callback) ( UIButton_t*, ui_mouse_state_t ) );
 
@@ -139,7 +139,7 @@ DLLEXPORT int add_hover_callback_button ( UIButton_t *p_button , void (*callback
   *  @sa add_click_callback_button
   *  @sa add_hover_callback_button
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int add_release_callback_button ( UIButton_t *p_button , void (*callback) ( UIButton_t*, ui_mouse_state_t ) );
 
@@ -152,7 +152,7 @@ DLLEXPORT int add_release_callback_button ( UIButton_t *p_button , void (*callba
   *
   *  @sa draw_element
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int draw_button ( UIWindow_t *p_window, UIButton_t *p_button );
 

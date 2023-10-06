@@ -4,25 +4,15 @@ int create_image ( UIImage_t **pp_image )
 {
 	
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if ( pp_image == (void *) 0 )
-				goto no_image;
-		#endif
-	}
+	if ( pp_image == (void *) 0 ) goto no_image;
 
 	// Initialized data
 	UIImage_t *p_image = calloc(1, sizeof(UIImage_t));
 
 	// Error checking
-	{
-		#ifndef NDEBUG
-			if (p_image == (void*)0)
-				goto no_mem;
-		#endif
-	}
+	if ( p_image == (void *) 0 ) goto no_mem;
 
-	// Return
+	// Return a pointer to the caller
 	*pp_image = p_image;
 
 	// Success
@@ -59,25 +49,20 @@ int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
 {
 	
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if(pp_image == (void *)0)
-				goto no_image;
-			if (p_value == (void*)0)
-				goto no_value;
-		#endif
-	}
+	if ( pp_image == (void *) 0 ) goto no_image;
+	if ( p_value  == (void *) 0 ) goto no_value;
 
 	// Initialized data
-	UIImage_t   *p_image  = 0;
+	UIImage_t  *p_image  = 0;
 	json_value *p_x      = 0,
-		        *p_y      = 0,
-		        *p_width  = 0,
-		        *p_height = 0,
-	            *p_path   = 0;
+		       *p_y      = 0,
+		       *p_width  = 0,
+		       *p_height = 0,
+	           *p_path   = 0;
 
 	// Parse JSON
-	if ( p_value->type == JSON_VALUE_OBJECT ){
+	if ( p_value->type == JSON_VALUE_OBJECT )
+	{
 
 		// Initialized data
 		dict *p_dict = p_value->object;
@@ -89,6 +74,7 @@ int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
 		p_height = dict_get(p_dict, "height");
 		p_path   = dict_get(p_dict, "path");
 
+		// TODO: Error check
 	}
 
 	// Construct the UI image
@@ -105,8 +91,7 @@ int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
 		}
 
 		// Allocate memory for the UI image
-		if ( create_image(&p_image) == 0 )
-			goto faield_to_allocate_image;
+		if ( create_image(&p_image) == 0 ) goto faield_to_allocate_image;
 		
 		// Set the image data
 
@@ -138,14 +123,17 @@ int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
 		else
 			goto wrong_height_type;
 
+		// Store the texture in the image struct
         p_image->texture = t;
 	}
 	
-	// Return
+	// Return a pointer to the caller
 	*pp_image = p_image;
 
 	// Success
 	return 1;
+
+	// TODO: 
 	wrong_x_type:
 	wrong_y_type:
 	wrong_width_type:
@@ -189,54 +177,115 @@ int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
 
 int click_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 {
+
+	// TODO: Argument check
+	//
+
+	// TODO: 
+
 	return 0;
+
+	// TODO: Error handling
+	{
+
+	}
 }
 
 int release_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 {
+
+	// TODO: Argument check
+	//
+
+	// TODO: 
+
 	return 0;
+
+	// TODO: Error handling
+	{
+		
+	}
 }
 
 int add_click_callback_image(UIImage_t* p_image, void(*callback)(UIImage_t*, ui_mouse_state_t))
 {
+
+	// TODO: Argument check
+	//
+
+	// TODO: 
+
 	return 0;
+
+	// TODO: Error handling
+	{
+		
+	}
 }
 
 int add_hover_callback_image(UIImage_t* p_image, void(*callback)(UIImage_t*, ui_mouse_state_t))
 {
+
+	// TODO: Argument check
+	//
+
+	// TODO: 
+
 	return 0;
+
+	// TODO: Error handling
+	{
+		
+	}
 }
 
 int add_release_callback_image(UIImage_t* p_image, void(*callback)(UIImage_t*, ui_mouse_state_t))
 {
+
+	// TODO: Argument check
+	//
+
+	// TODO: 
+
 	return 0;
+
+	// TODO: Error handling
+	{
+		
+	}
 }
 
 int hover_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 {
+
+	// TODO: Argument check
+	//
+
+	// TODO: 
+
 	return 0;
+
+	// TODO: Error handling
+	{
+		
+	}
 }
 
 int draw_image ( UIWindow_t *p_window, UIImage_t *p_image )
 {
 	
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if ( p_window == (void *) 0 )
-				goto no_window;
-			if ( p_image == (void *) 0 )
-				goto no_image;
-		#endif
-	}
+	if ( p_window == (void *) 0 ) goto no_window;
+	if ( p_image  == (void *) 0 ) goto no_image;
 
 	// Initialzed data
-	SDL_Rect texr = {
-		              .x = p_image->x,
-	                  .y = p_image->y,
-					  .w = p_image->width,
-					  .h = p_image->height
-					};
+	SDL_Rect texr = 
+	{
+		.x = p_image->x,
+	    .y = p_image->y,
+		.w = p_image->width,
+		.h = p_image->height
+	};
 
 	// Copy the texture to the window with the renderer
 	SDL_RenderCopy(p_window->renderer, p_image->texture, NULL, &texr);
@@ -256,6 +305,7 @@ int draw_image ( UIWindow_t *p_window, UIImage_t *p_image )
 
 				// Error
 				return 0;
+
 			no_image:
 				#ifndef NDEBUG
 					ui_print_error("[UI] [Image] Null pointer provided for parameter \"p_image\" in call to function \"%s\"\n", __FUNCTION__);
@@ -265,13 +315,14 @@ int draw_image ( UIWindow_t *p_window, UIImage_t *p_image )
 				return 0;
 		}
 	}
-	
-	return 0;
 }
 
 bool image_in_bounds(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 {
-	
+
+	// TODO: Argument check
+	//
+
 	// Initialized data
 	i32  x = p_image->x,
 		 y = p_image->y,
@@ -280,26 +331,29 @@ bool image_in_bounds(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 	
 	// Check for bounds
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
+
+		// In bounds
 		return true;
 	
+	// Out of bounds
 	return false;
+
+	// TODO: Error handling
+	{
+
+	}
 }
 
 int destroy_image(UIImage_t **pp_image)
 {
 	
-	
 	// Argument check
-	{
-		#ifndef NDEBUG
-			if ( pp_image == (void *) 0 )
-				goto no_image;
-		#endif
-	}
+	if ( pp_image == (void *) 0 ) goto no_image;
 
 	// Initialized data
 	UIImage_t *p_image = *pp_image;
 
+	// TODO: Handle the error
 	// Just exit if p_image is null 
 	if ( p_image == (void *) 0 )
 
@@ -323,6 +377,4 @@ int destroy_image(UIImage_t **pp_image)
 				return 0;
 		}
 	}
-
-	return 0;
 }

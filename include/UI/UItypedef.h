@@ -1,14 +1,14 @@
+// Include guard
 #pragma once
-#include <UI/UItypedef.h>
 
 // Platform dependent macros
 #ifdef _WIN64
-#define DLLEXPORT extern __declspec(dllexport)
+    #define DLLEXPORT extern __declspec(dllexport)
 #else
-#define DLLEXPORT
+    #define DLLEXPORT
 #endif
 
-// Useful typedefs 
+// Type definitions
 typedef unsigned char        u8;
 typedef signed   char        s8;
 typedef          char        i8;
@@ -25,7 +25,8 @@ typedef float                f32;
 typedef double               f64;
 typedef long     double      f80;
 
-// Color. R is bits 0-7, G is 8-15, B 16-23, A 24-31
+// Color
+// R is bits 0-7, G is 8-15, B 16-23, A 24-31
 typedef u32 color;
 
 // UI Structures
@@ -50,49 +51,49 @@ struct UIInstance_s;
 typedef struct ui_mouse_state_s ui_mouse_state_t;
 
 // UI Label type
-typedef struct UILabel_s	    UILabel_t;
+typedef struct UILabel_s UILabel_t;
 
 // UI Button type
-typedef struct UIButton_s	    UIButton_t;
+typedef struct UIButton_s UIButton_t;
 
 // UI Canvas type
-typedef struct UICanvas_s	    UICanvas_t;
+typedef struct UICanvas_s UICanvas_t;
 
 // UI Chart type
-typedef struct UIChart_s	    UIChart_t;
+typedef struct UIChart_s UIChart_t;
 
 // UI Table type
-typedef struct UITable_s        UITable_t;
+typedef struct UITable_s UITable_t;
 
 // UI Checkbox type
-typedef struct UICheckbox_s     UICheckbox_t;
+typedef struct UICheckbox_s UICheckbox_t;
 
 // UI Contianer type
-typedef struct UIContainer_s    UIContainer_t;
+typedef struct UIContainer_s UIContainer_t;
 
 // UI Dropdown type
-typedef struct UIDropdown_s	    UIDropdown_t;
+typedef struct UIDropdown_s UIDropdown_t;
 
 // UI Image type
-typedef struct UIImage_s        UIImage_t;
+typedef struct UIImage_s UIImage_t;
 
 // UI Label type
-typedef struct UILabel_s        UILabel_t;
+typedef struct UILabel_s UILabel_t;
 
 // UI Radio button type
-typedef struct UIRadioButton_s  UIRadioButton_t;
+typedef struct UIRadioButton_s UIRadioButton_t;
 
 // UI Slider type
-typedef struct UISlider_s       UISlider_t;
+typedef struct UISlider_s UISlider_t;
 
 // UI Text input type
-typedef struct UITextInput_s    UITextInput_t;
+typedef struct UITextInput_s UITextInput_t;
 
 // UI Element type
-typedef struct UIElement_s      UIElement_t;
+typedef struct UIElement_s UIElement_t;
 
 // UI Window type
-typedef struct UIWindow_s       UIWindow_t;
+typedef struct UIWindow_s UIWindow_t;
 
 // UI Instance type
-typedef struct UIInstance_s     UIInstance_t;
+typedef struct UIInstance_s UIInstance_t;

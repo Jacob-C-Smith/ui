@@ -45,7 +45,7 @@ struct UITable_s
   *  
   *  @sa destroy_table
   *  
-  *  @return 0 on success, -1 on error.  
+  *  @return 1 on success, 0 on error.  
   */
 DLLEXPORT int           create_table               ( UITable_t  **pp_table );
 
@@ -58,7 +58,7 @@ DLLEXPORT int           create_table               ( UITable_t  **pp_table );
   * 
   *  @sa load_element_as_json 
   *  
-  *  @return 0 on success, -1 on error.  
+  *  @return 1 on success, 0 on error.  
   */
 DLLEXPORT int           load_table_as_json_value   ( UITable_t  **pp_table, json_value *p_value );
 
@@ -73,7 +73,7 @@ DLLEXPORT int           load_table_as_json_value   ( UITable_t  **pp_table, json
   *  @sa click_table
   *  @sa release_table
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int           hover_table                ( UITable_t   *p_table, ui_mouse_state_t mouse_state );
 
@@ -86,7 +86,7 @@ DLLEXPORT int           hover_table                ( UITable_t   *p_table, ui_mo
   *  @sa hover_table
   *  @sa release_table
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int           click_table                ( UITable_t   *p_table, ui_mouse_state_t mouse_state );
 
@@ -99,7 +99,7 @@ DLLEXPORT int           click_table                ( UITable_t   *p_table, ui_mo
   *  @sa click_table
   *  @sa hover_table
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int           release_table              ( UITable_t   *p_table , ui_mouse_state_t mouse_state );
 
@@ -113,7 +113,7 @@ DLLEXPORT int           release_table              ( UITable_t   *p_table , ui_m
   *  @sa add_hover_callback_table
   *  @sa add_release_callback_table
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int           add_click_callback_table   ( UITable_t   *p_table , void (*callback) ( UITable_t*, ui_mouse_state_t ) );
 
@@ -126,7 +126,7 @@ DLLEXPORT int           add_click_callback_table   ( UITable_t   *p_table , void
   *  @sa add_click_callback_table
   *  @sa add_release_callback_table
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int           add_hover_callback_table   ( UITable_t   *p_table, void (*callback) ( UITable_t*, ui_mouse_state_t ) );
 
@@ -139,7 +139,7 @@ DLLEXPORT int           add_hover_callback_table   ( UITable_t   *p_table, void 
   *  @sa add_click_callback_table
   *  @sa add_hover_callback_table
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int           add_release_callback_table ( UITable_t   *p_table, void (*callback) ( UITable_t*, ui_mouse_state_t ) );
 
@@ -156,7 +156,7 @@ DLLEXPORT int           set_table_cell ( UITable_t   *p_table, size_t x, size_t 
   *
   *  @sa draw_element
   *
-  *  @return 0 on success, -1 on error.
+  *  @return 1 on success, 0 on error.
   */
 DLLEXPORT int           draw_table                 ( UIWindow_t   *window   , UITable_t *p_table );
 

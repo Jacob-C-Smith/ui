@@ -2,28 +2,21 @@
 
 int create_button ( UIButton_t **pp_button )
 {
-	// Argument check
-    {
-        #ifndef NDEBUG
-            if( pp_button == (void *) 0 )
-                goto no_button;
-        #endif
-    }
 
-    // Allocate for a button
+	// Argument check
+    if ( pp_button == (void *) 0 ) goto no_button;
+
+    // Initialized data
     UIButton_t* p_button = calloc(1, sizeof(UIButton_t));
 
     // Check memory
-    {
-        #ifndef NDEBUG
-            if(p_button == (void *)0)
-                goto no_mem;
-        #endif
-    }
+    if ( p_button == (void *) 0 ) goto no_mem;
 
+    // Return a pointer to the caller
     *pp_button = p_button;
 
-    return 0;
+    // Success
+    return 1;
 
     // Error handling
     {
@@ -56,20 +49,14 @@ int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value )
 {
 
     // Argument check
-	{
-		#ifndef NDEBUG
-			if(pp_button == (void *)0)
-				goto no_button;
-			if (p_value == (void*)0)
-				goto no_value;
-		#endif
-	}
+    if ( pp_button == (void *) 0 ) goto no_button;
+	if ( p_value   == (void *) 0 ) goto no_value;
 
 	// Initialized data
-	UIButton_t  *p_button = 0;
-	json_value *p_label  = 0,
-	            *p_x      = 0,
-		        *p_y      = 0;
+	UIButton_t *p_button  = 0;
+	json_value *p_label   = 0,
+	           *p_x       = 0,
+		       *p_y       = 0;
 
 	// Get properties from the dictionary
     if (p_value->type == JSON_VALUE_OBJECT)
@@ -87,8 +74,7 @@ int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value )
 	{
 
 		// Allocate a label
-		if ( create_label(&p_button) == 0)
-			goto failed_to_allocate_label;
+		if ( create_label(&p_button) == 0 ) goto failed_to_allocate_label;
 
 		// Copy the label text
 		if ( p_label->type == JSON_VALUE_STRING )
@@ -101,8 +87,7 @@ int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value )
 			p_button->label = calloc(label_text_len+1, sizeof(char));
 
 			// Error checking
-            if ( p_button->label == (void *) 0 )
-                goto no_mem;
+            if ( p_button->label == (void *) 0 ) goto no_mem;
 
 			// Copy the string
 			strncpy(p_button->label, p_label->string, label_text_len);
@@ -148,6 +133,7 @@ int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value )
 
 				// Error
 				return 0;
+                
 			no_value:
 				#ifndef NDEBUG
 					ui_print_error("[UI] [Button] Null pointer provided for \"p_value\" in call to function \"%s\"\n", __FUNCTION__);
@@ -175,12 +161,7 @@ int hover_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_button == (void *) 0 )
-                goto no_button;
-        #endif  
-    }
+    if ( p_button == (void *) 0 ) goto no_button;
 
     // Iterate through hover callbacks
     for (size_t i = 0; i < p_button->on_hover_count; i++)
@@ -195,7 +176,8 @@ int hover_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
 
     }
 
-    return 0;
+    // Success
+    return 1;
 
     // Error handling
     {
@@ -206,6 +188,8 @@ int hover_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Button] Null pointer provided for \"button\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
+                
+                // Error
                 return 0;
         }
     }
@@ -213,6 +197,10 @@ int hover_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
 
 int click_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
 {
+
+    // TODO: Argument check
+    //
+
     p_button->depressed = true;
 
     // Iterate through callbacks
@@ -228,11 +216,16 @@ int click_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
 
     }
 
-    return 0;
+    // Success
+    return 1;
 }
 
 int release_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state )
 {
+
+    // TODO: Argument check
+    //
+
     p_button->depressed = false;
 
     // Iterate through callbacks
@@ -247,12 +240,16 @@ int release_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state )
             (*callback)(p_button, mouse_state);
 
     }
-    return 0;
+
+    // Success
+    return 1;
 }
 
 int add_click_callback_button ( UIButton_t  *p_button, void(*callback)(UIButton_t*, ui_mouse_state_t))
 {
+
     // TODO: Argument check
+    //
 
     // If this is the first callback, set the max to 1 and 
     if (p_button->on_click_max == 0)
@@ -280,7 +277,9 @@ int add_click_callback_button ( UIButton_t  *p_button, void(*callback)(UIButton_
 
 int add_hover_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
 {
+
     // TODO: Argument check
+    //
 
     // If this is the first callback, set the max to 1 and 
     if (button->on_hover_max == 0)
@@ -321,7 +320,9 @@ int add_hover_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*
 
 int add_release_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
 {
+
     // TODO: Argument check
+    //
 
     // If this is the first callback, set the max to 1 and 
     if (button->on_release_max == 0)
@@ -362,6 +363,11 @@ int add_release_callback_button ( UIButton_t  *button, void(*callback)(UIButton_
 
 int draw_button ( UIWindow_t  *window, UIButton_t *button )
 {
+
+    // TODO: Argument check
+    //
+
+    // Initialized data
     UIInstance_t *instance = ui_get_active_instance();
     size_t        l        = strlen(button->label);
     SDL_Rect      r        = { button->x+1, button->y+1, (l * 8) + 5, 12 };
@@ -369,7 +375,7 @@ int draw_button ( UIWindow_t  *window, UIButton_t *button )
     button->w  = r.w,
     button->h = r.h;
 
-    if (button->depressed==false)
+    if ( button->depressed == false )
     {
         SDL_SetRenderDrawColor(window->renderer, (u8)instance->accent_2, (u8)(instance->accent_2 >> 8), (u8)(instance->accent_2 >> 16), 0xff);
         SDL_RenderDrawLine(window->renderer, r.x + r.w - 1, r.y, r.x + r.w - 1, r.y + r.h - 1);
@@ -384,11 +390,16 @@ int draw_button ( UIWindow_t  *window, UIButton_t *button )
     
     ui_draw_text(button->label, window, r.x + 3, r.y + 1, 1);
 
-    return 0;
+    // Success
+    return 1;
 }
 
-bool button_in_bounds ( UIButton_t  *button, ui_mouse_state_t mouse_state )
+bool button_in_bounds ( UIButton_t *button, ui_mouse_state_t mouse_state )
 {
+
+    // TODO: Argument check
+    //
+
     // Initialized data
 	i32  x = button->x,
 		 y = button->y,
@@ -397,35 +408,37 @@ bool button_in_bounds ( UIButton_t  *button, ui_mouse_state_t mouse_state )
 	
 	// Check for bounds
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
+
+        // In bounds
 		return true;
 
+    // Out of bounds
 	return false;
-
 }
 
 int destroy_button ( UIButton_t  *p_button )
 {
 
     // Argument check
-    {
-        if (p_button == (void*)0)
-            goto no_button;
-    }
+    if ( p_button == (void *) 0 ) goto no_button;
         
     // Free label string
     free(p_button->label);
 
-    // Free callbacks
-    {
-        free(p_button->on_click);
-        free(p_button->on_hover);
-        free(p_button->on_release);
-    }
+    // Free on click callbacks
+    free(p_button->on_click);
+
+    // Free on hover callbacks
+    free(p_button->on_hover);
+    
+    // Free on release callbacks
+    free(p_button->on_release);
 
     // Free the button memory
     free(p_button);
 
-    return 0;
+    // Success
+    return 1;
 
     // Error handling
     {
