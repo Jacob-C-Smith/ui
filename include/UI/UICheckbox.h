@@ -51,7 +51,7 @@ struct UICheckbox_s
 DLLEXPORT int           create_checkbox                ( UICheckbox_t **pp_checkbox );
 
 // Constructors
-DLLEXPORT int           load_checkbox_as_json_value    ( UICheckbox_t **pp_checkbox, JSONValue_t *p_value );
+DLLEXPORT int           load_checkbox_as_json_value    ( UICheckbox_t **pp_checkbox, json_value *p_value );
 DLLEXPORT int           construct_checkbox             ( UICheckbox_t **pp_checkbox, char **pp_labels, bool *checked, i32 x, i32 y );
 
 // Callbacks

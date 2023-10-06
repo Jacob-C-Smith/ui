@@ -1,21 +1,10 @@
-// Include the main UI header
+/** !
+ *  UI library example
+ * 
+ *  @author Jacob Smith
+ *  @file main.c
+*/
 #include <UI/UI.h>
-#include <UI/UIFileSelector.h>
-
-int click (UILabel_t *p_label, ui_mouse_state_t mouse_state)
-{
-    /*
-    
-    */
-   return 1;
-}
-
-int fun ( UIWindow_t *p_window, char *path )
-{
-
-    printf("%s got %s", p_window->title, path);
-    return 1;
-}
 
 // Entry point
 int main ( int argc, const char **argv )
@@ -27,18 +16,16 @@ int main ( int argc, const char **argv )
     UIElement_t  *p_ui_element  = 0;
 
     // Initialize the UI library
-    if ( ui_init(&p_ui_instance, "") == 0 )
-        goto failed_to_init_ui;
+    if ( ui_init(&p_ui_instance, "") == 0 ) goto failed_to_init_ui;
 
     // Load a window from the filesystem
-    if ( load_window(&p_ui_window, "window.json") == 0 )
-        goto failed_to_load_window;
+    if ( load_window(&p_ui_window, "window.json") == 0 ) goto failed_to_load_window;
 
     // Add the window to the instance
     ui_append_window(p_ui_instance, p_ui_window);
 
     // UI Loop
-    while ( /* Specify your exit condition, for instance */ p_ui_instance->running )
+    while ( p_ui_instance->running )
     {
         
         // Process input

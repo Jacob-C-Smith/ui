@@ -51,7 +51,7 @@ int create_label ( UILabel_t **pp_label )
 	}
 }
 
-int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
+int load_label_as_json_value (UILabel_t** pp_label, json_value *p_value)
 {
 
 	// Argument check
@@ -67,14 +67,14 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 	// Initialized data
 	UIInstance_t *p_instance = ui_get_active_instance();
 	UILabel_t    *p_label    = 0;
-	JSONValue_t  *p_text     = 0,
+	json_value  *p_text     = 0,
 	             *p_x        = 0,
 		         *p_y        = 0,
 		         *p_size     = 0,
 	             *p_color    = 0;
 
 	// Get properties from the dictionary
-    if (p_value->type == JSONobject)
+    if (p_value->type == JSON_VALUE_OBJECT)
     {
 
 		// Initialized data
@@ -104,7 +104,7 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 			goto failed_to_allocate_label;
 
 		// Copy the label text
-		if ( p_text->type == JSONstring )
+		if ( p_text->type == JSON_VALUE_STRING )
 		{
 
 			// Initialized data
@@ -126,7 +126,7 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 		{
 
 			// Initialized data
-			JSONValue_t *p_colors[3] = { 0, 0, 0 };
+			json_value *p_colors[3] = { 0, 0, 0 };
 			size_t       len = 0;
 			size_t       p_bytes[3] = { 0, 0, 0 };
 
@@ -151,21 +151,21 @@ int load_label_as_json_value (UILabel_t** pp_label, JSONValue_t *p_value)
 			p_label->c = p_instance->primary;
 
 		// Set the x
-		if ( p_x->type == JSONinteger)
+		if ( p_x->type == JSON_VALUE_INTEGER)
 			p_label->x = p_x->integer;
 		// Default
 		else
 			goto wrong_x_type;
 
 		// Set the y
-		if ( p_y->type == JSONinteger)
+		if ( p_y->type == JSON_VALUE_INTEGER)
 			p_label->y = p_y->integer;
 		// Default
 		else
 			goto wrong_y_type;
 
 		// Set the size
-		if ( p_size->type == JSONinteger)
+		if ( p_size->type == JSON_VALUE_INTEGER)
 			p_label->size = p_size->integer;
 		// Default
 		else
@@ -571,39 +571,39 @@ bool label_in_bounds ( UILabel_t  *p_label, ui_mouse_state_t mouse_state)
 
 int  print_label_to_file ( UILabel_t *p_label, FILE *f, char *name )
 {
-	JSONValue_t *p_value = calloc(1, sizeof(JSONValue_t));
+	json_value *p_value = calloc(1, sizeof(json_value));
 	
-	p_value->type = JSONobject;
-	dict_construct(&p_value->object,5);
+	p_value->type = JSON_VALUE_OBJECT;
+	dict_construct(&p_value->object, 5, 0);
 
 	{
 
 		// Initialized data
-		JSONValue_t *p_type = calloc(1, sizeof(JSONValue_t)),
-		            *p_name = calloc(1, sizeof(JSONValue_t)),
-		            *p_text = calloc(1, sizeof(JSONValue_t)),
-		            *p_x    = calloc(1, sizeof(JSONValue_t)),
-		            *p_y    = calloc(1, sizeof(JSONValue_t)),
-		            *p_size = calloc(1, sizeof(JSONValue_t));
+		json_value *p_type = calloc(1, sizeof(json_value)),
+		            *p_name = calloc(1, sizeof(json_value)),
+		            *p_text = calloc(1, sizeof(json_value)),
+		            *p_x    = calloc(1, sizeof(json_value)),
+		            *p_y    = calloc(1, sizeof(json_value)),
+		            *p_size = calloc(1, sizeof(json_value));
 
 		{
 
-			p_type->type = JSONstring;
+			p_type->type = JSON_VALUE_STRING;
 			p_type->string = "LABEL";
 			
-			p_name->type = JSONstring;
+			p_name->type = JSON_VALUE_STRING;
 			p_name->string = name;
 
-			p_text->type = JSONstring;
+			p_text->type = JSON_VALUE_STRING;
 			p_text->string = p_text;
 
-			p_x->type = JSONstring;
+			p_x->type = JSON_VALUE_STRING;
 			p_x->string = p_text;
 
-			p_y->type = JSONstring;
+			p_y->type = JSON_VALUE_STRING;
 			p_y->string = p_text;
 
-			p_size->type = JSONstring;
+			p_size->type = JSON_VALUE_STRING;
 			p_size->string = p_text;
 
 			dict_add(p_value->object, "type", p_type);

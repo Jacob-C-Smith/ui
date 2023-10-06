@@ -36,7 +36,7 @@ struct UILabel_s
 DLLEXPORT int  create_label              ( UILabel_t   **pp_label );
 
 // Constructors
-DLLEXPORT int  load_label_as_json_value   ( UILabel_t  **pp_label, JSONValue_t     *p_value );
+DLLEXPORT int  load_label_as_json_value   ( UILabel_t  **pp_label, json_value     *p_value );
 
 // Drawer
 DLLEXPORT int  draw_label                 ( UIWindow_t  *p_window, UILabel_t       *p_label );

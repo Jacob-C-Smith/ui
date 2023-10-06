@@ -55,7 +55,7 @@ int create_image ( UIImage_t **pp_image )
 	}
 }
 
-int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
+int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
 {
 	
 	// Argument check
@@ -70,14 +70,14 @@ int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 
 	// Initialized data
 	UIImage_t   *p_image  = 0;
-	JSONValue_t *p_x      = 0,
+	json_value *p_x      = 0,
 		        *p_y      = 0,
 		        *p_width  = 0,
 		        *p_height = 0,
 	            *p_path   = 0;
 
 	// Parse JSON
-	if ( p_value->type == JSONobject ){
+	if ( p_value->type == JSON_VALUE_OBJECT ){
 
 		// Initialized data
 		dict *p_dict = p_value->object;
@@ -111,28 +111,28 @@ int load_image_as_json_value (UIImage_t** pp_image, JSONValue_t* p_value)
 		// Set the image data
 
 		// Set the x
-		if ( p_x->type == JSONinteger)
+		if ( p_x->type == JSON_VALUE_INTEGER)
         	p_image->x = p_x->integer;
 		// Default
 		else
 			goto wrong_x_type;
 
 		// Set the y
-		if ( p_y->type == JSONinteger)
+		if ( p_y->type == JSON_VALUE_INTEGER)
         	p_image->y = p_y->integer;
 		// Default
 		else
 			goto wrong_y_type;
 			
 		// Set the width
-		if ( p_width->type == JSONinteger)
+		if ( p_width->type == JSON_VALUE_INTEGER)
         	p_image->width = p_width->integer;
 		// Default
 		else
 			goto wrong_width_type;
 
 		// Set the height
-		if ( p_height->type == JSONinteger)
+		if ( p_height->type == JSON_VALUE_INTEGER)
         	p_image->height = p_height->integer;
 		// Default
 		else

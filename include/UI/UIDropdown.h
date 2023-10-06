@@ -53,7 +53,7 @@ struct UIDropdown_s
 DLLEXPORT int create_dropdown               ( UIDropdown_t **pp_dropdown );
 
 // Constructors
-DLLEXPORT int load_dropdown_as_json_value   ( UIDropdown_t **pp_dropdown, JSONValue_t           *p_value );
+DLLEXPORT int load_dropdown_as_json_value   ( UIDropdown_t **pp_dropdown, json_value           *p_value );
 DLLEXPORT int construct_dropdown            ( UIDropdown_t **pp_dropdown, char                 **options, i32 x, i32 y, i32 index );
 
 // Drawing

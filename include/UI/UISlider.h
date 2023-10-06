@@ -52,13 +52,13 @@ DLLEXPORT int           create_slider               ( UISlider_t  **pp_slider );
   *  Load a UI Slider from a dict 
   *
   *  @param pp_slider : Pointer to pointer to slider
-  *  @param p_value   : Pointer to a JSONValue_t
+  *  @param p_value   : Pointer to a json_value
   * 
   *  @sa load_element_as_json_value 
   *  
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int           load_slider_as_json_value         ( UISlider_t **pp_slider, JSONValue_t *p_value );
+DLLEXPORT int           load_slider_as_json_value         ( UISlider_t **pp_slider, json_value *p_value );
 
 // Callbacks
 

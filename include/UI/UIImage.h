@@ -36,7 +36,7 @@ struct UIImage_s
 DLLEXPORT int  create_image               ( UIImage_t **pp_image );
 
 // Constructors
-DLLEXPORT int load_image_as_json_value    ( UIImage_t **pp_image, JSONValue_t      *p_value);
+DLLEXPORT int load_image_as_json_value    ( UIImage_t **pp_image, json_value      *p_value);
 
 // Callbacks
 DLLEXPORT int  hover_image                ( UIImage_t  *p_image, ui_mouse_state_t   mouse_state);

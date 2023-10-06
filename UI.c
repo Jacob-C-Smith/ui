@@ -21,7 +21,14 @@ u64 font[137] = {
     0x80C0E070371E1C08, 0x00001c3e3e3e1c00, 0x040C1C3C3C1C0C04, 0x0000ff4224180000, 0x7E7E7E7E7E7E3C18, 0x0709FF81818181FF, 0x784C46424242427E, 0x183C7E1818181818,
     0xC3E77e3c3c7eE7C3};
 
-char *default_config = "{\n\t\"name\"       : \"Default color theme\",\n\t\"primary\"    : [ 0, 0, 0 ],\n\t\"accent 1\"   : [ 128, 128, 128 ],\n\t\"accent 2\"   : [ 192, 192, 192 ],\n\t\"accent 3\"   : [ 0, 128, 255 ],\n\t\"background\" : [ 255, 255, 255 ]\n}\n";
+char *default_config = "{\n"                                             \
+                       "    \"name\"       : \"Default color theme\",\n" \
+                       "    \"primary\"    : [ 0, 0, 0 ],\n"             \
+                       "    \"accent 1\"   : [ 128, 128, 128 ],\n"       \ 
+                       "    \"accent 2\"   : [ 192, 192, 192 ],\n"       \
+                       "    \"accent 3\"   : [ 0, 128, 255 ],\n"         \
+                       "    \"background\" : [ 255, 255, 255 ]\n"        \ 
+                       "}\n";
 char *config_file_name = "/ui_config.json";
 UIInstance_t *active_instance = 0;
 
@@ -29,14 +36,8 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if (pp_instance == (void *)0)
-                goto no_instance;
-            if (path == (void *)0)
-                goto no_path;
-        #endif
-    }
+    if ( pp_instance == (void *) 0 ) goto no_instance;
+    if ( path        == (void *) 0 ) goto no_path;
 
     // Uninitialized data
     FILE *config_file;
@@ -54,7 +55,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                  *background       = 0;
     dict         *config_file_json = 0;
     size_t        config_file_len  = 0;
-    JSONValue_t  *p_value          = 0,
+    json_value  *p_value          = 0,
                  *p_primary        = 0,
                  *p_accent_1       = 0,
                  *p_accent_2       = 0,
@@ -103,7 +104,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
         goto failed_to_parse_json;
 
     // Get properties from the dictionary
-    if ( p_value->type == JSONobject )
+    if ( p_value->type == JSON_VALUE_OBJECT )
     {
 
         // Initialized data
@@ -142,12 +143,12 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
         {
 
             // Set the primary color
-            if ( p_primary->type == JSONarray )
+            if ( p_primary->type == JSON_VALUE_ARRAY )
             {
 
                 // Initialized data
                 size_t array_len = 0;
-                JSONValue_t *pp_array[3] = {0, 0, 0};
+                json_value *pp_array[3] = {0, 0, 0};
 
                 // Get the array contents
                 {
@@ -177,12 +178,12 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                 goto wrong_primary_type;
 
             // Set accent color 1
-            if ( p_accent_1->type == JSONarray )
+            if ( p_accent_1->type == JSON_VALUE_ARRAY )
             {
 
                 // Initialized data
                 size_t array_len = 0;
-                JSONValue_t *pp_array[3] = {0, 0, 0};
+                json_value *pp_array[3] = {0, 0, 0};
 
                 // Get the contents of the array
                 {
@@ -212,12 +213,12 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                 goto wrong_accent_1_type;
 
             // Set accent color 2
-            if ( p_accent_2->type == JSONarray )
+            if ( p_accent_2->type == JSON_VALUE_ARRAY )
             {
 
                 // Initialized data
                 size_t array_len = 0;
-                JSONValue_t *pp_array[3] = {0, 0, 0};
+                json_value *pp_array[3] = {0, 0, 0};
 
                 // Get the contents of the array
                 {
@@ -246,12 +247,12 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                 goto wrong_accent_2_type;
 
             // Set accent color 3
-            if( p_accent_3->type == JSONarray )
+            if( p_accent_3->type == JSON_VALUE_ARRAY )
             {
 
                 // Initialized data
                 size_t array_len = 0;
-                JSONValue_t *pp_array[3] = {0, 0, 0};
+                json_value *pp_array[3] = {0, 0, 0};
 
                 // Dump the contents of the array
                 {
@@ -280,12 +281,12 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
                 goto wrong_accent_3_type;
 
             // Set background
-            if ( p_background->type == JSONarray )
+            if ( p_background->type == JSON_VALUE_ARRAY )
             {
 
                 // Initialized data
                 size_t array_len = 0;
-                JSONValue_t *pp_array[3] = {0, 0, 0};
+                json_value *pp_array[3] = {0, 0, 0};
 
                 // Dump the contents of the array
                 {
@@ -326,7 +327,7 @@ int ui_init(UIInstance_t **pp_instance, const char *path)
         {
 
             // Construct a dictionary for windows
-            dict_construct(&p_instance->windows, MAX_WINDOW_COUNT);
+            dict_construct(&p_instance->windows, MAX_WINDOW_COUNT, 0);
 
             // Allocate a list of windows
             p_instance->windows_list = calloc(MAX_WINDOW_COUNT, sizeof(UIWindow_t *));

@@ -28,7 +28,7 @@ int create_dropdown              ( UIDropdown_t **pp_dropdown )
     }
 }
 
-int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t *p_value )
+int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, json_value *p_value )
 {
 
     // Argument check
@@ -43,14 +43,14 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t
 
 	// Initialized data
 	UIDropdown_t *p_dropdown = 0;
-    JSONValue_t **pp_options = 0,
+    json_value **pp_options = 0,
                  *p_options  = 0,
                  *p_x        = 0,
                  *p_y        = 0,
                  *p_index    = 0;
 
 	// Get properties from the dictionary
-    if ( p_value->type == JSONobject )
+    if ( p_value->type == JSON_VALUE_OBJECT )
     {
 
         // Initialized data
@@ -70,7 +70,7 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t
 			goto failed_to_allocate_label;
 
         // Set the options
-        if ( p_options->type == JSONarray)
+        if ( p_options->type == JSON_VALUE_ARRAY)
         {
 
             // Initialized data
@@ -78,7 +78,7 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t
 
             array_get(p_options->list, 0, &options_count);
 
-            pp_options  = calloc(options_count, sizeof(JSONValue_t *));
+            pp_options  = calloc(options_count, sizeof(json_value *));
 
             p_dropdown->options = calloc(options_count, sizeof(char *));
 
@@ -108,14 +108,14 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t
         }
 
 		// Set the x
-        if ( p_x->type == JSONinteger)
+        if ( p_x->type == JSON_VALUE_INTEGER)
 		    p_dropdown->x = p_x->integer;
         // Default
         else
             goto wrong_x_type;
 
 		// Set the y
-        if ( p_y->type == JSONinteger)
+        if ( p_y->type == JSON_VALUE_INTEGER)
 		    p_dropdown->y = p_y->integer;
         // Default
         else
@@ -124,7 +124,7 @@ int load_dropdown_as_json_value        ( UIDropdown_t** pp_dropdown, JSONValue_t
         // Set the index
         if ( p_index )
         {
-            if ( p_index->type == JSONinteger)
+            if ( p_index->type == JSON_VALUE_INTEGER)
 		        p_dropdown->index = p_index->integer;
             // Default
             else

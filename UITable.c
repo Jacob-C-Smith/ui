@@ -52,7 +52,7 @@ int create_table ( UITable_t **pp_table )
     }
 }
 
-int load_table_as_json_value ( UITable_t **pp_table, JSONValue_t *p_value )
+int load_table_as_json_value ( UITable_t **pp_table, json_value *p_value )
 {
 
     // Argument errors
@@ -67,14 +67,14 @@ int load_table_as_json_value ( UITable_t **pp_table, JSONValue_t *p_value )
 
     // Initialized data
     UITable_t   *p_table       = 0;
-    JSONValue_t *p_x           = 0,
+    json_value *p_x           = 0,
                 *p_y           = 0,
                 *p_max_rows    = 0,
                 *p_max_columns = 0,
                 *p_file        = 0;
 
 	// Get properties from the json value
-    if (p_value->type == JSONobject)
+    if (p_value->type == JSON_VALUE_OBJECT)
     {
 
         // Initialized data
@@ -100,14 +100,14 @@ int load_table_as_json_value ( UITable_t **pp_table, JSONValue_t *p_value )
         p_table = *pp_table;
 
         // Set the x
-        if ( p_x->type == JSONinteger)
+        if ( p_x->type == JSON_VALUE_INTEGER)
             p_table->x = p_x->integer;
         // Default
         else
             goto wrong_x_type;
         
         // Set the y
-        if ( p_y->type == JSONinteger)
+        if ( p_y->type == JSON_VALUE_INTEGER)
             p_table->y = p_y->integer;
         // Default
         else
@@ -117,14 +117,14 @@ int load_table_as_json_value ( UITable_t **pp_table, JSONValue_t *p_value )
             goto csv_parse;
 
         // Set the max rows
-        if ( p_max_rows->type == JSONinteger)
+        if ( p_max_rows->type == JSON_VALUE_INTEGER)
             p_table->max_rows = p_max_rows->integer;
         // Default
         else
             goto wrong_max_rows_type;
         
         // Set the max columns
-        if ( p_max_columns->type == JSONinteger)
+        if ( p_max_columns->type == JSON_VALUE_INTEGER)
             p_table->max_columns = p_max_columns->integer;
         // Default
         else

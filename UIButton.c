@@ -52,7 +52,7 @@ int create_button ( UIButton_t **pp_button )
     }
 }
 
-int load_button_as_json_value ( UIButton_t **pp_button, JSONValue_t *p_value )
+int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value )
 {
 
     // Argument check
@@ -67,12 +67,12 @@ int load_button_as_json_value ( UIButton_t **pp_button, JSONValue_t *p_value )
 
 	// Initialized data
 	UIButton_t  *p_button = 0;
-	JSONValue_t *p_label  = 0,
+	json_value *p_label  = 0,
 	            *p_x      = 0,
 		        *p_y      = 0;
 
 	// Get properties from the dictionary
-    if (p_value->type == JSONobject)
+    if (p_value->type == JSON_VALUE_OBJECT)
     {
 
         // Initialized data
@@ -91,7 +91,7 @@ int load_button_as_json_value ( UIButton_t **pp_button, JSONValue_t *p_value )
 			goto failed_to_allocate_label;
 
 		// Copy the label text
-		if ( p_label->type == JSONstring )
+		if ( p_label->type == JSON_VALUE_STRING )
         {
 
 			// Initialized data
@@ -112,13 +112,13 @@ int load_button_as_json_value ( UIButton_t **pp_button, JSONValue_t *p_value )
             goto wrong_label_type;
 
 		// Set the x
-        if ( p_x->type == JSONinteger )
+        if ( p_x->type == JSON_VALUE_INTEGER )
 		    p_button->x = p_x->integer;
         else
             goto wrong_x_type;
         
 		// Set the y
-		if ( p_y->type == JSONinteger )
+		if ( p_y->type == JSON_VALUE_INTEGER )
 		    p_button->y = p_y->integer;
         else
             goto wrong_y_type;

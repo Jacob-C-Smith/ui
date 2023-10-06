@@ -60,7 +60,7 @@ DLLEXPORT int           create_table               ( UITable_t  **pp_table );
   *  
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int           load_table_as_json_value   ( UITable_t  **pp_table, JSONValue_t *p_value );
+DLLEXPORT int           load_table_as_json_value   ( UITable_t  **pp_table, json_value *p_value );
 
 
 // Callbacks

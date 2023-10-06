@@ -51,7 +51,7 @@ int           create_slider               ( UISlider_t  **pp_slider )
         }
     }
 }
-int           load_slider_as_json_value         ( UISlider_t **pp_slider, JSONValue_t *p_value )
+int           load_slider_as_json_value         ( UISlider_t **pp_slider, json_value *p_value )
 {
     // Argument errors
     {
@@ -73,8 +73,8 @@ int           load_slider_as_json_value         ( UISlider_t **pp_slider, JSONVa
         // Initialized data
         dict *p_dict = p_value->object;
 
-        x = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "x")), JSONinteger);
-        y = JSON_VALUE(((JSONValue_t *)dict_get(p_dict, "y")), JSONinteger);
+        //x = JSON_VALUE(((json_value *)dict_get(p_dict, "x")), JSON_VALUE_INTEGER);
+        //y = JSON_VALUE(((json_value *)dict_get(p_dict, "y")), JSON_VALUE_INTEGER);
     }
 
     // Is there enough information to construct the slider?

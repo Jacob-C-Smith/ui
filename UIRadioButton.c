@@ -46,7 +46,7 @@ int create_radio_button(UIRadioButton_t** pp_radio_button)
     }
 }
 
-int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONValue_t *p_value )
+int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, json_value *p_value )
 {
     // Argument check
 	{
@@ -60,7 +60,7 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONVal
 
 	// Initialized data
 	UIRadioButton_t *p_radio_button = 0;
-	JSONValue_t     *p_labels       = 0,
+	json_value     *p_labels       = 0,
 	                *p_x            = 0,
 		            *p_y            = 0,
                     *p_index        = 0,
@@ -68,7 +68,7 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONVal
                    **pp_checked     = 0;
 
 	// Get properties from the dictionary
-    if (p_value->type == JSONobject)
+    if (p_value->type == JSON_VALUE_OBJECT)
     {
 
         // Initialized data
@@ -88,7 +88,7 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONVal
 			goto failed_to_allocate_label;
 
         // Set the labels and checks
-        if ( p_labels->type == JSONarray)
+        if ( p_labels->type == JSON_VALUE_ARRAY)
         {
 
             // Initialized data
@@ -101,7 +101,7 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONVal
                 array_get(p_labels->list, 0, &labels_count);
 
                 // Allocate memory for arrays
-                pp_labels = calloc(labels_count, sizeof(JSONValue_t *));
+                pp_labels = calloc(labels_count, sizeof(json_value *));
                 p_radio_button->labels = calloc(labels_count, sizeof(char *));
 
                 // Error checking
@@ -141,21 +141,21 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, JSONVal
         }
 
 		// Set the x
-        if ( p_x->type == JSONinteger )
+        if ( p_x->type == JSON_VALUE_INTEGER )
 		    p_radio_button->x = p_x->integer;
         // Default
         else
             goto wrong_x_type;
         
         // Set the y
-        if ( p_y->type == JSONinteger )
+        if ( p_y->type == JSON_VALUE_INTEGER )
 		    p_radio_button->y = p_y->integer;
         // Default
         else
             goto wrong_y_type;
 
 		// Set the index
-        if ( p_index->type == JSONinteger )
+        if ( p_index->type == JSON_VALUE_INTEGER )
 		    p_radio_button->index = p_index->integer;
         // Default
         else
@@ -236,7 +236,7 @@ int construct_radio_button(UIRadioButton_t** radio_button, char** labels, size_t
 
         i_radio_button->label_count = label_count;
 
-        dict_construct(&i_radio_button->labels, label_count);
+        dict_construct(&i_radio_button->labels, label_count, 0);
 
         // Allocate for and copy labels
         for (size_t i = 0; i < label_count; i++)

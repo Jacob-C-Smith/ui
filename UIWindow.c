@@ -134,7 +134,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 	// Initialized data
 	UIInstance_t *p_instance    = ui_get_active_instance();
 	UIWindow_t   *p_window      = 0;
-    JSONValue_t  *p_value       = 0,
+    json_value  *p_value       = 0,
 	             *p_name        = 0,
 	             *p_title       = 0,
 	             *p_width       = 0,
@@ -146,7 +146,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
         goto failed_to_parse_json;
 
     // Is the JSONValue the right type?
-    if ( p_value->type == JSONobject )
+    if ( p_value->type == JSON_VALUE_OBJECT )
 	{
 		
         p_name = dict_get(p_value->object, "name");
@@ -180,7 +180,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 			goto failed_to_allocate_window;
 
 		// Set the name
-		if ( p_name->type == JSONstring )
+		if ( p_name->type == JSON_VALUE_STRING )
 		{
 
 			// Initialized data
@@ -201,19 +201,19 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 			goto wrong_name_type;
 
 		// Set the width
-		if ( p_width->type == JSONinteger)
+		if ( p_width->type == JSON_VALUE_INTEGER)
 			width = p_width->integer;
 		else
 			goto wrong_width_type;
 		
 		// Set the height
-		if ( p_height->type == JSONinteger)
+		if ( p_height->type == JSON_VALUE_INTEGER)
 			height = p_height->integer;
 		else
 			goto wrong_height_type;
 
 		// Set the window title
-		if ( p_title->type == JSONstring )
+		if ( p_title->type == JSON_VALUE_STRING )
 		{
 
 			// Initialized data
@@ -256,16 +256,16 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 		};
 
 		// Load the window elements
-		if ( p_elements->type == JSONarray )
+		if ( p_elements->type == JSON_VALUE_ARRAY )
 		{
 
 			// Initialized data	
-			JSONValue_t **pp_elements = 0;
+			json_value **pp_elements = 0;
 
 			// Get the contents of the array
 			{
 				array_get(p_elements->list, 0, &element_count);
-				pp_elements = calloc(element_count+1, sizeof(JSONValue_t *));
+				pp_elements = calloc(element_count+1, sizeof(json_value *));
 				array_get(p_elements->list, pp_elements, &element_count);
 			}
 			
@@ -277,7 +277,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 			element_data = calloc(element_count+1, sizeof(UIElement_t *));
 
 			// Construct a dictionary to contain the elements
-			dict_construct(&elements, element_count);
+			dict_construct(&elements, element_count, 0);
 
 			p_window->element_data_max = element_data_max;
 			p_window->elements = elements;
@@ -288,7 +288,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 			{
 
 				// Initialized data
-				JSONValue_t *p_element = pp_elements[i];
+				json_value *p_element = pp_elements[i];
 				UIElement_t *constructed_element = 0;
 
 				if ( load_element_as_json_value(&constructed_element, p_element) == 0)

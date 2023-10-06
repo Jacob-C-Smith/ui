@@ -71,7 +71,7 @@ DLLEXPORT int load_element ( UIElement_t **pp_element, const char   path[] );
   * 
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int load_element_as_json_value ( UIElement_t **pp_element, JSONValue_t *p_value );
+DLLEXPORT int load_element_as_json_value ( UIElement_t **pp_element, json_value *p_value );
 DLLEXPORT int construct_element ( UIElement_t **element, char *name, char *type, void *element_data );
 
 // Callbacks

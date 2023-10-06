@@ -59,7 +59,7 @@ DLLEXPORT int create_button ( UIButton_t **pp_button );
   *  
   *  @return 0 on success, -1 on error.  
   */
-DLLEXPORT int load_button_as_json_value ( UIButton_t **pp_button, JSONValue_t *p_value );
+DLLEXPORT int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value );
 
 // Callbacks
 

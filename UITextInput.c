@@ -11,9 +11,9 @@ int create_text_input(UITextInput_t** pp_text_input)
 	return 0;
 }
 
-int load_text_input_as_json_value ( UITextInput_t **pp_text_input, JSONValue_t *p_value )
+int load_text_input_as_json_value ( UITextInput_t **pp_text_input, json_value *p_value )
 {
-	JSONValue_t *p_placeholder = 0,
+	json_value *p_placeholder = 0,
 		        *p_text        = 0,
 		        *p_x           = 0,
 		        *p_y           = 0,
@@ -43,7 +43,7 @@ int load_text_input_as_json_value ( UITextInput_t **pp_text_input, JSONValue_t *
 		size_t buffer_len  = 0;
 
 		// Set the placeholder
-		if ( p_placeholder->type == JSONstring )
+		if ( p_placeholder->type == JSON_VALUE_STRING )
 			placeholder = p_placeholder->string;
 		// Default
 		else
@@ -52,28 +52,28 @@ int load_text_input_as_json_value ( UITextInput_t **pp_text_input, JSONValue_t *
 		// Set the text
 		if ( p_text )
 		{
-			if ( p_text->type == JSONstring )
+			if ( p_text->type == JSON_VALUE_STRING )
 				text = p_text->string;
 			// Default
 			else
 				goto wrong_text_type;
 		}
 		// Set the x
-		if ( p_x->type == JSONinteger )
+		if ( p_x->type == JSON_VALUE_INTEGER )
 			x = p_x->integer;
 		// Default
 		else
 			goto wrong_x_type;
 
 		// Set the y
-		if ( p_y->type == JSONinteger )
+		if ( p_y->type == JSON_VALUE_INTEGER )
 			y = p_y->integer;
 		// Default
 		else
 			goto wrong_y_type;
 
 		// Set the buffer length
-		if ( p_buffer_len->type == JSONinteger )
+		if ( p_buffer_len->type == JSON_VALUE_INTEGER )
 			buffer_len = p_buffer_len->integer;
 		// Default
 		else

@@ -51,7 +51,7 @@ struct UIRadioButton_s
 DLLEXPORT int  create_radio_button               ( UIRadioButton_t **radio_button );
 
 // Constructors
-DLLEXPORT int  load_radio_button_as_json_value   ( UIRadioButton_t **pp_radio_button, JSONValue_t *p_value );
+DLLEXPORT int  load_radio_button_as_json_value   ( UIRadioButton_t **pp_radio_button, json_value *p_value );
 DLLEXPORT int  construct_radio_button            ( UIRadioButton_t **radio_button, char **labels, size_t index, i32 x, i32 y );
 
 // Callbacks

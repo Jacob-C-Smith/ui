@@ -161,16 +161,16 @@ int init_element ( void )
 
     // Construct a dictionary for each type of callback
     {
-        dict_construct(&load_lut       , ELEMENT_COUNT);
-        dict_construct(&click_lut      , ELEMENT_COUNT);
-        dict_construct(&hover_lut      , ELEMENT_COUNT);
-        dict_construct(&release_lut    , ELEMENT_COUNT);
-        dict_construct(&add_click_lut  , ELEMENT_COUNT);
-        dict_construct(&add_hover_lut  , ELEMENT_COUNT);
-        dict_construct(&add_release_lut, ELEMENT_COUNT);
-        dict_construct(&draw_lut       , ELEMENT_COUNT);
-        dict_construct(&bounds_lut     , ELEMENT_COUNT);
-        dict_construct(&destructor_lut , ELEMENT_COUNT);
+        dict_construct(&load_lut       , ELEMENT_COUNT, 0);
+        dict_construct(&click_lut      , ELEMENT_COUNT, 0);
+        dict_construct(&hover_lut      , ELEMENT_COUNT, 0);
+        dict_construct(&release_lut    , ELEMENT_COUNT, 0);
+        dict_construct(&add_click_lut  , ELEMENT_COUNT, 0);
+        dict_construct(&add_hover_lut  , ELEMENT_COUNT, 0);
+        dict_construct(&add_release_lut, ELEMENT_COUNT, 0);
+        dict_construct(&draw_lut       , ELEMENT_COUNT, 0);
+        dict_construct(&bounds_lut     , ELEMENT_COUNT, 0);
+        dict_construct(&destructor_lut , ELEMENT_COUNT, 0);
     }
 
     // Populate callbacks
@@ -245,7 +245,7 @@ int create_element ( UIElement_t **pp_element )
     }
 }
 
-int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
+int load_element_as_json_value(UIElement_t **pp_element, json_value *p_value)
 {
     
     // Argument check
@@ -257,11 +257,11 @@ int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
     }
 
     // Initialized data
-    JSONValue_t *p_type = 0,
+    json_value *p_type = 0,
                 *p_name = 0;
 
     // Get properties from the dictionary
-    if ( p_value->type == JSONobject )
+    if ( p_value->type == JSON_VALUE_OBJECT )
     {
 
         // Initialized data
@@ -276,7 +276,7 @@ int load_element_as_json_value(UIElement_t **pp_element, JSONValue_t *p_value)
     }
 
     // Construct the element
-    if ( p_type->type == JSONstring )
+    if ( p_type->type == JSON_VALUE_STRING )
     {
         
         // Initialized data
