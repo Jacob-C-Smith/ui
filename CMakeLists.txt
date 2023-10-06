@@ -17,20 +17,56 @@ ENDIF(WIN32)
 find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
 find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 
-
-if ( NOT ("${HAS_JSON}"))
-	message("[G10] adding json project")
-    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/json ${CMAKE_SOURCE_DIR}/build/json)
-endif()
-
-if ( NOT ("${HAS_ARRAY}"))
-	message("[G10] adding array project")
+# Find the array module
+if ( NOT "${HAS_ARRAY}")
+    
+    # Log
+    message("[ui] Adding array project")
+    
+    # Add the array directory
     add_subdirectory(${CMAKE_SOURCE_DIR}/extern/array ${CMAKE_SOURCE_DIR}/build/array)
+
+    # Let any parent project know that this project has array
+    set(HAS_ARRAY true PARENT_SCOPE)
 endif()
 
-if ( NOT ("${HAS_DICT}"))
-	message("[G10] adding dict project")
+# Find the dict module
+if ( NOT "${HAS_DICT}")
+    
+    # Log
+    message("[ui] Adding dict project")
+    
+    # Add the dict directory
     add_subdirectory(${CMAKE_SOURCE_DIR}/extern/dict ${CMAKE_SOURCE_DIR}/build/dict)
+
+    # Let any parent project know that this project has dict
+    set(HAS_DICT true PARENT_SCOPE)
+endif()
+
+# Find the sync module
+if ( NOT "${HAS_SYNC}")
+
+    # Log
+    message("[ui] Adding sync project")
+
+    # Add the sync directory
+    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/sync ${CMAKE_SOURCE_DIR}/build/sync)
+
+    # Let any parent project know that this project has sync
+    set(HAS_SYNC true PARENT_SCOPE)
+endif()
+
+# Find the json module
+if ( NOT "${HAS_JSON}")
+
+    # Log
+    message("[ui] Adding json project")
+
+    # Add the json directory
+    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/json ${CMAKE_SOURCE_DIR}/build/json)
+
+    # Let any parent project know that this project has json
+    set(HAS_JSON true PARENT_SCOPE)
 endif()
 
 if ( NOT "${HAS_UI}")
