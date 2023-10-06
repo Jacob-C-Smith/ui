@@ -7,3 +7,9 @@
 [submodule "extern/json"]
 	path = extern/json
 	url = https://github.com/Jacob-C-Smith/json
+[submodule "extern/sync"]
+	path = extern/sync
+	url = https://github.com/Jacob-C-Smith/sync
+[submodule "extern/crypto"]
+	path = extern/crypto
+	url = https://github.com/Jacob-C-Smith/crypto
