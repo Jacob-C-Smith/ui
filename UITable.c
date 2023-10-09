@@ -462,9 +462,9 @@ int set_table_cell(UITable_t* p_table, size_t x, size_t y, char* cell_text)
     return 1;
 }
 
-int draw_table ( UIWindow_t  *window, UITable_t *table )
+int draw_table ( ui_window  *window, UITable_t *table )
 {
-    UIInstance_t *instance = ui_get_active_instance();
+    ui_instance *instance = ui_get_active_instance();
     SDL_Rect      r        = { table->x, table->y, 0, 13 };
 
     for (size_t i = 0; i < table->max_rows; i++)

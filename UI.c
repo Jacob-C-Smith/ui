@@ -30,9 +30,9 @@ char *default_config = "{\n"                                             \
                        "    \"background\" : [ 255, 255, 255 ]\n"        \ 
                        "}\n";
 char *config_file_name = "/ui_config.json";
-UIInstance_t *active_instance = 0;
+ui_instance *active_instance = 0;
 
-int ui_init ( UIInstance_t **pp_instance, const char *path )
+int ui_init ( ui_instance **pp_instance, const char *path )
 {
 
     // Argument check
@@ -43,7 +43,7 @@ int ui_init ( UIInstance_t **pp_instance, const char *path )
     FILE *config_file;
 
     // Initialized data
-    UIInstance_t *p_instance       = 0;
+    ui_instance *p_instance       = 0;
     char         *appdata          = 0;
     size_t        appdata_len      = 0;
     char         *config_path      = 0,
@@ -118,7 +118,7 @@ int ui_init ( UIInstance_t **pp_instance, const char *path )
     {
 
         // Allocate memory for the instance
-        p_instance = calloc(1, sizeof(UIInstance_t));
+        p_instance = calloc(1, sizeof(ui_instance));
 
         // Error check
         if ( p_instance == (void *) 0 ) goto no_mem;
@@ -320,7 +320,7 @@ int ui_init ( UIInstance_t **pp_instance, const char *path )
             dict_construct(&p_instance->windows, MAX_WINDOW_COUNT, 0);
 
             // Allocate a list of windows
-            p_instance->windows_list = calloc(MAX_WINDOW_COUNT, sizeof(UIWindow_t *));
+            p_instance->windows_list = calloc(MAX_WINDOW_COUNT, sizeof(ui_window *));
         }
 
         // Initialize the element system
@@ -632,7 +632,7 @@ int ui_print_log(const char *const format, ...)
     }
 }
 
-int ui_append_window(UIInstance_t *p_instance, UIWindow_t *p_window)
+int ui_append_window(ui_instance *p_instance, ui_window *p_window)
 {
 
     // Argument check
@@ -675,7 +675,7 @@ int ui_append_window(UIInstance_t *p_instance, UIWindow_t *p_window)
     }
 }
 
-UIWindow_t *ui_remove_window(UIInstance_t *p_instance, const char *name)
+ui_window *ui_remove_window(ui_instance *p_instance, const char *name)
 {
 
     // Argument check
@@ -685,7 +685,7 @@ UIWindow_t *ui_remove_window(UIInstance_t *p_instance, const char *name)
 
     // Initialized data
     size_t      window_count = 0;
-    UIWindow_t *ret          = 0;
+    ui_window *ret          = 0;
 
     // Remove the specified window
     dict_pop(p_instance->windows, name, &ret);
@@ -711,7 +711,7 @@ UIWindow_t *ui_remove_window(UIInstance_t *p_instance, const char *name)
     }
 }
 
-int ui_process_input ( UIInstance_t *p_instance )
+int ui_process_input ( ui_instance *p_instance )
 {
 
     // Argument check
@@ -731,7 +731,7 @@ int ui_process_input ( UIInstance_t *p_instance )
             // Check if the window should close
             if (p_instance->windows_list[i]->is_open == false)
             {
-                UIWindow_t *w = ui_remove_window(p_instance, p_instance->windows_list[i]->name);
+                ui_window *w = ui_remove_window(p_instance, p_instance->windows_list[i]->name);
                 if (w)
                     destroy_window(w);
                 if (dict_values(p_instance->windows, 0))
@@ -770,7 +770,7 @@ int ui_process_input ( UIInstance_t *p_instance )
     }
 }
 
-int ui_draw ( UIInstance_t *p_instance )
+int ui_draw ( ui_instance *p_instance )
 {
 
     // Argument check
@@ -802,14 +802,14 @@ int ui_draw ( UIInstance_t *p_instance )
     }
 }
 
-UIInstance_t *ui_get_active_instance ( void )
+ui_instance *ui_get_active_instance ( void )
 {
 
     // Success
     return active_instance;
 }
 
-int ui_draw_format_text ( const char *const format, UIWindow_t *p_window, int x, int y, int size, ... )
+int ui_draw_format_text ( const char *const format, ui_window *p_window, int x, int y, int size, ... )
 {
 
     // Argument check
@@ -860,7 +860,7 @@ int ui_draw_format_text ( const char *const format, UIWindow_t *p_window, int x,
     }
 }
 
-void ui_draw_char(char c, UIWindow_t *p_window, int x, int y, int size)
+void ui_draw_char(char c, ui_window *p_window, int x, int y, int size)
 {
 
     // Argument check
@@ -907,7 +907,7 @@ void ui_draw_char(char c, UIWindow_t *p_window, int x, int y, int size)
     }
 }
 
-int ui_draw_text(const char *const text, UIWindow_t *p_window, int x, int y, int size)
+int ui_draw_text(const char *const text, ui_window *p_window, int x, int y, int size)
 {
 
     // Argument check
@@ -940,7 +940,7 @@ int ui_draw_text(const char *const text, UIWindow_t *p_window, int x, int y, int
     }
 }
 
-int ui_draw_circle(int radius, UIWindow_t *p_window, int x_center, int y_center)
+int ui_draw_circle(int radius, ui_window *p_window, int x_center, int y_center)
 {
 
     // Argument check
@@ -1001,14 +1001,14 @@ int ui_draw_circle(int radius, UIWindow_t *p_window, int x_center, int y_center)
     }
 }
 
-int ui_exit ( UIInstance_t **pp_instance )
+int ui_exit ( ui_instance **pp_instance )
 {
 
     // Argument check
     if ( pp_instance == (void *)0 ) goto no_instance;
 
     // Initialized data
-    UIInstance_t *p_instance = *pp_instance;
+    ui_instance *p_instance = *pp_instance;
 
     // TODO: Fix
     // Destroy the windows

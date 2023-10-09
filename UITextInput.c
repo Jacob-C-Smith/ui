@@ -1,16 +1,16 @@
 #include <UI/UITextInput.h>
 
-int create_text_input ( UITextInput_t **pp_text_input )
+int create_text_input ( ui_textinput **pp_text_input )
 {
 
 	// Argument check
 	if ( pp_text_input == (void *) 0 ) goto no_text_input;
 
 	// Initialized data
-	UITextInput_t** p_text_input = 0;
+	ui_textinput** p_text_input = 0;
 
 	// Allocate a text input
-	p_text_input = calloc(1, sizeof(UITextInput_t));
+	p_text_input = calloc(1, sizeof(ui_textinput));
 
 	// Error check
 	if ( p_text_input == (void *) 0 ) goto no_mem;
@@ -48,7 +48,7 @@ int create_text_input ( UITextInput_t **pp_text_input )
 	}
 }
 
-int load_text_input_as_json_value ( UITextInput_t **pp_text_input, json_value *p_value )
+int load_text_input_as_json_value ( ui_textinput **pp_text_input, json_value *p_value )
 {
 
 	// TODO: Argument check
@@ -139,14 +139,14 @@ int load_text_input_as_json_value ( UITextInput_t **pp_text_input, json_value *p
 	return 0;
 }
 
-int construct_text_input(UITextInput_t** pp_text_input, char* placeholder, char* text, i32 x, i32 y, size_t buffer_len)
+int construct_text_input(ui_textinput** pp_text_input, char* placeholder, char* text, i32 x, i32 y, size_t buffer_len)
 {
 
 	// Argument check
 	if ( pp_text_input == (void *) 0 ) goto no_text_input;
 
 	// Initialized data
-	UITextInput_t *p_text_input = 0;
+	ui_textinput *p_text_input = 0;
 
 	// Allocate a text input
 	if ( create_text_input(&p_text_input) == 0 ) goto failed_to_create_text_input;
@@ -211,7 +211,7 @@ int construct_text_input(UITextInput_t** pp_text_input, char* placeholder, char*
 	}
 }
 
-int hover_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
+int hover_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
 {
 	
 	// TODO: Argument check
@@ -222,7 +222,7 @@ int hover_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
     {
 
         // Initialized data
-        void (*callback)(UITextInput_t*, ui_mouse_state_t) = text_input->on_hover[i];
+        void (*callback)(ui_textinput*, ui_mouse_state_t) = text_input->on_hover[i];
 
         // Call the callback function
         if ( callback )
@@ -234,7 +234,7 @@ int hover_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
 	return 1;
 }
 
-int click_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
+int click_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
 {
 
 	// TODO:
@@ -243,7 +243,7 @@ int click_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
 	return 0;
 }
 
-int release_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
+int release_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
 {
 
 	// TODO:
@@ -252,7 +252,7 @@ int release_text_input(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
 	return 0;
 }
 
-int add_click_callback_text_input(UITextInput_t* text_input, void(*callback)(UITextInput_t*, ui_mouse_state_t))
+int add_click_callback_text_input(ui_textinput* text_input, void(*callback)(ui_textinput*, ui_mouse_state_t))
 {
 	
 	// TODO: 
@@ -261,7 +261,7 @@ int add_click_callback_text_input(UITextInput_t* text_input, void(*callback)(UIT
 	return 0;
 }
 
-int add_hover_callback_text_input(UITextInput_t* text_input, void(*callback)(UITextInput_t*, ui_mouse_state_t))
+int add_hover_callback_text_input(ui_textinput* text_input, void(*callback)(ui_textinput*, ui_mouse_state_t))
 {
 
 	// TODO: Argument check
@@ -292,7 +292,7 @@ int add_hover_callback_text_input(UITextInput_t* text_input, void(*callback)(UIT
     // TODO: Error handling
 }
 
-int add_release_callback_text_input(UITextInput_t* text_input, void(*callback)(UITextInput_t*, ui_mouse_state_t))
+int add_release_callback_text_input(ui_textinput* text_input, void(*callback)(ui_textinput*, ui_mouse_state_t))
 {
 
 	// TODO:
@@ -301,14 +301,14 @@ int add_release_callback_text_input(UITextInput_t* text_input, void(*callback)(U
 	return 0;
 }
 
-int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
+int draw_text_input(ui_window* window, ui_textinput* text_input)
 {
 	// Argument check
 	if ( window     == (void *) 0 ) goto no_window;
 	if ( text_input == (void *) 0 ) goto no_text_input;
 
 	// Initialized data
-	UIInstance_t *instance = ui_get_active_instance();
+	ui_instance *instance = ui_get_active_instance();
 	SDL_Renderer *renderer = window->renderer;
 
 	// Set the renderer color
@@ -374,7 +374,7 @@ int draw_text_input(UIWindow_t* window, UITextInput_t* text_input)
 	}
 }
 
-int  set_text_input_text ( UITextInput_t *p_text_input, char *text )
+int  set_text_input_text ( ui_textinput *p_text_input, char *text )
 {
 
 	// TODO: Argument check
@@ -401,7 +401,7 @@ int  set_text_input_text ( UITextInput_t *p_text_input, char *text )
 	// TODO: Error handling
 }
 
-bool text_input_in_bounds(UITextInput_t* text_input, ui_mouse_state_t mouse_state)
+bool text_input_in_bounds(ui_textinput* text_input, ui_mouse_state_t mouse_state)
 {
 
 	// TODO: Argument check
@@ -423,7 +423,7 @@ bool text_input_in_bounds(UITextInput_t* text_input, ui_mouse_state_t mouse_stat
 	return false;
 }
 
-int destroy_text_input(UITextInput_t* text_input)
+int destroy_text_input(ui_textinput* text_input)
 {
 
 	// TODO: 

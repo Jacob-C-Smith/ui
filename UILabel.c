@@ -1,13 +1,13 @@
 #include <UI/UILabel.h>
 
-int create_label ( UILabel_t **pp_label )
+int create_label ( ui_label **pp_label )
 {
 
 	// Argument check
 	if ( pp_label == (void *) 0 ) goto no_label;
 
 	// Initialized data
-	UILabel_t *p_label = calloc(1, sizeof(UILabel_t));
+	ui_label *p_label = calloc(1, sizeof(ui_label));
 	
 	// Error checking
 	if ( p_label == (void *) 0 ) goto no_mem;
@@ -45,7 +45,7 @@ int create_label ( UILabel_t **pp_label )
 	}
 }
 
-int load_label_as_json_value (UILabel_t** pp_label, json_value *p_value)
+int load_label_as_json_value (ui_label** pp_label, json_value *p_value)
 {
 
 	// Argument check
@@ -53,8 +53,8 @@ int load_label_as_json_value (UILabel_t** pp_label, json_value *p_value)
 	if ( p_value  == (void *) 0 ) goto no_value;
 
 	// Initialized data
-	UIInstance_t *p_instance = ui_get_active_instance();
-	UILabel_t    *p_label    = 0;
+	ui_instance *p_instance = ui_get_active_instance();
+	ui_label    *p_label    = 0;
 	json_value   *p_text     = 0,
 	             *p_x        = 0,
 		         *p_y        = 0,
@@ -202,7 +202,7 @@ int load_label_as_json_value (UILabel_t** pp_label, json_value *p_value)
 	}
 }
 
-int draw_label ( UIWindow_t *p_window, UILabel_t* p_label )
+int draw_label ( ui_window *p_window, ui_label* p_label )
 {
 
 	// Argument check
@@ -210,7 +210,7 @@ int draw_label ( UIWindow_t *p_window, UILabel_t* p_label )
 	if ( p_label  == (void *) 0 ) goto no_label;
 
 	// Initialized data
-	UIInstance_t *p_instance = ui_get_active_instance();
+	ui_instance *p_instance = ui_get_active_instance();
 
 	// Don't draw a hidden label
 	if ( p_label->hidden == false )
@@ -254,7 +254,7 @@ int draw_label ( UIWindow_t *p_window, UILabel_t* p_label )
 	}
 }
 
-int click_label ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
+int click_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
 {
 
 	// Argument check
@@ -265,7 +265,7 @@ int click_label ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
 	{
 
 		// Initialized data
-		void (*callback)(UILabel_t*, ui_mouse_state_t) = p_label->on_click[i];
+		void (*callback)(ui_label*, ui_mouse_state_t) = p_label->on_click[i];
 
 		// Call the callback function
 		if ( callback )
@@ -292,7 +292,7 @@ int click_label ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
 	}
 }
 
-int hover_label ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
+int hover_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
 {
 	
 	// Argument check
@@ -303,7 +303,7 @@ int hover_label ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
 	{
 
 		// Initialized data
-		void (*callback)(UILabel_t*, ui_mouse_state_t) = p_label->on_hover[i];
+		void (*callback)(ui_label*, ui_mouse_state_t) = p_label->on_hover[i];
 
 		// Call the callback function
 		if ( callback )
@@ -330,7 +330,7 @@ int hover_label ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
 	}
 }
 
-int release_label ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
+int release_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
 {
 
 	// Argument check
@@ -341,7 +341,7 @@ int release_label ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
 	{
 
 		// Initialized data
-		void (*callback)(UILabel_t*, ui_mouse_state_t) = p_label->on_release[i];
+		void (*callback)(ui_label*, ui_mouse_state_t) = p_label->on_release[i];
 
 		// Call the callback function
 		if ( callback )
@@ -368,7 +368,7 @@ int release_label ( UILabel_t* p_label, ui_mouse_state_t mouse_state)
 	}
 }
 
-int add_click_callback_label ( UILabel_t* p_label, void(*callback)(UILabel_t*, ui_mouse_state_t))
+int add_click_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_mouse_state_t))
 {
 
     // Argument check
@@ -425,7 +425,7 @@ int add_click_callback_label ( UILabel_t* p_label, void(*callback)(UILabel_t*, u
 	}
 }
 
-int add_hover_callback_label ( UILabel_t* p_label, void(*callback)(UILabel_t*, ui_mouse_state_t))
+int add_hover_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_mouse_state_t))
 {
 
 	// Argument check
@@ -452,7 +452,7 @@ int add_hover_callback_label ( UILabel_t* p_label, void(*callback)(UILabel_t*, u
 	}
 }
 
-int add_release_callback_label ( UILabel_t* p_label, void(*callback)(UILabel_t*, ui_mouse_state_t))
+int add_release_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_mouse_state_t))
 {
 	
 	// Argument check
@@ -479,7 +479,7 @@ int add_release_callback_label ( UILabel_t* p_label, void(*callback)(UILabel_t*,
 	}
 }
 
-bool label_in_bounds ( UILabel_t  *p_label, ui_mouse_state_t mouse_state)
+bool label_in_bounds ( ui_label  *p_label, ui_mouse_state_t mouse_state)
 {
 
 	// Argument check
@@ -516,7 +516,7 @@ bool label_in_bounds ( UILabel_t  *p_label, ui_mouse_state_t mouse_state)
 	}
 }
 
-int print_label_to_file ( UILabel_t *p_label, FILE *f, char *name )
+int print_label_to_file ( ui_label *p_label, FILE *f, char *name )
 {
 
 	// Initialized data
@@ -572,14 +572,14 @@ int print_label_to_file ( UILabel_t *p_label, FILE *f, char *name )
 	return 1;
 }
 
-int destroy_label ( UILabel_t  **pp_label )
+int destroy_label ( ui_label  **pp_label )
 {
 
 	// Argument check
 	if ( pp_label == (void *) 0 ) goto no_label;
 
 	// Initialized data
-	UILabel_t *p_label = pp_label;
+	ui_label *p_label = pp_label;
 
 	// Free the label text and the callbacks
 	free(p_label->text);

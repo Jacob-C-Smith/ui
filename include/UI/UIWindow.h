@@ -34,11 +34,11 @@ struct UIWindow_s {
 	i32                rx,
 		               ry;
 	dict              *elements;
-	UIElement_t      **element_data;
-	UIElement_t       *last;
+	ui_element      **element_data;
+	ui_element       *last;
 	SDL_Window        *window;
 	SDL_Renderer      *renderer;
-	int (*path_drop_function)(UIWindow_t *p_window, char *path);
+	int (*path_drop_function)(ui_window *p_window, char *path);
 };
 
 // Allocators
@@ -51,30 +51,30 @@ struct UIWindow_s {
  * 
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int create_window ( UIWindow_t **pp_window );
+DLLEXPORT int create_window ( ui_window **pp_window );
  
 // Constructors
-DLLEXPORT int load_window         ( UIWindow_t **pp_window, const char *path );
-DLLEXPORT int load_window_as_json ( UIWindow_t **pp_window, char       *text );
-DLLEXPORT int construct_window    ( UIWindow_t **pp_window, char       *title, size_t width, size_t height, size_t element_count );
+DLLEXPORT int load_window         ( ui_window **pp_window, const char *path );
+DLLEXPORT int load_window_as_json ( ui_window **pp_window, char       *text );
+DLLEXPORT int construct_window    ( ui_window **pp_window, char       *title, size_t width, size_t height, size_t element_count );
 
 // Element operations
-DLLEXPORT int          append_element_to_window ( UIWindow_t *p_window, UIElement_t *element );
-DLLEXPORT UIElement_t *find_element             ( UIWindow_t *p_window, char *name );
+DLLEXPORT int          append_element_to_window ( ui_window *p_window, ui_element *element );
+DLLEXPORT ui_element *find_element             ( ui_window *p_window, char *name );
 
-DLLEXPORT int resize_window ( UIWindow_t *p_window );
+DLLEXPORT int resize_window ( ui_window *p_window );
 
-DLLEXPORT int set_file_drop_operation ( UIWindow_t *p_window, int (*callback_function)(UIWindow_t *p_window, char *path));
+DLLEXPORT int set_file_drop_operation ( ui_window *p_window, int (*callback_function)(ui_window *p_window, char *path));
 
 // User interaction
-DLLEXPORT int process_window_input ( UIWindow_t *p_window );
-DLLEXPORT int click_window         ( UIWindow_t *p_window, ui_mouse_state_t mouse_state );
-DLLEXPORT int hover_window         ( UIWindow_t *p_window, ui_mouse_state_t mouse_state );
-DLLEXPORT int release_window       ( UIWindow_t *p_window, ui_mouse_state_t mouse_state );
+DLLEXPORT int process_window_input ( ui_window *p_window );
+DLLEXPORT int click_window         ( ui_window *p_window, ui_mouse_state_t mouse_state );
+DLLEXPORT int hover_window         ( ui_window *p_window, ui_mouse_state_t mouse_state );
+DLLEXPORT int release_window       ( ui_window *p_window, ui_mouse_state_t mouse_state );
 
 // Drawing 
-DLLEXPORT int draw_window ( UIWindow_t *p_window );
+DLLEXPORT int draw_window ( ui_window *p_window );
 
 // Destruction
-DLLEXPORT int destroy_window ( UIWindow_t *p_window );
+DLLEXPORT int destroy_window ( ui_window *p_window );
 

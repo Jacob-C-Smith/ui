@@ -12,9 +12,9 @@ int main ( int argc, const char **argv )
 {
     
     // Initialized data
-    UIInstance_t *p_ui_instance = 0;
-    UIWindow_t   *p_ui_window   = 0;
-    UIElement_t  *p_ui_element  = 0;
+    ui_instance *p_ui_instance = 0;
+    ui_window   *p_ui_window   = 0;
+    ui_element  *p_ui_element  = 0;
 
     // Initialize the UI library
     if ( ui_init(&p_ui_instance, "") == 0 ) goto failed_to_init_ui;

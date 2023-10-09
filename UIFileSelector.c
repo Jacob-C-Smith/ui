@@ -1,8 +1,8 @@
 #include <UI/UIFileSelector.h>
 /*
 int update_ftab();
-int dirup_click  (UIButton_t *p_button, ui_mouse_state_t m);
-int select_click (UIButton_t *p_button, ui_mouse_state_t m);
+int dirup_click  (ui_button *p_button, ui_mouse_state_t m);
+int select_click (ui_button *p_button, ui_mouse_state_t m);
 
 int (*filesel_callb)(char *);
 
@@ -10,8 +10,8 @@ int file_selector (char *path, int(*cb)(char *))
 {
 
     // Initialized data
-    UIInstance_t *p_ui_instance = ui_get_active_instance();
-    UIWindow_t   *p_ui_window   = 0;
+    ui_instance *p_ui_instance = ui_get_active_instance();
+    ui_window   *p_ui_window   = 0;
 
     // Load a window from the filesystem
     if ( load_window(&p_ui_window, "fileselector.json") == 0 )
@@ -20,9 +20,9 @@ int file_selector (char *path, int(*cb)(char *))
     // Add the window to the instance
     ui_append_window(p_ui_instance, p_ui_window);
     
-    UITable_t     *t = ((UIElement_t *)find_element(p_ui_window, "ftab"))->table;
-    UITextInput_t *i = ((UIElement_t *)find_element(p_ui_window, "filepath"))->text_input;
-    UIButton_t    *b1 = ((UIElement_t *)find_element(p_ui_window, "up"))->button;
+    UITable_t     *t = ((ui_element *)find_element(p_ui_window, "ftab"))->table;
+    ui_textinput *i = ((ui_element *)find_element(p_ui_window, "filepath"))->text_input;
+    ui_button    *b1 = ((ui_element *)find_element(p_ui_window, "up"))->button;
     
     size_t plen = strlen(path);
     strncpy(i->text, path, plen);
@@ -45,12 +45,12 @@ int file_selector (char *path, int(*cb)(char *))
 
 int update_ftab()
 {
-    UIInstance_t  *p_ui_instance = ui_get_active_instance();
-    UIWindow_t    *p_ui_window   = dict_get(p_ui_instance->windows, "UI_FILE_SELECTOR");
+    ui_instance  *p_ui_instance = ui_get_active_instance();
+    ui_window    *p_ui_window   = dict_get(p_ui_instance->windows, "UI_FILE_SELECTOR");
     
-    UITable_t     *t = ((UIElement_t *)find_element(p_ui_window, "ftab"))->table;
-    UITextInput_t *i = ((UIElement_t *)find_element(p_ui_window, "filepath"))->text_input;
-    UIButton_t    *b2 = ((UIElement_t *)find_element(p_ui_window, "select"))->button;
+    UITable_t     *t = ((ui_element *)find_element(p_ui_window, "ftab"))->table;
+    ui_textinput *i = ((ui_element *)find_element(p_ui_window, "filepath"))->text_input;
+    ui_button    *b2 = ((ui_element *)find_element(p_ui_window, "select"))->button;
 
     t->max_rows = 35;
     DIR *dir;
@@ -93,10 +93,10 @@ int dirtab_click (UITable_t *p_table, ui_mouse_state_t m)
 {
     if(p_table->last_y == 0)
         return 1;
-    UIInstance_t  *p_ui_instance = ui_get_active_instance();
-    UIWindow_t    *p_ui_window   = dict_get(p_ui_instance->windows, "UI_FILE_SELECTOR");
-    UITextInput_t *i             = ((UIElement_t *)find_element(p_ui_window,"filepath"))->text_input;
-    UITable_t     *t             = ((UIElement_t *)find_element(p_ui_window, "ftab"))->table;
+    ui_instance  *p_ui_instance = ui_get_active_instance();
+    ui_window    *p_ui_window   = dict_get(p_ui_instance->windows, "UI_FILE_SELECTOR");
+    ui_textinput *i             = ((ui_element *)find_element(p_ui_window,"filepath"))->text_input;
+    UITable_t     *t             = ((ui_element *)find_element(p_ui_window, "ftab"))->table;
 
     char *isFile = get_table_cell(p_table, 0, p_table->last_y);
     if(*(isFile)=='\205')
@@ -111,12 +111,12 @@ int dirtab_click (UITable_t *p_table, ui_mouse_state_t m)
     return 1;
 }
 
-int dirup_click (UIButton_t *p_button, ui_mouse_state_t m)
+int dirup_click (ui_button *p_button, ui_mouse_state_t m)
 {
 
-    UIInstance_t  *p_ui_instance = ui_get_active_instance();
-    UIWindow_t    *p_ui_window   = dict_get(p_ui_instance->windows, "UI_FILE_SELECTOR");
-    UITextInput_t *i             = ((UIElement_t *)find_element(p_ui_window,"filepath"))->text_input;
+    ui_instance  *p_ui_instance = ui_get_active_instance();
+    ui_window    *p_ui_window   = dict_get(p_ui_instance->windows, "UI_FILE_SELECTOR");
+    ui_textinput *i             = ((ui_element *)find_element(p_ui_window,"filepath"))->text_input;
     if (i->text[0]=='/'&&i->text[1]=='\0')
         return 1;
     *(strrchr(i->text, '/'))=0;
@@ -127,13 +127,13 @@ int dirup_click (UIButton_t *p_button, ui_mouse_state_t m)
     return 1;
 }
 
-int select_click (UIButton_t *p_button, ui_mouse_state_t m)
+int select_click (ui_button *p_button, ui_mouse_state_t m)
 {
-    UIInstance_t  *p_ui_instance = ui_get_active_instance();
-    UIWindow_t    *p_ui_window   = dict_get(p_ui_instance->windows, "UI_FILE_SELECTOR");
-    UIWindow_t    *p_load_w      = 0;
-    UITextInput_t *i             = ((UIElement_t *)find_element(p_ui_window,"filepath"))->text_input;
-    UITable_t     *t             = ((UIElement_t *)find_element(p_ui_window,"ftab"))->table;
+    ui_instance  *p_ui_instance = ui_get_active_instance();
+    ui_window    *p_ui_window   = dict_get(p_ui_instance->windows, "UI_FILE_SELECTOR");
+    ui_window    *p_load_w      = 0;
+    ui_textinput *i             = ((ui_element *)find_element(p_ui_window,"filepath"))->text_input;
+    UITable_t     *t             = ((ui_element *)find_element(p_ui_window,"ftab"))->table;
     char *buf = calloc(1024, sizeof(char));
 
     sprintf(buf, "%s%s",i->text,get_table_cell(t,1,t->last_y));

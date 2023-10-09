@@ -1,6 +1,6 @@
 #include <UI/UIRadioButton.h>
 
-int create_radio_button(UIRadioButton_t** pp_radio_button)
+int create_radio_button(ui_radiobutton** pp_radio_button)
 {
     
     // Argument check
@@ -12,7 +12,7 @@ int create_radio_button(UIRadioButton_t** pp_radio_button)
     }
 
     // Allocate a UIRadioButton_s
-    UIRadioButton_t* p_radio_button = calloc(1, sizeof(UIRadioButton_t));
+    ui_radiobutton* p_radio_button = calloc(1, sizeof(ui_radiobutton));
 
     // Check memory
     {
@@ -46,7 +46,7 @@ int create_radio_button(UIRadioButton_t** pp_radio_button)
     }
 }
 
-int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, json_value *p_value )
+int load_radio_button_as_json_value ( ui_radiobutton **pp_radio_button, json_value *p_value )
 {
     // Argument check
 	{
@@ -59,7 +59,7 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, json_va
 	}
 
 	// Initialized data
-	UIRadioButton_t *p_radio_button = 0;
+	ui_radiobutton *p_radio_button = 0;
 	json_value     *p_labels       = 0,
 	                *p_x            = 0,
 		            *p_y            = 0,
@@ -210,7 +210,7 @@ int load_radio_button_as_json_value ( UIRadioButton_t **pp_radio_button, json_va
 	}
 }
 
-int construct_radio_button(UIRadioButton_t** radio_button, char** labels, size_t index, i32 x, i32 y)
+int construct_radio_button(ui_radiobutton** radio_button, char** labels, size_t index, i32 x, i32 y)
 {
     // TODO: Argument check
     {
@@ -218,7 +218,7 @@ int construct_radio_button(UIRadioButton_t** radio_button, char** labels, size_t
     }
 
     // Initialized data
-    UIRadioButton_t *i_radio_button = 0;
+    ui_radiobutton *i_radio_button = 0;
 
     create_radio_button(radio_button);
     
@@ -278,7 +278,7 @@ int construct_radio_button(UIRadioButton_t** radio_button, char** labels, size_t
     return 1;
 }
 
-int hover_radio_button(UIRadioButton_t* radio_button, ui_mouse_state_t mouse_state)
+int hover_radio_button(ui_radiobutton* radio_button, ui_mouse_state_t mouse_state)
 {
     s32 x = mouse_state.x - radio_button->x,
         y = mouse_state.y - radio_button->y;
@@ -298,7 +298,7 @@ int hover_radio_button(UIRadioButton_t* radio_button, ui_mouse_state_t mouse_sta
     return 0;
 }
 
-int click_radio_button(UIRadioButton_t* radio_button, ui_mouse_state_t mouse_state)
+int click_radio_button(ui_radiobutton* radio_button, ui_mouse_state_t mouse_state)
 {
     if (radio_button->hover_index != -1)
         radio_button->index = radio_button->hover_index;
@@ -307,7 +307,7 @@ int click_radio_button(UIRadioButton_t* radio_button, ui_mouse_state_t mouse_sta
     for (size_t i = 0; i < radio_button->on_click_count; i++)
     {
         // Define the callback function
-        void (*callback)(UIRadioButton_t*, ui_mouse_state_t) = radio_button->on_click[i];
+        void (*callback)(ui_radiobutton*, ui_mouse_state_t) = radio_button->on_click[i];
 
         // Call the callback function
         (*callback)(radio_button, mouse_state);
@@ -317,29 +317,29 @@ int click_radio_button(UIRadioButton_t* radio_button, ui_mouse_state_t mouse_sta
     return 0;
 }
 
-int release_radio_button(UIRadioButton_t* radio_button, ui_mouse_state_t mouse_state)
+int release_radio_button(ui_radiobutton* radio_button, ui_mouse_state_t mouse_state)
 {
     return 0;
 }
 
-int add_click_callback_radio_button(UIRadioButton_t* radio_button, void(*callback)(UIRadioButton_t*, ui_mouse_state_t))
+int add_click_callback_radio_button(ui_radiobutton* radio_button, void(*callback)(ui_radiobutton*, ui_mouse_state_t))
 {
     return 0;
 }
 
-int add_hover_callback_radio_button(UIRadioButton_t* radio_button, void(*callback)(UIRadioButton_t*, ui_mouse_state_t))
+int add_hover_callback_radio_button(ui_radiobutton* radio_button, void(*callback)(ui_radiobutton*, ui_mouse_state_t))
 {
     return 0;
 }
 
-int add_release_callback_radio_button(UIRadioButton_t* radio_button, void(*callback)(UIRadioButton_t*, ui_mouse_state_t))
+int add_release_callback_radio_button(ui_radiobutton* radio_button, void(*callback)(ui_radiobutton*, ui_mouse_state_t))
 {
     return 0;
 }
 
-int draw_radio_button(UIWindow_t* window, UIRadioButton_t* radio_button)
+int draw_radio_button(ui_window* window, ui_radiobutton* radio_button)
 {
-    UIInstance_t* instance = ui_get_active_instance();
+    ui_instance* instance = ui_get_active_instance();
     SDL_Rect r = { radio_button->x, radio_button->y, 12, 12 };
 
     radio_button->width  = 12,
@@ -361,7 +361,7 @@ int draw_radio_button(UIWindow_t* window, UIRadioButton_t* radio_button)
     return 0;
 }
 
-bool radio_button_in_bounds(UIRadioButton_t* radio_button, ui_mouse_state_t mouse_state)
+bool radio_button_in_bounds(ui_radiobutton* radio_button, ui_mouse_state_t mouse_state)
 {
 	// Initialized data
 	i32  x = radio_button->x,
@@ -376,7 +376,7 @@ bool radio_button_in_bounds(UIRadioButton_t* radio_button, ui_mouse_state_t mous
 	return false;
 }
 
-int destroy_radio_button(UIRadioButton_t* radio_button)
+int destroy_radio_button(ui_radiobutton* radio_button)
 {
     return 0;
 }

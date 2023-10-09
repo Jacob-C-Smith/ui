@@ -50,27 +50,27 @@ struct UIDropdown_s
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int create_dropdown ( UIDropdown_t **pp_dropdown );
+DLLEXPORT int create_dropdown ( ui_dropdown **pp_dropdown );
 
 // Constructors
-DLLEXPORT int load_dropdown_as_json_value ( UIDropdown_t **pp_dropdown, json_value  *p_value );
-DLLEXPORT int construct_dropdown          ( UIDropdown_t **pp_dropdown, char       **options, i32 x, i32 y, i32 index );
+DLLEXPORT int load_dropdown_as_json_value ( ui_dropdown **pp_dropdown, json_value  *p_value );
+DLLEXPORT int construct_dropdown          ( ui_dropdown **pp_dropdown, char       **options, i32 x, i32 y, i32 index );
 
 // Drawing
-DLLEXPORT int draw_dropdown ( UIWindow_t *p_window, UIDropdown_t *p_dropdown );
+DLLEXPORT int draw_dropdown ( ui_window *p_window, ui_dropdown *p_dropdown );
 
 // Callbacks
-DLLEXPORT int click_dropdown   ( UIDropdown_t *p_dropdown, ui_mouse_state_t mouse_state );
-DLLEXPORT int hover_dropdown   ( UIDropdown_t *p_dropdown, ui_mouse_state_t mouse_state );
-DLLEXPORT int release_dropdown ( UIDropdown_t *p_dropdown, ui_mouse_state_t mouse_state );
+DLLEXPORT int click_dropdown   ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state );
+DLLEXPORT int hover_dropdown   ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state );
+DLLEXPORT int release_dropdown ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state );
 
 // Add callbacks
-DLLEXPORT int add_click_callback_dropdown   ( UIDropdown_t *p_dropdown, void ( *callback ) ( UIDropdown_t *, ui_mouse_state_t ) );
-DLLEXPORT int add_hover_callback_dropdown   ( UIDropdown_t *p_dropdown, void ( *callback ) ( UIDropdown_t *, ui_mouse_state_t ) );
-DLLEXPORT int add_release_callback_dropdown ( UIDropdown_t *p_dropdown, void ( *callback ) ( UIDropdown_t *, ui_mouse_state_t ) );
+DLLEXPORT int add_click_callback_dropdown   ( ui_dropdown *p_dropdown, void ( *callback ) ( ui_dropdown *, ui_mouse_state_t ) );
+DLLEXPORT int add_hover_callback_dropdown   ( ui_dropdown *p_dropdown, void ( *callback ) ( ui_dropdown *, ui_mouse_state_t ) );
+DLLEXPORT int add_release_callback_dropdown ( ui_dropdown *p_dropdown, void ( *callback ) ( ui_dropdown *, ui_mouse_state_t ) );
 
 // Bounds
-DLLEXPORT bool dropdown_in_bounds ( UIDropdown_t *p_dropdown, ui_mouse_state_t mouse_state );
+DLLEXPORT bool dropdown_in_bounds ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state );
 
 // Destructors
-DLLEXPORT int destroy_dropdown ( UIDropdown_t *p_dropdown );
+DLLEXPORT int destroy_dropdown ( ui_dropdown *p_dropdown );

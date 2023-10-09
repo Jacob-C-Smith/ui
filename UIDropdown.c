@@ -1,13 +1,13 @@
 #include <UI/UIDropdown.h>
 
-int create_dropdown ( UIDropdown_t **pp_dropdown )
+int create_dropdown ( ui_dropdown **pp_dropdown )
 {
     
     // TODO: Argument check
 	//
     
     // Initialized data
-    UIDropdown_t *p_dropdown = calloc(1, sizeof(UIDropdown_t));
+    ui_dropdown *p_dropdown = calloc(1, sizeof(ui_dropdown));
     
     // Check memory
     if ( p_dropdown == (void *)0 ) goto no_mem;
@@ -28,7 +28,7 @@ int create_dropdown ( UIDropdown_t **pp_dropdown )
     }
 }
 
-int load_dropdown_as_json_value ( UIDropdown_t** pp_dropdown, json_value *p_value )
+int load_dropdown_as_json_value ( ui_dropdown** pp_dropdown, json_value *p_value )
 {
 
     // Argument check
@@ -36,7 +36,7 @@ int load_dropdown_as_json_value ( UIDropdown_t** pp_dropdown, json_value *p_valu
 	if ( p_value     == (void *) 0 ) goto no_value;
 
 	// Initialized data
-	UIDropdown_t  *p_dropdown = 0;
+	ui_dropdown  *p_dropdown = 0;
     json_value   **pp_options = 0,
                   *p_options  = 0,
                   *p_x        = 0,
@@ -176,14 +176,14 @@ int load_dropdown_as_json_value ( UIDropdown_t** pp_dropdown, json_value *p_valu
 	}
 }
 
-int construct_dropdown ( UIDropdown_t **pp_dropdown, char** options, i32 x, i32 y, i32 index )
+int construct_dropdown ( ui_dropdown **pp_dropdown, char** options, i32 x, i32 y, i32 index )
 {
 
     // TODO: Argument check
 	//
 
     // Initialized data
-    UIDropdown_t *p_dropdown = 0;
+    ui_dropdown *p_dropdown = 0;
 
     // Allocate a dropdown
     if ( create_dropdown(&p_dropdown) == 0 ) goto no_mem;
@@ -274,7 +274,7 @@ int construct_dropdown ( UIDropdown_t **pp_dropdown, char** options, i32 x, i32 
     }
 }
  
-int hover_dropdown ( UIDropdown_t* dropdown, ui_mouse_state_t mouse_state )
+int hover_dropdown ( ui_dropdown* dropdown, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -303,7 +303,7 @@ int hover_dropdown ( UIDropdown_t* dropdown, ui_mouse_state_t mouse_state )
     {
 
         // Initialized data
-        void (*callback)(UIDropdown_t*, ui_mouse_state_t) = dropdown->on_hover;
+        void (*callback)(ui_dropdown*, ui_mouse_state_t) = dropdown->on_hover;
 
         // Call the callback function
         if ( callback )
@@ -320,7 +320,7 @@ int hover_dropdown ( UIDropdown_t* dropdown, ui_mouse_state_t mouse_state )
     }
 }
 
-int release_dropdown ( UIDropdown_t* p_dropdown, ui_mouse_state_t mouse_state )
+int release_dropdown ( ui_dropdown* p_dropdown, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -331,7 +331,7 @@ int release_dropdown ( UIDropdown_t* p_dropdown, ui_mouse_state_t mouse_state )
     {
 
         // Initialized data
-        void (*callback)(UIDropdown_t*, ui_mouse_state_t) = p_dropdown->on_release[i];
+        void (*callback)(ui_dropdown*, ui_mouse_state_t) = p_dropdown->on_release[i];
 
         // Call the callback function
         if ( callback )
@@ -348,7 +348,7 @@ int release_dropdown ( UIDropdown_t* p_dropdown, ui_mouse_state_t mouse_state )
     }
 }
 
-int add_click_callback_dropdown ( UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t) )
+int add_click_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dropdown*, ui_mouse_state_t) )
 {
 
     // TODO: Argument check
@@ -382,7 +382,7 @@ int add_click_callback_dropdown ( UIDropdown_t* p_dropdown, void(*callback)(UIDr
     }
 }
 
-int add_hover_callback_dropdown ( UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t) )
+int add_hover_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dropdown*, ui_mouse_state_t) )
 {
 
     // TODO: Argument check
@@ -399,7 +399,7 @@ int add_hover_callback_dropdown ( UIDropdown_t* p_dropdown, void(*callback)(UIDr
     }
 }
 
-int add_release_callback_dropdown ( UIDropdown_t* p_dropdown, void(*callback)(UIDropdown_t*, ui_mouse_state_t) )
+int add_release_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dropdown*, ui_mouse_state_t) )
 {
     
     // TODO: Argument check
@@ -431,7 +431,7 @@ int add_release_callback_dropdown ( UIDropdown_t* p_dropdown, void(*callback)(UI
     // TODO: Error handling    
 }
 
-bool dropdown_in_bounds ( UIDropdown_t *p_dropdown, ui_mouse_state_t mouse_state )
+bool dropdown_in_bounds ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state )
 {
     
     // TODO: Argument check
@@ -459,14 +459,14 @@ bool dropdown_in_bounds ( UIDropdown_t *p_dropdown, ui_mouse_state_t mouse_state
     }
 }
 
-int click_dropdown ( UIDropdown_t *dropdown, ui_mouse_state_t mouse_state )
+int click_dropdown ( ui_dropdown *dropdown, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
 	//
 
     // Initialized data
-    UIInstance_t *instance = ui_get_active_instance();
+    ui_instance *instance = ui_get_active_instance();
     
     // Toggle dropdown
     dropdown->collapsed ^= true;
@@ -475,7 +475,7 @@ int click_dropdown ( UIDropdown_t *dropdown, ui_mouse_state_t mouse_state )
     for (size_t i = 0; i < dropdown->on_click_count; i++)
     {
         // Define the callback function
-        void (*callback)(UIDropdown_t *, ui_mouse_state_t) = dropdown->on_click[i];
+        void (*callback)(ui_dropdown *, ui_mouse_state_t) = dropdown->on_click[i];
 
         // Call the callback function
         (*callback)(dropdown, mouse_state);
@@ -492,7 +492,7 @@ int click_dropdown ( UIDropdown_t *dropdown, ui_mouse_state_t mouse_state )
 }
 
 
-int draw_dropdown                ( UIWindow_t* window, UIDropdown_t* dropdown)
+int draw_dropdown                ( ui_window* window, ui_dropdown* dropdown)
 {
     
     // TODO: Argument check
@@ -502,7 +502,7 @@ int draw_dropdown                ( UIWindow_t* window, UIDropdown_t* dropdown)
     size_t   longest_option_len = 0,
              current_len        = 0;
     SDL_Rect      r             = { 0, 0, 0, 0 };
-    UIInstance_t *instance      = ui_get_active_instance();
+    ui_instance *instance      = ui_get_active_instance();
 
     // 16 pixels of box drawings plus the string
     r.x = dropdown->x,
@@ -564,7 +564,7 @@ int draw_dropdown                ( UIWindow_t* window, UIDropdown_t* dropdown)
 }
 
 
-int destroy_dropdown ( UIDropdown_t* dropdown )
+int destroy_dropdown ( ui_dropdown* dropdown )
 {
 
     // TODO: Argument check

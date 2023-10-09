@@ -124,8 +124,8 @@ Here's the source for the above window:
 int main ( int argc, const char **argv )
 {
     // Initialized data
-    UIInstance_t *p_ui_instance = 0;
-    UIWindow_t   *p_ui_window   = 0;
+    ui_instance *p_ui_instance = 0;
+    ui_window   *p_ui_window   = 0;
 
     // Initialize the UI library
     ui_init(&p_ui_instance, "");

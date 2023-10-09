@@ -46,7 +46,7 @@ struct UIButton_s
   *  
   *  @return 1 on success, 0 on error.  
   */
-DLLEXPORT int create_button ( UIButton_t **pp_button );
+DLLEXPORT int create_button ( ui_button **pp_button );
 
 // Constructors
 /** !
@@ -59,7 +59,7 @@ DLLEXPORT int create_button ( UIButton_t **pp_button );
   *  
   *  @return 1 on success, 0 on error.  
   */
-DLLEXPORT int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value );
+DLLEXPORT int load_button_as_json_value ( ui_button **pp_button, json_value *p_value );
 
 // Callbacks
 
@@ -74,7 +74,7 @@ DLLEXPORT int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int hover_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state );
+DLLEXPORT int hover_button ( ui_button *p_button , ui_mouse_state_t mouse_state );
 
 /** !
   *  Fire each click callbacks. 
@@ -87,7 +87,7 @@ DLLEXPORT int hover_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int click_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state );
+DLLEXPORT int click_button ( ui_button *p_button , ui_mouse_state_t mouse_state );
 
 /** !
   *  Fire each release callbacks. 
@@ -100,7 +100,7 @@ DLLEXPORT int click_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int release_button ( UIButton_t *p_button , ui_mouse_state_t mouse_state );
+DLLEXPORT int release_button ( ui_button *p_button , ui_mouse_state_t mouse_state );
 
 // Add callbacks
 
@@ -108,40 +108,40 @@ DLLEXPORT int release_button ( UIButton_t *p_button , ui_mouse_state_t mouse_sta
   *  Add a click callback.
   *
   *  @param p_button : Pointer to button
-  *  @param callback : function pointer. Should be of type int callback ( UIButton_t* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state_t )
   *
   *  @sa add_hover_callback_button
   *  @sa add_release_callback_button
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int add_click_callback_button ( UIButton_t *p_button , void (*callback) ( UIButton_t*, ui_mouse_state_t ) );
+DLLEXPORT int add_click_callback_button ( ui_button *p_button , void (*callback) ( ui_button*, ui_mouse_state_t ) );
 
 /** !
   *  Add a hover callback.
   *
   *  @param p_button : Pointer to button
-  *  @param callback : function pointer. Should be of type int callback ( UIButton_t* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state_t )
   *
   *  @sa add_click_callback_button
   *  @sa add_release_callback_button
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int add_hover_callback_button ( UIButton_t *p_button , void (*callback) ( UIButton_t*, ui_mouse_state_t ) );
+DLLEXPORT int add_hover_callback_button ( ui_button *p_button , void (*callback) ( ui_button*, ui_mouse_state_t ) );
 
 /** !
   *  Add a release callback.
   *
   *  @param p_button : Pointer to button
-  *  @param callback : function pointer. Should be of type int callback ( UIButton_t* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state_t )
   *
   *  @sa add_click_callback_button
   *  @sa add_hover_callback_button
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int add_release_callback_button ( UIButton_t *p_button , void (*callback) ( UIButton_t*, ui_mouse_state_t ) );
+DLLEXPORT int add_release_callback_button ( ui_button *p_button , void (*callback) ( ui_button*, ui_mouse_state_t ) );
 
 // Drawing
 /** !
@@ -154,7 +154,7 @@ DLLEXPORT int add_release_callback_button ( UIButton_t *p_button , void (*callba
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int draw_button ( UIWindow_t *p_window, UIButton_t *p_button );
+DLLEXPORT int draw_button ( ui_window *p_window, ui_button *p_button );
 
 // Collision
 /** !
@@ -165,7 +165,7 @@ DLLEXPORT int draw_button ( UIWindow_t *p_window, UIButton_t *p_button );
   *
   *  @return true if cursor is on the button, and false otherwise
   */
-DLLEXPORT bool button_in_bounds ( UIButton_t *p_button, ui_mouse_state_t mouse_state );
+DLLEXPORT bool button_in_bounds ( ui_button *p_button, ui_mouse_state_t mouse_state );
 
 // Deallocators
 /** !
@@ -175,4 +175,4 @@ DLLEXPORT bool button_in_bounds ( UIButton_t *p_button, ui_mouse_state_t mouse_s
   *
   *  @return 
   */
-DLLEXPORT int destroy_button ( UIButton_t *p_button );
+DLLEXPORT int destroy_button ( ui_button *p_button );

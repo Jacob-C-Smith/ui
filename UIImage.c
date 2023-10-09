@@ -1,13 +1,13 @@
 #include <UI/UIImage.h>
 
-int create_image ( UIImage_t **pp_image )
+int create_image ( ui_image **pp_image )
 {
 	
 	// Argument check
 	if ( pp_image == (void *) 0 ) goto no_image;
 
 	// Initialized data
-	UIImage_t *p_image = calloc(1, sizeof(UIImage_t));
+	ui_image *p_image = calloc(1, sizeof(ui_image));
 
 	// Error checking
 	if ( p_image == (void *) 0 ) goto no_mem;
@@ -45,7 +45,7 @@ int create_image ( UIImage_t **pp_image )
 	}
 }
 
-int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
+int load_image_as_json_value (ui_image** pp_image, json_value* p_value)
 {
 	
 	// Argument check
@@ -53,7 +53,7 @@ int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
 	if ( p_value  == (void *) 0 ) goto no_value;
 
 	// Initialized data
-	UIImage_t  *p_image  = 0;
+	ui_image  *p_image  = 0;
 	json_value *p_x      = 0,
 		       *p_y      = 0,
 		       *p_width  = 0,
@@ -81,7 +81,7 @@ int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
 	{
 
 		// Initialized data
-		UIInstance_t *p_instance = ui_get_active_instance();
+		ui_instance *p_instance = ui_get_active_instance();
         SDL_Texture  *t          = IMG_LoadTexture(p_instance->load_window->renderer, p_path->string);
 
 		// Error check
@@ -175,7 +175,7 @@ int load_image_as_json_value (UIImage_t** pp_image, json_value* p_value)
 	}
 }
 
-int click_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
+int click_image(ui_image* p_image, ui_mouse_state_t mouse_state)
 {
 
 	// TODO: Argument check
@@ -191,23 +191,7 @@ int click_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 	}
 }
 
-int release_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
-{
-
-	// TODO: Argument check
-	//
-
-	// TODO: 
-
-	return 0;
-
-	// TODO: Error handling
-	{
-		
-	}
-}
-
-int add_click_callback_image(UIImage_t* p_image, void(*callback)(UIImage_t*, ui_mouse_state_t))
+int release_image(ui_image* p_image, ui_mouse_state_t mouse_state)
 {
 
 	// TODO: Argument check
@@ -223,7 +207,7 @@ int add_click_callback_image(UIImage_t* p_image, void(*callback)(UIImage_t*, ui_
 	}
 }
 
-int add_hover_callback_image(UIImage_t* p_image, void(*callback)(UIImage_t*, ui_mouse_state_t))
+int add_click_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mouse_state_t))
 {
 
 	// TODO: Argument check
@@ -239,7 +223,7 @@ int add_hover_callback_image(UIImage_t* p_image, void(*callback)(UIImage_t*, ui_
 	}
 }
 
-int add_release_callback_image(UIImage_t* p_image, void(*callback)(UIImage_t*, ui_mouse_state_t))
+int add_hover_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mouse_state_t))
 {
 
 	// TODO: Argument check
@@ -255,7 +239,7 @@ int add_release_callback_image(UIImage_t* p_image, void(*callback)(UIImage_t*, u
 	}
 }
 
-int hover_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
+int add_release_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mouse_state_t))
 {
 
 	// TODO: Argument check
@@ -271,7 +255,23 @@ int hover_image(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 	}
 }
 
-int draw_image ( UIWindow_t *p_window, UIImage_t *p_image )
+int hover_image(ui_image* p_image, ui_mouse_state_t mouse_state)
+{
+
+	// TODO: Argument check
+	//
+
+	// TODO: 
+
+	return 0;
+
+	// TODO: Error handling
+	{
+		
+	}
+}
+
+int draw_image ( ui_window *p_window, ui_image *p_image )
 {
 	
 	// Argument check
@@ -317,7 +317,7 @@ int draw_image ( UIWindow_t *p_window, UIImage_t *p_image )
 	}
 }
 
-bool image_in_bounds(UIImage_t* p_image, ui_mouse_state_t mouse_state)
+bool image_in_bounds(ui_image* p_image, ui_mouse_state_t mouse_state)
 {
 
 	// TODO: Argument check
@@ -344,14 +344,14 @@ bool image_in_bounds(UIImage_t* p_image, ui_mouse_state_t mouse_state)
 	}
 }
 
-int destroy_image(UIImage_t **pp_image)
+int destroy_image(ui_image **pp_image)
 {
 	
 	// Argument check
 	if ( pp_image == (void *) 0 ) goto no_image;
 
 	// Initialized data
-	UIImage_t *p_image = *pp_image;
+	ui_image *p_image = *pp_image;
 
 	// TODO: Handle the error
 	// Just exit if p_image is null 

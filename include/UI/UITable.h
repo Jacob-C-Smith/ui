@@ -108,7 +108,7 @@ DLLEXPORT int           release_table              ( UITable_t   *p_table , ui_m
   *  Add a click callback.
   *
   *  @param p_table : Pointer to table
-  *  @param callback : function pointer. Should be of type int callback ( UIButton_t* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state_t )
   *
   *  @sa add_hover_callback_table
   *  @sa add_release_callback_table
@@ -121,7 +121,7 @@ DLLEXPORT int           add_click_callback_table   ( UITable_t   *p_table , void
   *  Add a hover callback.
   *
   *  @param p_table : Pointer to table
-  *  @param callback : function pointer. Should be of type int callback ( UIButton_t* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state_t )
   *
   *  @sa add_click_callback_table
   *  @sa add_release_callback_table
@@ -134,7 +134,7 @@ DLLEXPORT int           add_hover_callback_table   ( UITable_t   *p_table, void 
   *  Add a release callback.
   *
   *  @param p_table : Pointer to table
-  *  @param callback : function pointer. Should be of type int callback ( UIButton_t* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state_t )
   *
   *  @sa add_click_callback_table
   *  @sa add_hover_callback_table
@@ -158,7 +158,7 @@ DLLEXPORT int           set_table_cell ( UITable_t   *p_table, size_t x, size_t 
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           draw_table                 ( UIWindow_t   *window   , UITable_t *p_table );
+DLLEXPORT int           draw_table                 ( ui_window   *window   , UITable_t *p_table );
 
 // Collision
 /** !

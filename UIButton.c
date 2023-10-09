@@ -1,13 +1,13 @@
 #include <UI/UIButton.h>
 
-int create_button ( UIButton_t **pp_button )
+int create_button ( ui_button **pp_button )
 {
 
 	// Argument check
     if ( pp_button == (void *) 0 ) goto no_button;
 
     // Initialized data
-    UIButton_t* p_button = calloc(1, sizeof(UIButton_t));
+    ui_button* p_button = calloc(1, sizeof(ui_button));
 
     // Check memory
     if ( p_button == (void *) 0 ) goto no_mem;
@@ -45,7 +45,7 @@ int create_button ( UIButton_t **pp_button )
     }
 }
 
-int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value )
+int load_button_as_json_value ( ui_button **pp_button, json_value *p_value )
 {
 
     // Argument check
@@ -53,7 +53,7 @@ int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value )
 	if ( p_value   == (void *) 0 ) goto no_value;
 
 	// Initialized data
-	UIButton_t *p_button  = 0;
+	ui_button *p_button  = 0;
 	json_value *p_label   = 0,
 	           *p_x       = 0,
 		       *p_y       = 0;
@@ -157,7 +157,7 @@ int load_button_as_json_value ( UIButton_t **pp_button, json_value *p_value )
 	}
 }
 
-int hover_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
+int hover_button ( ui_button  *p_button, ui_mouse_state_t mouse_state)
 {
 
     // Argument check
@@ -168,7 +168,7 @@ int hover_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
     {
 
         // Define the callback function
-        void (*callback)(UIButton_t*, ui_mouse_state_t) = p_button->on_hover[i];
+        void (*callback)(ui_button*, ui_mouse_state_t) = p_button->on_hover[i];
 
         // Call the callback function
         if (callback)
@@ -195,7 +195,7 @@ int hover_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
     }
 }
 
-int click_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
+int click_button ( ui_button  *p_button, ui_mouse_state_t mouse_state)
 {
 
     // TODO: Argument check
@@ -207,7 +207,7 @@ int click_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
     for (size_t i = 0; i < p_button->on_click_count; i++)
     {
         // Define the callback function
-        void (*callback)(UIButton_t*, ui_mouse_state_t) = p_button->on_click[i];
+        void (*callback)(ui_button*, ui_mouse_state_t) = p_button->on_click[i];
 
 
         // Call the callback function
@@ -220,7 +220,7 @@ int click_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state)
     return 1;
 }
 
-int release_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state )
+int release_button ( ui_button  *p_button, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -232,7 +232,7 @@ int release_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state )
     for (size_t i = 0; i < p_button->on_release_count; i++)
     {
         // Define the callback function
-        void (*callback)(UIButton_t*, ui_mouse_state_t) = p_button->on_release[i];
+        void (*callback)(ui_button*, ui_mouse_state_t) = p_button->on_release[i];
 
 
         // Call the callback function
@@ -245,7 +245,7 @@ int release_button ( UIButton_t  *p_button, ui_mouse_state_t mouse_state )
     return 1;
 }
 
-int add_click_callback_button ( UIButton_t  *p_button, void(*callback)(UIButton_t*, ui_mouse_state_t))
+int add_click_callback_button ( ui_button  *p_button, void(*callback)(ui_button*, ui_mouse_state_t))
 {
 
     // TODO: Argument check
@@ -275,7 +275,7 @@ int add_click_callback_button ( UIButton_t  *p_button, void(*callback)(UIButton_
     // TODO: Error handling
 }
 
-int add_hover_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
+int add_hover_callback_button ( ui_button  *button, void(*callback)(ui_button*, ui_mouse_state_t))
 {
 
     // TODO: Argument check
@@ -318,7 +318,7 @@ int add_hover_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*
     // TODO: Error handling
 }
 
-int add_release_callback_button ( UIButton_t  *button, void(*callback)(UIButton_t*, ui_mouse_state_t))
+int add_release_callback_button ( ui_button  *button, void(*callback)(ui_button*, ui_mouse_state_t))
 {
 
     // TODO: Argument check
@@ -361,14 +361,14 @@ int add_release_callback_button ( UIButton_t  *button, void(*callback)(UIButton_
     // TODO: Error handling
 }
 
-int draw_button ( UIWindow_t  *window, UIButton_t *button )
+int draw_button ( ui_window  *window, ui_button *button )
 {
 
     // TODO: Argument check
     //
 
     // Initialized data
-    UIInstance_t *instance = ui_get_active_instance();
+    ui_instance *instance = ui_get_active_instance();
     size_t        l        = strlen(button->label);
     SDL_Rect      r        = { button->x+1, button->y+1, (l * 8) + 5, 12 };
     
@@ -394,7 +394,7 @@ int draw_button ( UIWindow_t  *window, UIButton_t *button )
     return 1;
 }
 
-bool button_in_bounds ( UIButton_t *button, ui_mouse_state_t mouse_state )
+bool button_in_bounds ( ui_button *button, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -416,7 +416,7 @@ bool button_in_bounds ( UIButton_t *button, ui_mouse_state_t mouse_state )
 	return false;
 }
 
-int destroy_button ( UIButton_t  *p_button )
+int destroy_button ( ui_button  *p_button )
 {
 
     // Argument check

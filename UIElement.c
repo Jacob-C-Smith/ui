@@ -192,14 +192,14 @@ int init_element ( void )
     return 1;
 }
 
-int create_element ( UIElement_t **pp_element )
+int create_element ( ui_element **pp_element )
 {
 
     // Argument check
     if ( pp_element == (void *) 0 ) goto no_element;
 
     // Initialized data
-    UIElement_t *p_element = calloc(1, sizeof(UIElement_t));
+    ui_element *p_element = calloc(1, sizeof(ui_element));
     
     // Error check
     if ( p_element == (void *) 0 ) goto no_mem;
@@ -237,7 +237,7 @@ int create_element ( UIElement_t **pp_element )
     }
 }
 
-int load_element_as_json_value(UIElement_t **pp_element, json_value *p_value)
+int load_element_as_json_value(ui_element **pp_element, json_value *p_value)
 {
     
     // Argument check
@@ -327,14 +327,14 @@ int load_element_as_json_value(UIElement_t **pp_element, json_value *p_value)
     }
 }
 
-int construct_element(UIElement_t **pp_element, char *p_name, char *p_type, void* element_data)
+int construct_element(ui_element **pp_element, char *p_name, char *p_type, void* element_data)
 {
     
     // Argument check
     if ( element_data == (void *) 0 ) goto no_element_data;
 
     // Initialized data
-    UIElement_t *p_element = 0;
+    ui_element *p_element = 0;
     
     // Allocate memory for an element
     if ( create_element(&p_element) == 0 ) goto failed_to_allocate_element;
@@ -379,7 +379,7 @@ int construct_element(UIElement_t **pp_element, char *p_name, char *p_type, void
         }
 
         // Populate the element
-        *p_element = (UIElement_t)
+        *p_element = (ui_element)
         {
             .name = name,
             .type = type,
@@ -408,14 +408,14 @@ int construct_element(UIElement_t **pp_element, char *p_name, char *p_type, void
     }
 }
 
-int click_element ( UIElement_t* element, ui_mouse_state_t mouse_state )
+int click_element ( ui_element* element, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
 	//
 
     // Initialized data
-    UIInstance_t *instanace = ui_get_active_instance();
+    ui_instance *instanace = ui_get_active_instance();
     int (*click)(void*, ui_mouse_state_t) = dict_get(click_lut, element->type);
 
     // Set the last element
@@ -430,7 +430,7 @@ int click_element ( UIElement_t* element, ui_mouse_state_t mouse_state )
     }
 }
 
-int hover_element ( UIElement_t* element, ui_mouse_state_t mouse_state )
+int hover_element ( ui_element* element, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -448,14 +448,14 @@ int hover_element ( UIElement_t* element, ui_mouse_state_t mouse_state )
     }
 }
 
-int release_element ( UIElement_t* element, ui_mouse_state_t mouse_state )
+int release_element ( ui_element* element, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
 	//
 
     // Initialized data
-    UIInstance_t *instanace = ui_get_active_instance();
+    ui_instance *instanace = ui_get_active_instance();
     int (*release)(void*, ui_mouse_state_t) = dict_get(release_lut, element->type);
 
     // Set the last element
@@ -470,14 +470,14 @@ int release_element ( UIElement_t* element, ui_mouse_state_t mouse_state )
     }
 }
 
-int add_click_callback_element(UIElement_t* element, void(*callback)(UIElement_t*, ui_mouse_state_t))
+int add_click_callback_element(ui_element* element, void(*callback)(ui_element*, ui_mouse_state_t))
 {
 
     // TODO: Argument check
     //
 
     // Initialized data
-    int (*add_click_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_click_lut, element->type);
+    int (*add_click_callback)(void*, void(*callback)(ui_element*, ui_mouse_state_t)) = dict_get(add_click_lut, element->type);
 
     // Call the element add click function for the specific type
     return (*add_click_callback)((void*)element->label, callback);
@@ -485,14 +485,14 @@ int add_click_callback_element(UIElement_t* element, void(*callback)(UIElement_t
     // TODO: Error handling
 }
 
-int add_hover_callback_element(UIElement_t* element, void(*callback)(UIElement_t*, ui_mouse_state_t))
+int add_hover_callback_element(ui_element* element, void(*callback)(ui_element*, ui_mouse_state_t))
 {
 
     // TODO: Argument check
     //
 
     // Initialized data
-    int (*add_hover_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_hover_lut, element->type);
+    int (*add_hover_callback)(void*, void(*callback)(ui_element*, ui_mouse_state_t)) = dict_get(add_hover_lut, element->type);
 
     // Call the element add hover function for the specific type
     return (*add_hover_callback)((void*)element->label, callback);
@@ -503,14 +503,14 @@ int add_hover_callback_element(UIElement_t* element, void(*callback)(UIElement_t
     }
 }
 
-int add_release_callback_element(UIElement_t* element, void(*callback)(UIElement_t*, ui_mouse_state_t))
+int add_release_callback_element(ui_element* element, void(*callback)(ui_element*, ui_mouse_state_t))
 {
 
     // TODO: Argument check
     //
 
     // Initialized data
-    int (*add_release_callback)(void*, void(*callback)(UIElement_t*, ui_mouse_state_t)) = dict_get(add_release_lut, element->type);
+    int (*add_release_callback)(void*, void(*callback)(ui_element*, ui_mouse_state_t)) = dict_get(add_release_lut, element->type);
 
     // Call the element add release function for the specific type
     return (*add_release_callback)((void*)element->label, callback);
@@ -521,7 +521,7 @@ int add_release_callback_element(UIElement_t* element, void(*callback)(UIElement
     }
 }
 
-bool in_bounds ( UIElement_t* element, ui_mouse_state_t mouse_state )
+bool in_bounds ( ui_element* element, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -539,7 +539,7 @@ bool in_bounds ( UIElement_t* element, ui_mouse_state_t mouse_state )
     }
 }
 
-int draw_element( UIWindow_t *window, UIElement_t* element )
+int draw_element( ui_window *window, ui_element* element )
 {
 
     // TODO: Argument check
@@ -563,14 +563,14 @@ int draw_element( UIWindow_t *window, UIElement_t* element )
     // TODO: Error handling
 }
 
-int destroy_element(UIElement_t **pp_element)
+int destroy_element(ui_element **pp_element)
 {
 
     // Argument check
     if ( pp_element == (void *) 0 ) goto no_element;
     
     // Initialized data
-    UIElement_t *p_element = *pp_element;
+    ui_element *p_element = *pp_element;
     
     // Free the element
     free(p_element->label);

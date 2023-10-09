@@ -1,13 +1,13 @@
 #include <UI/UISlider.h>
 
-int create_slider ( UISlider_t  **pp_slider )
+int create_slider ( ui_slider **pp_slider )
 {
 
     // Argument check
     if ( pp_slider == (void *) 0 ) goto no_slider;
 
     // Initialized data
-    UISlider_t* p_slider = calloc(1, sizeof(UISlider_t));
+    ui_slider* p_slider = calloc(1, sizeof(ui_slider));
 
     // Error check
     if ( p_slider == (void *) 0 ) goto no_mem;
@@ -45,7 +45,7 @@ int create_slider ( UISlider_t  **pp_slider )
     }
 }
 
-int load_slider_as_json_value ( UISlider_t **pp_slider, json_value *p_value )
+int load_slider_as_json_value ( ui_slider **pp_slider, json_value *p_value )
 {
 
     // Argument errors
@@ -53,9 +53,11 @@ int load_slider_as_json_value ( UISlider_t **pp_slider, json_value *p_value )
     if ( p_value   == (void *) 0 ) goto no_value;
 
     // Initialized data
-    UISlider_t *p_slider = 0;
-    signed      x        = 0,
-                y        = 0;
+    ui_slider *p_slider = 0;
+    signed      x       = 0,
+                y       = 0;
+    json_value *p_x     = 0,
+               *p_y     = 0;
 
     // Parse the slider
     {        
@@ -63,15 +65,23 @@ int load_slider_as_json_value ( UISlider_t **pp_slider, json_value *p_value )
         // Initialized data
         dict *p_dict = p_value->object;
 
-        // TODO: Fix
-        //x = JSON_VALUE(((json_value *)dict_get(p_dict, "x")), JSON_VALUE_INTEGER);
-        //y = JSON_VALUE(((json_value *)dict_get(p_dict, "y")), JSON_VALUE_INTEGER);
+        // Store the "x" property
+        p_x = (json_value *)dict_get(p_dict, "x");
+
+        // Store the "y" property
+        p_y = (json_value *)dict_get(p_dict, "y");
+
+        // Check for missing properties
+        if ( ( p_x && p_y ) == 0 ) goto missing_properties;
+
+            // Error
+            return 0;
     }
 
     // Is there enough information to construct the slider?
-    if ( x == (void *) 0 ) goto no_x;
-    if ( y == (void *) 0 ) goto no_y;
-
+    x = p_x->integer;
+    y = p_y->integer;
+    
     // Allocate the slider
     if ( create_slider(&p_slider) == 0 ) goto failed_to_allocate_slider;
     
@@ -118,37 +128,11 @@ int load_slider_as_json_value ( UISlider_t **pp_slider, json_value *p_value )
 
         // Missing required construction parameters
         {
-            no_label:
+            missing_properties:
                 #ifndef NDEBUG
-                    ui_print_error("[UI] [Slider] No \"label\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-                
-                // Error
-                return 0;
-            no_x:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Slider] No \"x\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
+                    ui_print_error("[UI] [Slider] Missing properties in JSON object in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
-                // Error
-                return 0;
-
-            no_y:
-                #ifndef NDEBUG
-                    ui_print_error("[UI] [Slider] No \"y\" property in \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-                
-                // Error
-                return 0;
-        }
-
-        // Standard library errors
-        {
-            no_mem:
-                #ifndef NDEBUG
-                    ui_print_error("[Standard Library] Failed to allocate memory in call to funciton \"%s\"\n", __FUNCTION__);
-                #endif
-                
                 // Error
                 return 0;
         }
@@ -161,7 +145,7 @@ int load_slider_as_json_value ( UISlider_t **pp_slider, json_value *p_value )
     }
 }
 
-int hover_slider ( UISlider_t *p_slider, ui_mouse_state_t mouse_state )
+int hover_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -176,7 +160,7 @@ int hover_slider ( UISlider_t *p_slider, ui_mouse_state_t mouse_state )
     // TODO: Error handling
 }
 
-int click_slider ( UISlider_t *p_slider, ui_mouse_state_t mouse_state )
+int click_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -190,7 +174,7 @@ int click_slider ( UISlider_t *p_slider, ui_mouse_state_t mouse_state )
     // TOOD: Error handling
 }
 
-int release_slider ( UISlider_t *p_slider, ui_mouse_state_t mouse_state )
+int release_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -205,7 +189,7 @@ int release_slider ( UISlider_t *p_slider, ui_mouse_state_t mouse_state )
 
 }
 
-int add_click_callback_slider ( UISlider_t *p_slider , void (*callback) ( UISlider_t*, ui_mouse_state_t ) )
+int add_click_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slider*, ui_mouse_state_t ) )
 {
 
     // TODO: Argument check
@@ -219,7 +203,7 @@ int add_click_callback_slider ( UISlider_t *p_slider , void (*callback) ( UISlid
     // TODO: Error handling
 }
 
-int add_hover_callback_slider ( UISlider_t *p_slider , void (*callback) ( UISlider_t*, ui_mouse_state_t ) )
+int add_hover_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slider*, ui_mouse_state_t ) )
 {
 
     // TODO: Argument check
@@ -233,7 +217,7 @@ int add_hover_callback_slider ( UISlider_t *p_slider , void (*callback) ( UISlid
     // TODO: Error handling
 }
 
-int add_release_callback_slider ( UISlider_t *p_slider , void (*callback) ( UISlider_t*, ui_mouse_state_t ) )
+int add_release_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slider*, ui_mouse_state_t ) )
 {
 
     // TODO: Argument check
@@ -247,14 +231,14 @@ int add_release_callback_slider ( UISlider_t *p_slider , void (*callback) ( UISl
     // TODO: Error handling
 }
 
-int draw_slider ( UIWindow_t *window, UISlider_t *p_slider )
+int draw_slider ( ui_window *window, ui_slider *p_slider )
 {
 
     // TODO: Argument check
 	//
 
     // Initialized data
-    UIInstance_t *instance = ui_get_active_instance();
+    ui_instance *instance = ui_get_active_instance();
     SDL_Rect      r        = { p_slider->x+1, p_slider->y+1, (8 * 8) + 5, 12 };
     
     p_slider->w = r.w,
@@ -274,7 +258,7 @@ int draw_slider ( UIWindow_t *window, UISlider_t *p_slider )
     // TODO: Error handling
 }
 
-bool slider_in_bounds ( UISlider_t *p_slider , ui_mouse_state_t mouse_state )
+bool slider_in_bounds ( ui_slider *p_slider , ui_mouse_state_t mouse_state )
 {
 
     // TODO: Argument check
@@ -299,7 +283,7 @@ bool slider_in_bounds ( UISlider_t *p_slider , ui_mouse_state_t mouse_state )
 	return false;
 }
 
-int destroy_slider ( UISlider_t *p_slider )
+int destroy_slider ( ui_slider *p_slider )
 {
 
     // TODO: Argument check

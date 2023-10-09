@@ -51,49 +51,46 @@ struct UIInstance_s;
 typedef struct ui_mouse_state_s ui_mouse_state_t;
 
 // UI Label type
-typedef struct UILabel_s UILabel_t;
+typedef struct UILabel_s ui_label;
 
 // UI Button type
-typedef struct UIButton_s UIButton_t;
+typedef struct UIButton_s ui_button;
 
 // UI Canvas type
-typedef struct UICanvas_s UICanvas_t;
+typedef struct UICanvas_s ui_canvas;
 
 // UI Chart type
-typedef struct UIChart_s UIChart_t;
+typedef struct UIChart_s ui_chart;
 
 // UI Table type
 typedef struct UITable_s UITable_t;
 
 // UI Checkbox type
-typedef struct UICheckbox_s UICheckbox_t;
-
-// UI Contianer type
-typedef struct UIContainer_s UIContainer_t;
+typedef struct UICheckbox_s ui_checkbox;
 
 // UI Dropdown type
-typedef struct UIDropdown_s UIDropdown_t;
+typedef struct UIDropdown_s ui_dropdown;
 
 // UI Image type
-typedef struct UIImage_s UIImage_t;
+typedef struct UIImage_s ui_image;
 
 // UI Label type
-typedef struct UILabel_s UILabel_t;
+typedef struct UILabel_s ui_label;
 
 // UI Radio button type
-typedef struct UIRadioButton_s UIRadioButton_t;
+typedef struct UIRadioButton_s ui_radiobutton;
 
 // UI Slider type
-typedef struct UISlider_s UISlider_t;
+typedef struct UISlider_s ui_slider;
 
 // UI Text input type
-typedef struct UITextInput_s UITextInput_t;
+typedef struct UITextInput_s ui_textinput;
 
 // UI Element type
-typedef struct UIElement_s UIElement_t;
+typedef struct UIElement_s ui_element;
 
 // UI Window type
-typedef struct UIWindow_s UIWindow_t;
+typedef struct UIWindow_s ui_window;
 
 // UI Instance type
-typedef struct UIInstance_s UIInstance_t;
+typedef struct UIInstance_s ui_instance;

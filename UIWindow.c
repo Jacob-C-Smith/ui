@@ -1,13 +1,13 @@
 #include <UI/UIWindow.h>
 
-int create_window ( UIWindow_t **pp_window )
+int create_window ( ui_window **pp_window )
 {
 
 	// Argument check
 	if ( pp_window == (void *) 0 ) goto no_window;
 
 	// Initialized data
-	UIWindow_t *p_window = calloc(1, sizeof(UIWindow_t));
+	ui_window *p_window = calloc(1, sizeof(ui_window));
 
 	// Check memory
 	if ( p_window == (void *) 0 ) goto no_mem;
@@ -47,7 +47,7 @@ int create_window ( UIWindow_t **pp_window )
 	}
 }
 
-int load_window ( UIWindow_t **pp_window, const char *path )
+int load_window ( ui_window **pp_window, const char *path )
 {
 
 	// Argument check
@@ -113,7 +113,7 @@ int load_window ( UIWindow_t **pp_window, const char *path )
 	}
 }
 
-int load_window_as_json ( UIWindow_t **pp_window, char *text )
+int load_window_as_json ( ui_window **pp_window, char *text )
 {
 
 	// Argument check
@@ -121,8 +121,8 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 	if ( text      == (void *) 0 ) goto no_text;
 
 	// Initialized data
-	UIInstance_t *p_instance    = ui_get_active_instance();
-	UIWindow_t   *p_window      = 0;
+	ui_instance *p_instance    = ui_get_active_instance();
+	ui_window   *p_window      = 0;
     json_value   *p_value       = 0,
 	             *p_name        = 0,
 	             *p_title       = 0,
@@ -160,7 +160,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 		SDL_Renderer *renderer = 0;
 		dict *elements = 0;
 		size_t element_data_max = 0;
-		UIElement_t *element_data = 0;
+		ui_element *element_data = 0;
 
 		// Allocate memory for a UI window
 		if ( create_window(&p_window) == 0 ) goto failed_to_allocate_window;
@@ -224,7 +224,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 		// Create an SDL2 renderer
 		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-		*p_window = (UIWindow_t)
+		*p_window = (ui_window)
 		{
 			.is_open  = true,
 			.drag     = false,
@@ -258,7 +258,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 			
 			// Set the element max and the element array
 			element_data_max = element_count;
-			element_data = calloc(element_count+1, sizeof(UIElement_t *));
+			element_data = calloc(element_count+1, sizeof(ui_element *));
 
 			// Construct a dictionary to contain the elements
 			dict_construct(&elements, element_count, 0);
@@ -273,7 +273,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 
 				// Initialized data
 				json_value *p_element = pp_elements[i];
-				UIElement_t *constructed_element = 0;
+				ui_element *constructed_element = 0;
 
 				if ( load_element_as_json_value(&constructed_element, p_element) == 0) goto failed_to_load_element;
 
@@ -362,7 +362,7 @@ int load_window_as_json ( UIWindow_t **pp_window, char *text )
 	}
 }
  
-int append_element_to_window ( UIWindow_t *p_window, UIElement_t *element )
+int append_element_to_window ( ui_window *p_window, ui_element *element )
 {
 
 	// TODO: Argument check	
@@ -388,20 +388,20 @@ int append_element_to_window ( UIWindow_t *p_window, UIElement_t *element )
 		goto resize_done;
 }
 
-UIElement_t *find_element ( UIWindow_t *p_window, char *name )
+ui_element *find_element ( ui_window *p_window, char *name )
 {
 
 	// TODO: Argument check
 	//
 
 	// Initialized data
-	UIElement_t *ret = dict_get(p_window->elements, name);
+	ui_element *ret = dict_get(p_window->elements, name);
 	
 	// Return
 	return ret;
 }
 
-int resize_window ( UIWindow_t *p_window )
+int resize_window ( ui_window *p_window )
 {
 	
 	// TODO: Argument check
@@ -414,7 +414,7 @@ int resize_window ( UIWindow_t *p_window )
 	return 1;
 }
 
-int set_file_drop_operation ( UIWindow_t *p_window, int (*callback_function)(UIWindow_t *p_window, char *path))
+int set_file_drop_operation ( ui_window *p_window, int (*callback_function)(ui_window *p_window, char *path))
 {
 
 	// Argument check
@@ -452,7 +452,7 @@ int set_file_drop_operation ( UIWindow_t *p_window, int (*callback_function)(UIW
 	}
 }
 
-int draw_window ( UIWindow_t *p_window )
+int draw_window ( ui_window *p_window )
 {
 
 	// Argument check
@@ -465,7 +465,7 @@ int draw_window ( UIWindow_t *p_window )
 		return 1;
 
 	// Initialized data
-	UIInstance_t *instance = ui_get_active_instance();
+	ui_instance *instance = ui_get_active_instance();
 	int w   = 0,
 		h   = 0,
 		t_1 = 0,
@@ -561,14 +561,14 @@ int draw_window ( UIWindow_t *p_window )
 	}
 }
 
-int process_window_input ( UIWindow_t *p_window )
+int process_window_input ( ui_window *p_window )
 {
 
 	// Argument check
 	if ( p_window == (void *) 0 ) goto no_window;
 
 	// Initialized data
-	UIInstance_t *instance = ui_get_active_instance();
+	ui_instance *instance = ui_get_active_instance();
 	SDL_Event     e;
 
 	dict_values(p_window->elements, p_window->element_data);
@@ -600,7 +600,7 @@ int process_window_input ( UIWindow_t *p_window )
 				{
 					if (strcmp(p_window->last->type, "TEXT INPUT") == 0)
 					{
-						UITextInput_t* text_input = p_window->last->text_input;
+						ui_textinput* text_input = p_window->last->text_input;
 						size_t text_len = strlen(text_input->text);
 						
 						text_input->text[text_len - 1] = (char)0;
@@ -619,7 +619,7 @@ int process_window_input ( UIWindow_t *p_window )
 				if (p_window->last)
 					if (strcmp(p_window->last->type, "TEXT INPUT") == 0)
 					{
-						UITextInput_t *next       = 0;
+						ui_textinput *next       = 0;
 						size_t last_i    = 0,
 							   current_i = 0;
 
@@ -748,7 +748,7 @@ int process_window_input ( UIWindow_t *p_window )
 			if(p_window->last)
 				if (strcmp(p_window->last->type, "TEXT INPUT") == 0)
 				{//
-					UITextInput_t* text_input = p_window->last->text_input;
+					ui_textinput* text_input = p_window->last->text_input;
 					strcat(text_input->text, e.text.text);
 					text_input->width = 8 + (8 * strlen(text_input->text));
 				}
@@ -782,7 +782,7 @@ int process_window_input ( UIWindow_t *p_window )
 	}
 }
 
-int click_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
+int click_window ( ui_window *p_window, ui_mouse_state_t mouse_state )
 {
 
 	// TODO: Argument check
@@ -791,7 +791,7 @@ int click_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 	// Initialized data
 	dict          *elements = p_window->elements;
 	void         **values   = 0;
-	UIInstance_t  *instance = ui_get_active_instance();
+	ui_instance  *instance = ui_get_active_instance();
 
 	// Did the user click on the element on the iterator?
 	for (size_t i = 0; i < p_window->element_count; i++)
@@ -843,7 +843,7 @@ int click_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 	// TODO: Error handling
 }
 
-int hover_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
+int hover_window ( ui_window *p_window, ui_mouse_state_t mouse_state )
 {
 
 	// TODO: Argument check
@@ -851,7 +851,7 @@ int hover_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 
 	// Initialized data
 	dict         *elements = p_window->elements;
-	UIInstance_t *instance = ui_get_active_instance();
+	ui_instance *instance = ui_get_active_instance();
 
 	if (p_window->drag)
 		SDL_SetWindowPosition(p_window, p_window->rx+mouse_state.x, p_window->ry+mouse_state.y);
@@ -867,7 +867,7 @@ int hover_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 	return 1;
 }
 
-int release_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
+int release_window ( ui_window *p_window, ui_mouse_state_t mouse_state )
 {
 
 	// TODO: Argument check
@@ -875,7 +875,7 @@ int release_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 
 	// Initialized data
 	dict* elements = p_window->elements;
-	UIInstance_t* instance = ui_get_active_instance();
+	ui_instance* instance = ui_get_active_instance();
 
 	if (p_window->drag) 
 		p_window->drag = false;
@@ -893,7 +893,7 @@ int release_window ( UIWindow_t *p_window, ui_mouse_state_t mouse_state )
 	// TODO: Error handling
 }
 
-int destroy_window ( UIWindow_t *p_window )
+int destroy_window ( ui_window *p_window )
 {
 
 	// Argument check

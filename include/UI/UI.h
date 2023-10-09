@@ -53,7 +53,7 @@ struct ui_mouse_state_s {
 struct UIInstance_s {
     dict        *windows;
     bool         running;
-    UIWindow_t  *active_window,
+    ui_window  *active_window,
                 *load_window,
                **windows_list;
     color        primary,
@@ -75,7 +75,7 @@ struct UIInstance_s {
  *
  *  @return 1 on success, 0 on error.
  */
-DLLEXPORT int ui_init ( UIInstance_t **pp_instance, const char *path );
+DLLEXPORT int ui_init ( ui_instance **pp_instance, const char *path );
 
 // ANSI colored prints
 /** !
@@ -132,7 +132,7 @@ DLLEXPORT int ui_print_error ( const char* const format, ... );
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int ui_draw_format_text ( const char* const format, UIWindow_t *p_window, int x, int y, int size, ... );
+DLLEXPORT int ui_draw_format_text ( const char* const format, ui_window *p_window, int x, int y, int size, ... );
 
 // Text drawing
 /** !
@@ -148,7 +148,7 @@ DLLEXPORT int ui_draw_format_text ( const char* const format, UIWindow_t *p_wind
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int ui_draw_text ( const char* const text, UIWindow_t *p_window, int x, int y, int size );
+DLLEXPORT int ui_draw_text ( const char* const text, ui_window *p_window, int x, int y, int size );
 
 /** !
   *  Draw a circle
@@ -160,7 +160,7 @@ DLLEXPORT int ui_draw_text ( const char* const text, UIWindow_t *p_window, int x
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int ui_draw_circle ( int radius, UIWindow_t *p_window, int x, int y );
+DLLEXPORT int ui_draw_circle ( int radius, ui_window *p_window, int x, int y );
 
 // Window operations
 /** !
@@ -171,7 +171,7 @@ DLLEXPORT int ui_draw_circle ( int radius, UIWindow_t *p_window, int x, int y );
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int ui_append_window ( UIInstance_t *p_instance, UIWindow_t *p_window );
+DLLEXPORT int ui_append_window ( ui_instance *p_instance, ui_window *p_window );
 
 /** !
   *  Remove a window
@@ -181,7 +181,7 @@ DLLEXPORT int ui_append_window ( UIInstance_t *p_instance, UIWindow_t *p_window 
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT UIWindow_t *ui_remove_window ( UIInstance_t *p_instance, const char *name );
+DLLEXPORT ui_window *ui_remove_window ( ui_instance *p_instance, const char *name );
 
 /** !
   *  Process active window input
@@ -190,7 +190,7 @@ DLLEXPORT UIWindow_t *ui_remove_window ( UIInstance_t *p_instance, const char *n
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int ui_process_input ( UIInstance_t *p_instance );
+DLLEXPORT int ui_process_input ( ui_instance *p_instance );
 
 /** !
   *  Draw the active window
@@ -199,7 +199,7 @@ DLLEXPORT int ui_process_input ( UIInstance_t *p_instance );
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int ui_draw ( UIInstance_t *p_instance );
+DLLEXPORT int ui_draw ( ui_instance *p_instance );
 
 // Image drawing
 /** !
@@ -207,7 +207,7 @@ DLLEXPORT int ui_draw ( UIInstance_t *p_instance );
   *
   *  @return active instance for this process ID
   */
-DLLEXPORT UIInstance_t *ui_get_active_instance ( void );
+DLLEXPORT ui_instance *ui_get_active_instance ( void );
 
 // File I/O
 /** !
@@ -229,4 +229,4 @@ DLLEXPORT size_t ui_load_file ( const char *path, void *buffer, bool binary );
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int ui_exit ( UIInstance_t **pp_instance );
+DLLEXPORT int ui_exit ( ui_instance **pp_instance );
