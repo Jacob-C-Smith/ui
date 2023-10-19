@@ -68,9 +68,9 @@ DLLEXPORT int set_file_drop_operation ( ui_window *p_window, int (*callback_func
 
 // User interaction
 DLLEXPORT int process_window_input ( ui_window *p_window );
-DLLEXPORT int click_window         ( ui_window *p_window, ui_mouse_state_t mouse_state );
-DLLEXPORT int hover_window         ( ui_window *p_window, ui_mouse_state_t mouse_state );
-DLLEXPORT int release_window       ( ui_window *p_window, ui_mouse_state_t mouse_state );
+DLLEXPORT int click_window         ( ui_window *p_window, ui_mouse_state mouse_state );
+DLLEXPORT int hover_window         ( ui_window *p_window, ui_mouse_state mouse_state );
+DLLEXPORT int release_window       ( ui_window *p_window, ui_mouse_state mouse_state );
 
 // Drawing 
 DLLEXPORT int draw_window ( ui_window *p_window );

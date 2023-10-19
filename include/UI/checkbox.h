@@ -55,20 +55,20 @@ DLLEXPORT int load_checkbox_as_json_value ( ui_checkbox **pp_checkbox, json_valu
 DLLEXPORT int construct_checkbox          ( ui_checkbox **pp_checkbox, char       **pp_labels, bool *checked, i32 x, i32 y );
 
 // Callbacks
-DLLEXPORT int hover_checkbox   ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state );
-DLLEXPORT int click_checkbox   ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state );
-DLLEXPORT int release_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state );
+DLLEXPORT int hover_checkbox   ( ui_checkbox *p_checkbox, ui_mouse_state mouse_state );
+DLLEXPORT int click_checkbox   ( ui_checkbox *p_checkbox, ui_mouse_state mouse_state );
+DLLEXPORT int release_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state mouse_state );
 
 // Add callbacks
-DLLEXPORT int add_click_callback_checkbox   ( ui_checkbox *p_checkbox, void (*callback)(ui_checkbox*, ui_mouse_state_t) );
-DLLEXPORT int add_hover_callback_checkbox   ( ui_checkbox *p_checkbox, void (*callback)(ui_checkbox*, ui_mouse_state_t) );
-DLLEXPORT int add_release_callback_checkbox ( ui_checkbox *p_checkbox, void (*callback)(ui_checkbox*, ui_mouse_state_t) );
+DLLEXPORT int add_click_callback_checkbox   ( ui_checkbox *p_checkbox, void (*callback)(ui_checkbox*, ui_mouse_state) );
+DLLEXPORT int add_hover_callback_checkbox   ( ui_checkbox *p_checkbox, void (*callback)(ui_checkbox*, ui_mouse_state) );
+DLLEXPORT int add_release_callback_checkbox ( ui_checkbox *p_checkbox, void (*callback)(ui_checkbox*, ui_mouse_state) );
 
 // Drawing
 DLLEXPORT int draw_checkbox ( ui_window *p_window, ui_checkbox *p_checkbox );
 
 // Bounds
-DLLEXPORT bool checkbox_in_bounds ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state );
+DLLEXPORT bool checkbox_in_bounds ( ui_checkbox *p_checkbox, ui_mouse_state mouse_state );
 
 // Deallocators
 DLLEXPORT int destroy_checkbox ( ui_checkbox *p_checkbox );

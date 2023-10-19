@@ -48,7 +48,7 @@ struct UIWindow_s;
 struct UIInstance_s;
 
 // Mouse state type
-typedef struct ui_mouse_state_s ui_mouse_state_t;
+typedef struct ui_mouse_state_s ui_mouse_state;
 
 // UI Label type
 typedef struct UILabel_s ui_label;
@@ -63,7 +63,7 @@ typedef struct UICanvas_s ui_canvas;
 typedef struct UIChart_s ui_chart;
 
 // UI Table type
-typedef struct UITable_s UITable_t;
+typedef struct UITable_s ui_table;
 
 // UI Checkbox type
 typedef struct UICheckbox_s ui_checkbox;

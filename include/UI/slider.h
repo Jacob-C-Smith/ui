@@ -74,7 +74,7 @@ DLLEXPORT int load_slider_as_json_value ( ui_slider **pp_slider, json_value *p_v
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int hover_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state );
+DLLEXPORT int hover_slider ( ui_slider *p_slider, ui_mouse_state mouse_state );
 
 /** !
   *  Fire each click callback. 
@@ -87,7 +87,7 @@ DLLEXPORT int hover_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int click_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state );
+DLLEXPORT int click_slider ( ui_slider *p_slider, ui_mouse_state mouse_state );
 
 /** !
   *  Fire each release callback. 
@@ -100,7 +100,7 @@ DLLEXPORT int click_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int release_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state );
+DLLEXPORT int release_slider ( ui_slider *p_slider, ui_mouse_state mouse_state );
 
 // Add callbacks
 
@@ -108,40 +108,40 @@ DLLEXPORT int release_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state
   *  Add a click callback.
   *
   *  @param p_slider : Pointer to slider
-  *  @param callback : function pointer. Should be of type int callback ( ui_slider* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_slider* , ui_mouse_state )
   *
   *  @sa add_hover_callback_slider
   *  @sa add_release_callback_slider
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int add_click_callback_slider ( ui_slider *p_slider, void (*callback) ( ui_slider*, ui_mouse_state_t ) );
+DLLEXPORT int add_click_callback_slider ( ui_slider *p_slider, void (*callback) ( ui_slider*, ui_mouse_state ) );
 
 /** !
   *  Add a hover callback.
   *
   *  @param p_slider : Pointer to slider
-  *  @param callback : function pointer. Should be of type int callback ( ui_slider* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_slider* , ui_mouse_state )
   *
   *  @sa add_click_callback_slider
   *  @sa add_release_callback_slider
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int add_hover_callback_slider ( ui_slider *p_slider, void (*callback) ( ui_slider*, ui_mouse_state_t ) );
+DLLEXPORT int add_hover_callback_slider ( ui_slider *p_slider, void (*callback) ( ui_slider*, ui_mouse_state ) );
 
 /** !
   *  Add a release callback.
   *
   *  @param p_slider : Pointer to slider
-  *  @param callback : function pointer. Should be of type int (callback) ( ui_slider* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int (callback) ( ui_slider* , ui_mouse_state )
   *
   *  @sa add_click_callback_slider
   *  @sa add_hover_callback_slider
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int add_release_callback_slider ( ui_slider *p_slider, void (*callback) ( ui_slider*, ui_mouse_state_t ) );
+DLLEXPORT int add_release_callback_slider ( ui_slider *p_slider, void (*callback) ( ui_slider*, ui_mouse_state ) );
 
 // Drawing
 /** !
@@ -165,7 +165,7 @@ DLLEXPORT int draw_slider ( ui_window *window, ui_slider *p_slider );
   *
   *  @return true if cursor is on the slider, and false otherwise
   */
-DLLEXPORT bool slider_in_bounds ( ui_slider *p_slider, ui_mouse_state_t mouse_state );
+DLLEXPORT bool slider_in_bounds ( ui_slider *p_slider, ui_mouse_state mouse_state );
 
 // Deallocators
 /** !

@@ -60,17 +60,17 @@ DLLEXPORT int construct_dropdown          ( ui_dropdown **pp_dropdown, char     
 DLLEXPORT int draw_dropdown ( ui_window *p_window, ui_dropdown *p_dropdown );
 
 // Callbacks
-DLLEXPORT int click_dropdown   ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state );
-DLLEXPORT int hover_dropdown   ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state );
-DLLEXPORT int release_dropdown ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state );
+DLLEXPORT int click_dropdown   ( ui_dropdown *p_dropdown, ui_mouse_state mouse_state );
+DLLEXPORT int hover_dropdown   ( ui_dropdown *p_dropdown, ui_mouse_state mouse_state );
+DLLEXPORT int release_dropdown ( ui_dropdown *p_dropdown, ui_mouse_state mouse_state );
 
 // Add callbacks
-DLLEXPORT int add_click_callback_dropdown   ( ui_dropdown *p_dropdown, void ( *callback ) ( ui_dropdown *, ui_mouse_state_t ) );
-DLLEXPORT int add_hover_callback_dropdown   ( ui_dropdown *p_dropdown, void ( *callback ) ( ui_dropdown *, ui_mouse_state_t ) );
-DLLEXPORT int add_release_callback_dropdown ( ui_dropdown *p_dropdown, void ( *callback ) ( ui_dropdown *, ui_mouse_state_t ) );
+DLLEXPORT int add_click_callback_dropdown   ( ui_dropdown *p_dropdown, void ( *callback ) ( ui_dropdown *, ui_mouse_state ) );
+DLLEXPORT int add_hover_callback_dropdown   ( ui_dropdown *p_dropdown, void ( *callback ) ( ui_dropdown *, ui_mouse_state ) );
+DLLEXPORT int add_release_callback_dropdown ( ui_dropdown *p_dropdown, void ( *callback ) ( ui_dropdown *, ui_mouse_state ) );
 
 // Bounds
-DLLEXPORT bool dropdown_in_bounds ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state );
+DLLEXPORT bool dropdown_in_bounds ( ui_dropdown *p_dropdown, ui_mouse_state mouse_state );
 
 // Destructors
 DLLEXPORT int destroy_dropdown ( ui_dropdown *p_dropdown );

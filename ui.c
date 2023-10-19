@@ -21,15 +21,16 @@ u64 font[137] = {
     0x80C0E070371E1C08, 0x00001c3e3e3e1c00, 0x040C1C3C3C1C0C04, 0x0000ff4224180000, 0x7E7E7E7E7E7E3C18, 0x0709FF81818181FF, 0x784C46424242427E, 0x183C7E1818181818,
     0xC3E77e3c3c7eE7C3};
 
-char *default_config = "{\n"                                             \
-                       "    \"name\"       : \"Default color theme\",\n" \
-                       "    \"primary\"    : [ 0, 0, 0 ],\n"             \
-                       "    \"accent 1\"   : [ 128, 128, 128 ],\n"       \ 
-                       "    \"accent 2\"   : [ 192, 192, 192 ],\n"       \
-                       "    \"accent 3\"   : [ 0, 128, 255 ],\n"         \
-                       "    \"background\" : [ 255, 255, 255 ]\n"        \ 
-                       "}\n";
-char *config_file_name = "/ui_config.json";
+const char *default_config = "{\n"\
+                             "    \"name\"       : \"Default color theme\",\n"\
+                             "    \"primary\"    : [ 0, 0, 0 ],\n"\
+                             "    \"accent 1\"   : [ 192, 192, 192 ],\n"\ 
+                             "    \"accent 2\"   : [ 128, 128, 128 ],\n"\
+                             "    \"accent 3\"   : [ 0, 128, 255 ],\n"\
+                             "    \"background\" : [ 255, 255, 255 ]\n"\ 
+                             "}\n";
+const char *config_file_name = "/ui_config.json";
+
 ui_instance *active_instance = 0;
 
 int ui_init ( ui_instance **pp_instance, const char *path )
@@ -44,23 +45,23 @@ int ui_init ( ui_instance **pp_instance, const char *path )
 
     // Initialized data
     ui_instance *p_instance       = 0;
-    char         *appdata          = 0;
-    size_t        appdata_len      = 0;
-    char         *config_path      = 0,
-                 *config_file_data = 0;
-    array        *primary          = 0,
-                 *accent_1         = 0,
-                 *accent_2         = 0,
-                 *accent_3         = 0,
-                 *background       = 0;
-    dict         *config_file_json = 0;
-    size_t        config_file_len  = 0;
+    char        *appdata          = 0;
+    size_t       appdata_len      = 0;
+    char        *config_path      = 0,
+                *config_file_data = 0;
+    array       *primary          = 0,
+                *accent_1         = 0,
+                *accent_2         = 0,
+                *accent_3         = 0,
+                *background       = 0;
+    dict        *config_file_json = 0;
+    size_t       config_file_len  = 0;
     json_value  *p_value          = 0,
-                 *p_primary        = 0,
-                 *p_accent_1       = 0,
-                 *p_accent_2       = 0,
-                 *p_accent_3       = 0,
-                 *p_background     = 0;
+                *p_primary        = 0,
+                *p_accent_1       = 0,
+                *p_accent_2       = 0,
+                *p_accent_3       = 0,
+                *p_background     = 0;
 
     // Find a directory for the config file
     {
@@ -313,27 +314,27 @@ int ui_init ( ui_instance **pp_instance, const char *path )
     // Initialize UI subsystems
     {
 
-        // Initialize the window system
-        {
+        // External functions
+        extern int init_element ( void );
 
-            // Construct a dictionary for windows
-            dict_construct(&p_instance->windows, MAX_WINDOW_COUNT, 0);
+        //////////////////////////////////
+        // Initialize the window system //
+        //////////////////////////////////
 
-            // Allocate a list of windows
-            p_instance->windows_list = calloc(MAX_WINDOW_COUNT, sizeof(ui_window *));
-        }
+        // Construct a dictionary for windows
+        dict_construct(&p_instance->windows, MAX_WINDOW_COUNT, 0);
+
+        // Allocate a list of windows
+        p_instance->windows_list = calloc(MAX_WINDOW_COUNT, sizeof(ui_window *));
 
         // Initialize the element system
-        {
-            extern int init_element( void );
-            init_element();
-        }
+        init_element();
     }
 
     // Set the active instance
     active_instance = p_instance;
 
-    // Return
+    // Return a pointer to the caller
     *pp_instance = p_instance;
 
     // Clean up
@@ -349,6 +350,7 @@ int ui_init ( ui_instance **pp_instance, const char *path )
     wrong_accent_3_type:
     wrong_background_type:
         return 0;
+
     // Error handling
     {
 

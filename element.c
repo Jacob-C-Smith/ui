@@ -408,7 +408,7 @@ int construct_element(ui_element **pp_element, char *p_name, char *p_type, void*
     }
 }
 
-int click_element ( ui_element* element, ui_mouse_state_t mouse_state )
+int click_element ( ui_element* element, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -416,7 +416,7 @@ int click_element ( ui_element* element, ui_mouse_state_t mouse_state )
 
     // Initialized data
     ui_instance *instanace = ui_get_active_instance();
-    int (*click)(void*, ui_mouse_state_t) = dict_get(click_lut, element->type);
+    int (*click)(void*, ui_mouse_state) = dict_get(click_lut, element->type);
 
     // Set the last element
     instanace->active_window->last = element;
@@ -430,14 +430,14 @@ int click_element ( ui_element* element, ui_mouse_state_t mouse_state )
     }
 }
 
-int hover_element ( ui_element* element, ui_mouse_state_t mouse_state )
+int hover_element ( ui_element* element, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
 	//
 
     // Initialized data
-    int (*hover)(void*, ui_mouse_state_t) = dict_get(hover_lut, element->type);
+    int (*hover)(void*, ui_mouse_state) = dict_get(hover_lut, element->type);
 
     // Call the element hover function for the specific type
     return (*hover)((void*)element->label, mouse_state);
@@ -448,7 +448,7 @@ int hover_element ( ui_element* element, ui_mouse_state_t mouse_state )
     }
 }
 
-int release_element ( ui_element* element, ui_mouse_state_t mouse_state )
+int release_element ( ui_element* element, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -456,7 +456,7 @@ int release_element ( ui_element* element, ui_mouse_state_t mouse_state )
 
     // Initialized data
     ui_instance *instanace = ui_get_active_instance();
-    int (*release)(void*, ui_mouse_state_t) = dict_get(release_lut, element->type);
+    int (*release)(void*, ui_mouse_state) = dict_get(release_lut, element->type);
 
     // Set the last element
     instanace->active_window->last = element;
@@ -470,14 +470,14 @@ int release_element ( ui_element* element, ui_mouse_state_t mouse_state )
     }
 }
 
-int add_click_callback_element(ui_element* element, void(*callback)(ui_element*, ui_mouse_state_t))
+int add_click_callback_element(ui_element* element, void(*callback)(ui_element*, ui_mouse_state))
 {
 
     // TODO: Argument check
     //
 
     // Initialized data
-    int (*add_click_callback)(void*, void(*callback)(ui_element*, ui_mouse_state_t)) = dict_get(add_click_lut, element->type);
+    int (*add_click_callback)(void*, void(*callback)(ui_element*, ui_mouse_state)) = dict_get(add_click_lut, element->type);
 
     // Call the element add click function for the specific type
     return (*add_click_callback)((void*)element->label, callback);
@@ -485,14 +485,14 @@ int add_click_callback_element(ui_element* element, void(*callback)(ui_element*,
     // TODO: Error handling
 }
 
-int add_hover_callback_element(ui_element* element, void(*callback)(ui_element*, ui_mouse_state_t))
+int add_hover_callback_element(ui_element* element, void(*callback)(ui_element*, ui_mouse_state))
 {
 
     // TODO: Argument check
     //
 
     // Initialized data
-    int (*add_hover_callback)(void*, void(*callback)(ui_element*, ui_mouse_state_t)) = dict_get(add_hover_lut, element->type);
+    int (*add_hover_callback)(void*, void(*callback)(ui_element*, ui_mouse_state)) = dict_get(add_hover_lut, element->type);
 
     // Call the element add hover function for the specific type
     return (*add_hover_callback)((void*)element->label, callback);
@@ -503,14 +503,14 @@ int add_hover_callback_element(ui_element* element, void(*callback)(ui_element*,
     }
 }
 
-int add_release_callback_element(ui_element* element, void(*callback)(ui_element*, ui_mouse_state_t))
+int add_release_callback_element(ui_element* element, void(*callback)(ui_element*, ui_mouse_state))
 {
 
     // TODO: Argument check
     //
 
     // Initialized data
-    int (*add_release_callback)(void*, void(*callback)(ui_element*, ui_mouse_state_t)) = dict_get(add_release_lut, element->type);
+    int (*add_release_callback)(void*, void(*callback)(ui_element*, ui_mouse_state)) = dict_get(add_release_lut, element->type);
 
     // Call the element add release function for the specific type
     return (*add_release_callback)((void*)element->label, callback);
@@ -521,14 +521,14 @@ int add_release_callback_element(ui_element* element, void(*callback)(ui_element
     }
 }
 
-bool in_bounds ( ui_element* element, ui_mouse_state_t mouse_state )
+bool in_bounds ( ui_element* element, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
     //
 
     // Initialized data
-    bool (*bounds)(void*, ui_mouse_state_t) = dict_get(bounds_lut, element->type);
+    bool (*bounds)(void*, ui_mouse_state) = dict_get(bounds_lut, element->type);
 
     // Call the element in bounds function for the specific type
     return (*bounds)((void*)element->label, mouse_state);

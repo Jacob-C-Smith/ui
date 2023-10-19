@@ -292,7 +292,7 @@ int construct_checkbox ( ui_checkbox** pp_checkbox, char** labels, bool* checked
 
 }
 
-int hover_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state )
+int hover_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -319,7 +319,7 @@ int hover_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state )
     // TODO: Error handling
 }
 
-int click_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state)
+int click_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state mouse_state)
 {
     
     // TODO: Argument check
@@ -332,7 +332,7 @@ int click_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state)
     for (size_t i = 0; i < p_checkbox->on_click_count; i++)
     {
         // Define the callback function
-        void (*callback)(ui_checkbox*, ui_mouse_state_t) = p_checkbox->on_click[i];
+        void (*callback)(ui_checkbox*, ui_mouse_state) = p_checkbox->on_click[i];
 
         // Call the callback function
         (*callback)(p_checkbox, mouse_state);
@@ -348,7 +348,7 @@ int click_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state)
     }
 }
 
-int release_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state )
+int release_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -358,7 +358,7 @@ int release_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state )
     for (size_t i = 0; i < p_checkbox->on_release_count; i++)
     {
         // Define the callback function
-        void (*callback)(ui_checkbox*, ui_mouse_state_t) = p_checkbox->on_release[i];
+        void (*callback)(ui_checkbox*, ui_mouse_state) = p_checkbox->on_release[i];
 
 
         // Call the callback function
@@ -371,7 +371,7 @@ int release_checkbox ( ui_checkbox *p_checkbox, ui_mouse_state_t mouse_state )
     return 1;
 }
 
-int add_click_callback_checkbox(ui_checkbox *p_checkbox, void(*callback)(ui_checkbox*, ui_mouse_state_t))
+int add_click_callback_checkbox(ui_checkbox *p_checkbox, void(*callback)(ui_checkbox*, ui_mouse_state))
 {
 
     // TODO: Argument check
@@ -387,7 +387,7 @@ int add_click_callback_checkbox(ui_checkbox *p_checkbox, void(*callback)(ui_chec
     }
 }
 
-int add_hover_callback_checkbox ( ui_checkbox *p_checkbox, void(*callback)(ui_checkbox*, ui_mouse_state_t) )
+int add_hover_callback_checkbox ( ui_checkbox *p_checkbox, void(*callback)(ui_checkbox*, ui_mouse_state) )
 {
     
     // TODO: Argument check
@@ -403,7 +403,7 @@ int add_hover_callback_checkbox ( ui_checkbox *p_checkbox, void(*callback)(ui_ch
     }
 }
 
-int add_release_callback_checkbox ( ui_checkbox *p_checkbox, void(*callback)(ui_checkbox*, ui_mouse_state_t) )
+int add_release_callback_checkbox ( ui_checkbox *p_checkbox, void(*callback)(ui_checkbox*, ui_mouse_state) )
 {
 
     // TODO: Argument check
@@ -456,7 +456,7 @@ int draw_checkbox ( ui_window *window, ui_checkbox *checkbox )
 }
 
 
-bool checkbox_in_bounds ( ui_checkbox  *checkbox, ui_mouse_state_t mouse_state)
+bool checkbox_in_bounds ( ui_checkbox  *checkbox, ui_mouse_state mouse_state)
 {
 
     // TODO: Argument check

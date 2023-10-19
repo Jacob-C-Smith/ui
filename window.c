@@ -644,7 +644,7 @@ int process_window_input ( ui_window *p_window )
 
 		case SDL_MOUSEBUTTONUP:
 		{
-			ui_mouse_state_t mouse_state = { 0,0,0 };
+			ui_mouse_state mouse_state = { 0,0,0 };
 
 			// Create the mouse_state struct
 			{
@@ -673,7 +673,7 @@ int process_window_input ( ui_window *p_window )
 
 		case SDL_MOUSEBUTTONDOWN:
 		{
-			ui_mouse_state_t mouse_state = { 0,0,0 };
+			ui_mouse_state mouse_state = { 0,0,0 };
 
 			// Create the mouse_state struct
 			{
@@ -707,7 +707,7 @@ int process_window_input ( ui_window *p_window )
 			}
 
 			// This is used for the oncoming callbacks
-			ui_mouse_state_t mouse_state = { 0,0,0 };
+			ui_mouse_state mouse_state = { 0,0,0 };
 
 			// Set the button state
 			{
@@ -782,7 +782,7 @@ int process_window_input ( ui_window *p_window )
 	}
 }
 
-int click_window ( ui_window *p_window, ui_mouse_state_t mouse_state )
+int click_window ( ui_window *p_window, ui_mouse_state mouse_state )
 {
 
 	// TODO: Argument check
@@ -843,7 +843,7 @@ int click_window ( ui_window *p_window, ui_mouse_state_t mouse_state )
 	// TODO: Error handling
 }
 
-int hover_window ( ui_window *p_window, ui_mouse_state_t mouse_state )
+int hover_window ( ui_window *p_window, ui_mouse_state mouse_state )
 {
 
 	// TODO: Argument check
@@ -867,7 +867,7 @@ int hover_window ( ui_window *p_window, ui_mouse_state_t mouse_state )
 	return 1;
 }
 
-int release_window ( ui_window *p_window, ui_mouse_state_t mouse_state )
+int release_window ( ui_window *p_window, ui_mouse_state mouse_state )
 {
 
 	// TODO: Argument check

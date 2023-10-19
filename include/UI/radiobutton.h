@@ -55,20 +55,20 @@ DLLEXPORT int  load_radio_button_as_json_value   ( ui_radiobutton **pp_radio_but
 DLLEXPORT int  construct_radio_button            ( ui_radiobutton **radio_button   , char       **labels , size_t index, i32 x, i32 y );
 
 // Callbacks
-DLLEXPORT int  hover_radio_button                ( ui_radiobutton *radio_button  , ui_mouse_state_t mouse_state );
-DLLEXPORT int  click_radio_button                ( ui_radiobutton *radio_button  , ui_mouse_state_t mouse_state );
-DLLEXPORT int  release_radio_button              ( ui_radiobutton *radio_button  , ui_mouse_state_t mouse_state );
+DLLEXPORT int  hover_radio_button                ( ui_radiobutton *radio_button  , ui_mouse_state mouse_state );
+DLLEXPORT int  click_radio_button                ( ui_radiobutton *radio_button  , ui_mouse_state mouse_state );
+DLLEXPORT int  release_radio_button              ( ui_radiobutton *radio_button  , ui_mouse_state mouse_state );
 
 // Add callbacks
-DLLEXPORT int  add_click_callback_radio_button   ( ui_radiobutton *radio_button, void (*callback)(ui_radiobutton*, ui_mouse_state_t) );
-DLLEXPORT int  add_hover_callback_radio_button   ( ui_radiobutton *radio_button, void (*callback)(ui_radiobutton*, ui_mouse_state_t) );
-DLLEXPORT int  add_release_callback_radio_button ( ui_radiobutton *radio_button, void (*callback)(ui_radiobutton*, ui_mouse_state_t) );
+DLLEXPORT int  add_click_callback_radio_button   ( ui_radiobutton *radio_button, void (*callback)(ui_radiobutton*, ui_mouse_state) );
+DLLEXPORT int  add_hover_callback_radio_button   ( ui_radiobutton *radio_button, void (*callback)(ui_radiobutton*, ui_mouse_state) );
+DLLEXPORT int  add_release_callback_radio_button ( ui_radiobutton *radio_button, void (*callback)(ui_radiobutton*, ui_mouse_state) );
 
 // Drawing
 DLLEXPORT int  draw_radio_button                 ( ui_window *window, ui_radiobutton *radio_button );
 
 // Bounds
-DLLEXPORT bool radio_button_in_bounds            ( ui_radiobutton *radio_button, ui_mouse_state_t mouse_state );
+DLLEXPORT bool radio_button_in_bounds            ( ui_radiobutton *radio_button, ui_mouse_state mouse_state );
 
 // Deallocators
 DLLEXPORT int  destroy_radio_button              ( ui_radiobutton *radio_button );

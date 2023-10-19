@@ -254,7 +254,7 @@ int draw_label ( ui_window *p_window, ui_label* p_label )
 	}
 }
 
-int click_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
+int click_label ( ui_label* p_label, ui_mouse_state mouse_state)
 {
 
 	// Argument check
@@ -265,7 +265,7 @@ int click_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
 	{
 
 		// Initialized data
-		void (*callback)(ui_label*, ui_mouse_state_t) = p_label->on_click[i];
+		void (*callback)(ui_label*, ui_mouse_state) = p_label->on_click[i];
 
 		// Call the callback function
 		if ( callback )
@@ -292,7 +292,7 @@ int click_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
 	}
 }
 
-int hover_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
+int hover_label ( ui_label* p_label, ui_mouse_state mouse_state)
 {
 	
 	// Argument check
@@ -303,7 +303,7 @@ int hover_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
 	{
 
 		// Initialized data
-		void (*callback)(ui_label*, ui_mouse_state_t) = p_label->on_hover[i];
+		void (*callback)(ui_label*, ui_mouse_state) = p_label->on_hover[i];
 
 		// Call the callback function
 		if ( callback )
@@ -330,7 +330,7 @@ int hover_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
 	}
 }
 
-int release_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
+int release_label ( ui_label* p_label, ui_mouse_state mouse_state)
 {
 
 	// Argument check
@@ -341,7 +341,7 @@ int release_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
 	{
 
 		// Initialized data
-		void (*callback)(ui_label*, ui_mouse_state_t) = p_label->on_release[i];
+		void (*callback)(ui_label*, ui_mouse_state) = p_label->on_release[i];
 
 		// Call the callback function
 		if ( callback )
@@ -368,7 +368,7 @@ int release_label ( ui_label* p_label, ui_mouse_state_t mouse_state)
 	}
 }
 
-int add_click_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_mouse_state_t))
+int add_click_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_mouse_state))
 {
 
     // Argument check
@@ -425,7 +425,7 @@ int add_click_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_
 	}
 }
 
-int add_hover_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_mouse_state_t))
+int add_hover_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_mouse_state))
 {
 
 	// Argument check
@@ -452,7 +452,7 @@ int add_hover_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_
 	}
 }
 
-int add_release_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_mouse_state_t))
+int add_release_callback_label ( ui_label* p_label, void(*callback)(ui_label*, ui_mouse_state))
 {
 	
 	// Argument check
@@ -479,7 +479,7 @@ int add_release_callback_label ( ui_label* p_label, void(*callback)(ui_label*, u
 	}
 }
 
-bool label_in_bounds ( ui_label  *p_label, ui_mouse_state_t mouse_state)
+bool label_in_bounds ( ui_label  *p_label, ui_mouse_state mouse_state)
 {
 
 	// Argument check

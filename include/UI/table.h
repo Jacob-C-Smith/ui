@@ -47,7 +47,7 @@ struct UITable_s
   *  
   *  @return 1 on success, 0 on error.  
   */
-DLLEXPORT int           create_table               ( UITable_t  **pp_table );
+DLLEXPORT int           create_table               ( ui_table  **pp_table );
 
 // Constructors
  /** !
@@ -60,7 +60,7 @@ DLLEXPORT int           create_table               ( UITable_t  **pp_table );
   *  
   *  @return 1 on success, 0 on error.  
   */
-DLLEXPORT int           load_table_as_json_value   ( UITable_t  **pp_table, json_value *p_value );
+DLLEXPORT int           load_table_as_json_value   ( ui_table  **pp_table, json_value *p_value );
 
 
 // Callbacks
@@ -75,7 +75,7 @@ DLLEXPORT int           load_table_as_json_value   ( UITable_t  **pp_table, json
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           hover_table                ( UITable_t   *p_table, ui_mouse_state_t mouse_state );
+DLLEXPORT int           hover_table                ( ui_table   *p_table, ui_mouse_state mouse_state );
 
 /** !
   *  Fire each click callbacks. 
@@ -88,7 +88,7 @@ DLLEXPORT int           hover_table                ( UITable_t   *p_table, ui_mo
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           click_table                ( UITable_t   *p_table, ui_mouse_state_t mouse_state );
+DLLEXPORT int           click_table                ( ui_table   *p_table, ui_mouse_state mouse_state );
 
 /** !
   *  Fire each release callbacks. 
@@ -101,51 +101,51 @@ DLLEXPORT int           click_table                ( UITable_t   *p_table, ui_mo
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           release_table              ( UITable_t   *p_table , ui_mouse_state_t mouse_state );
+DLLEXPORT int           release_table              ( ui_table   *p_table , ui_mouse_state mouse_state );
 
 // Add callbacks
 /** !
   *  Add a click callback.
   *
   *  @param p_table : Pointer to table
-  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state )
   *
   *  @sa add_hover_callback_table
   *  @sa add_release_callback_table
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           add_click_callback_table   ( UITable_t   *p_table , void (*callback) ( UITable_t*, ui_mouse_state_t ) );
+DLLEXPORT int           add_click_callback_table   ( ui_table   *p_table , void (*callback) ( ui_table*, ui_mouse_state ) );
 
 /** !
   *  Add a hover callback.
   *
   *  @param p_table : Pointer to table
-  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state )
   *
   *  @sa add_click_callback_table
   *  @sa add_release_callback_table
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           add_hover_callback_table   ( UITable_t   *p_table, void (*callback) ( UITable_t*, ui_mouse_state_t ) );
+DLLEXPORT int           add_hover_callback_table   ( ui_table   *p_table, void (*callback) ( ui_table*, ui_mouse_state ) );
 
 /** !
   *  Add a release callback.
   *
   *  @param p_table : Pointer to table
-  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state_t )
+  *  @param callback : function pointer. Should be of type int callback ( ui_button* , ui_mouse_state )
   *
   *  @sa add_click_callback_table
   *  @sa add_hover_callback_table
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           add_release_callback_table ( UITable_t   *p_table, void (*callback) ( UITable_t*, ui_mouse_state_t ) );
+DLLEXPORT int           add_release_callback_table ( ui_table   *p_table, void (*callback) ( ui_table*, ui_mouse_state ) );
 
-DLLEXPORT char         *get_table_cell ( UITable_t   *p_table, size_t x, size_t y );
+DLLEXPORT char         *get_table_cell ( ui_table   *p_table, size_t x, size_t y );
 
-DLLEXPORT int           set_table_cell ( UITable_t   *p_table, size_t x, size_t y, char *cell_text );
+DLLEXPORT int           set_table_cell ( ui_table   *p_table, size_t x, size_t y, char *cell_text );
 
 // Drawing
 /** !
@@ -158,7 +158,7 @@ DLLEXPORT int           set_table_cell ( UITable_t   *p_table, size_t x, size_t 
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           draw_table                 ( ui_window   *window   , UITable_t *p_table );
+DLLEXPORT int           draw_table                 ( ui_window   *window   , ui_table *p_table );
 
 // Collision
 /** !
@@ -169,7 +169,7 @@ DLLEXPORT int           draw_table                 ( ui_window   *window   , UIT
   *
   *  @return true if cursor is on the table, and false otherwise
   */
-DLLEXPORT bool          table_in_bounds            ( UITable_t   *p_table, ui_mouse_state_t mouse_state );
+DLLEXPORT bool          table_in_bounds            ( ui_table   *p_table, ui_mouse_state mouse_state );
 
 // Deallocators
 /** !
@@ -178,4 +178,4 @@ DLLEXPORT bool          table_in_bounds            ( UITable_t   *p_table, ui_mo
   *
   *  @return 
   */
-DLLEXPORT int           destroy_table              ( UITable_t   *p_table);
+DLLEXPORT int           destroy_table              ( ui_table   *p_table);

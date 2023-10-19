@@ -211,7 +211,7 @@ int construct_text_input(ui_textinput** pp_text_input, char* placeholder, char* 
 	}
 }
 
-int hover_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
+int hover_text_input(ui_textinput* text_input, ui_mouse_state mouse_state)
 {
 	
 	// TODO: Argument check
@@ -222,7 +222,7 @@ int hover_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
     {
 
         // Initialized data
-        void (*callback)(ui_textinput*, ui_mouse_state_t) = text_input->on_hover[i];
+        void (*callback)(ui_textinput*, ui_mouse_state) = text_input->on_hover[i];
 
         // Call the callback function
         if ( callback )
@@ -234,7 +234,7 @@ int hover_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
 	return 1;
 }
 
-int click_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
+int click_text_input(ui_textinput* text_input, ui_mouse_state mouse_state)
 {
 
 	// TODO:
@@ -243,7 +243,7 @@ int click_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
 	return 0;
 }
 
-int release_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
+int release_text_input(ui_textinput* text_input, ui_mouse_state mouse_state)
 {
 
 	// TODO:
@@ -252,7 +252,7 @@ int release_text_input(ui_textinput* text_input, ui_mouse_state_t mouse_state)
 	return 0;
 }
 
-int add_click_callback_text_input(ui_textinput* text_input, void(*callback)(ui_textinput*, ui_mouse_state_t))
+int add_click_callback_text_input(ui_textinput* text_input, void(*callback)(ui_textinput*, ui_mouse_state))
 {
 	
 	// TODO: 
@@ -261,7 +261,7 @@ int add_click_callback_text_input(ui_textinput* text_input, void(*callback)(ui_t
 	return 0;
 }
 
-int add_hover_callback_text_input(ui_textinput* text_input, void(*callback)(ui_textinput*, ui_mouse_state_t))
+int add_hover_callback_text_input(ui_textinput* text_input, void(*callback)(ui_textinput*, ui_mouse_state))
 {
 
 	// TODO: Argument check
@@ -292,7 +292,7 @@ int add_hover_callback_text_input(ui_textinput* text_input, void(*callback)(ui_t
     // TODO: Error handling
 }
 
-int add_release_callback_text_input(ui_textinput* text_input, void(*callback)(ui_textinput*, ui_mouse_state_t))
+int add_release_callback_text_input(ui_textinput* text_input, void(*callback)(ui_textinput*, ui_mouse_state))
 {
 
 	// TODO:
@@ -401,7 +401,7 @@ int  set_text_input_text ( ui_textinput *p_text_input, char *text )
 	// TODO: Error handling
 }
 
-bool text_input_in_bounds(ui_textinput* text_input, ui_mouse_state_t mouse_state)
+bool text_input_in_bounds(ui_textinput* text_input, ui_mouse_state mouse_state)
 {
 
 	// TODO: Argument check

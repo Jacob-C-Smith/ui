@@ -274,7 +274,7 @@ int construct_dropdown ( ui_dropdown **pp_dropdown, char** options, i32 x, i32 y
     }
 }
  
-int hover_dropdown ( ui_dropdown* dropdown, ui_mouse_state_t mouse_state )
+int hover_dropdown ( ui_dropdown* dropdown, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -303,7 +303,7 @@ int hover_dropdown ( ui_dropdown* dropdown, ui_mouse_state_t mouse_state )
     {
 
         // Initialized data
-        void (*callback)(ui_dropdown*, ui_mouse_state_t) = dropdown->on_hover;
+        void (*callback)(ui_dropdown*, ui_mouse_state) = dropdown->on_hover;
 
         // Call the callback function
         if ( callback )
@@ -320,7 +320,7 @@ int hover_dropdown ( ui_dropdown* dropdown, ui_mouse_state_t mouse_state )
     }
 }
 
-int release_dropdown ( ui_dropdown* p_dropdown, ui_mouse_state_t mouse_state )
+int release_dropdown ( ui_dropdown* p_dropdown, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -331,7 +331,7 @@ int release_dropdown ( ui_dropdown* p_dropdown, ui_mouse_state_t mouse_state )
     {
 
         // Initialized data
-        void (*callback)(ui_dropdown*, ui_mouse_state_t) = p_dropdown->on_release[i];
+        void (*callback)(ui_dropdown*, ui_mouse_state) = p_dropdown->on_release[i];
 
         // Call the callback function
         if ( callback )
@@ -348,7 +348,7 @@ int release_dropdown ( ui_dropdown* p_dropdown, ui_mouse_state_t mouse_state )
     }
 }
 
-int add_click_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dropdown*, ui_mouse_state_t) )
+int add_click_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dropdown*, ui_mouse_state) )
 {
 
     // TODO: Argument check
@@ -382,7 +382,7 @@ int add_click_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dr
     }
 }
 
-int add_hover_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dropdown*, ui_mouse_state_t) )
+int add_hover_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dropdown*, ui_mouse_state) )
 {
 
     // TODO: Argument check
@@ -399,7 +399,7 @@ int add_hover_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dr
     }
 }
 
-int add_release_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dropdown*, ui_mouse_state_t) )
+int add_release_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_dropdown*, ui_mouse_state) )
 {
     
     // TODO: Argument check
@@ -431,7 +431,7 @@ int add_release_callback_dropdown ( ui_dropdown* p_dropdown, void(*callback)(ui_
     // TODO: Error handling    
 }
 
-bool dropdown_in_bounds ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state )
+bool dropdown_in_bounds ( ui_dropdown *p_dropdown, ui_mouse_state mouse_state )
 {
     
     // TODO: Argument check
@@ -459,7 +459,7 @@ bool dropdown_in_bounds ( ui_dropdown *p_dropdown, ui_mouse_state_t mouse_state 
     }
 }
 
-int click_dropdown ( ui_dropdown *dropdown, ui_mouse_state_t mouse_state )
+int click_dropdown ( ui_dropdown *dropdown, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -475,7 +475,7 @@ int click_dropdown ( ui_dropdown *dropdown, ui_mouse_state_t mouse_state )
     for (size_t i = 0; i < dropdown->on_click_count; i++)
     {
         // Define the callback function
-        void (*callback)(ui_dropdown *, ui_mouse_state_t) = dropdown->on_click[i];
+        void (*callback)(ui_dropdown *, ui_mouse_state) = dropdown->on_click[i];
 
         // Call the callback function
         (*callback)(dropdown, mouse_state);

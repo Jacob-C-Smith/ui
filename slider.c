@@ -145,7 +145,7 @@ int load_slider_as_json_value ( ui_slider **pp_slider, json_value *p_value )
     }
 }
 
-int hover_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
+int hover_slider ( ui_slider *p_slider, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -160,7 +160,7 @@ int hover_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
     // TODO: Error handling
 }
 
-int click_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
+int click_slider ( ui_slider *p_slider, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -174,7 +174,7 @@ int click_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
     // TOOD: Error handling
 }
 
-int release_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
+int release_slider ( ui_slider *p_slider, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
@@ -189,7 +189,7 @@ int release_slider ( ui_slider *p_slider, ui_mouse_state_t mouse_state )
 
 }
 
-int add_click_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slider*, ui_mouse_state_t ) )
+int add_click_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slider*, ui_mouse_state ) )
 {
 
     // TODO: Argument check
@@ -203,7 +203,7 @@ int add_click_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slid
     // TODO: Error handling
 }
 
-int add_hover_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slider*, ui_mouse_state_t ) )
+int add_hover_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slider*, ui_mouse_state ) )
 {
 
     // TODO: Argument check
@@ -217,7 +217,7 @@ int add_hover_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slid
     // TODO: Error handling
 }
 
-int add_release_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slider*, ui_mouse_state_t ) )
+int add_release_callback_slider ( ui_slider *p_slider , void (*callback) ( ui_slider*, ui_mouse_state ) )
 {
 
     // TODO: Argument check
@@ -258,7 +258,7 @@ int draw_slider ( ui_window *window, ui_slider *p_slider )
     // TODO: Error handling
 }
 
-bool slider_in_bounds ( ui_slider *p_slider , ui_mouse_state_t mouse_state )
+bool slider_in_bounds ( ui_slider *p_slider , ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check

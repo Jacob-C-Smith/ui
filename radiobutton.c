@@ -278,7 +278,7 @@ int construct_radio_button(ui_radiobutton** radio_button, char** labels, size_t 
     return 1;
 }
 
-int hover_radio_button(ui_radiobutton* radio_button, ui_mouse_state_t mouse_state)
+int hover_radio_button(ui_radiobutton* radio_button, ui_mouse_state mouse_state)
 {
     s32 x = mouse_state.x - radio_button->x,
         y = mouse_state.y - radio_button->y;
@@ -298,7 +298,7 @@ int hover_radio_button(ui_radiobutton* radio_button, ui_mouse_state_t mouse_stat
     return 0;
 }
 
-int click_radio_button(ui_radiobutton* radio_button, ui_mouse_state_t mouse_state)
+int click_radio_button(ui_radiobutton* radio_button, ui_mouse_state mouse_state)
 {
     if (radio_button->hover_index != -1)
         radio_button->index = radio_button->hover_index;
@@ -307,7 +307,7 @@ int click_radio_button(ui_radiobutton* radio_button, ui_mouse_state_t mouse_stat
     for (size_t i = 0; i < radio_button->on_click_count; i++)
     {
         // Define the callback function
-        void (*callback)(ui_radiobutton*, ui_mouse_state_t) = radio_button->on_click[i];
+        void (*callback)(ui_radiobutton*, ui_mouse_state) = radio_button->on_click[i];
 
         // Call the callback function
         (*callback)(radio_button, mouse_state);
@@ -317,22 +317,22 @@ int click_radio_button(ui_radiobutton* radio_button, ui_mouse_state_t mouse_stat
     return 0;
 }
 
-int release_radio_button(ui_radiobutton* radio_button, ui_mouse_state_t mouse_state)
+int release_radio_button(ui_radiobutton* radio_button, ui_mouse_state mouse_state)
 {
     return 0;
 }
 
-int add_click_callback_radio_button(ui_radiobutton* radio_button, void(*callback)(ui_radiobutton*, ui_mouse_state_t))
+int add_click_callback_radio_button(ui_radiobutton* radio_button, void(*callback)(ui_radiobutton*, ui_mouse_state))
 {
     return 0;
 }
 
-int add_hover_callback_radio_button(ui_radiobutton* radio_button, void(*callback)(ui_radiobutton*, ui_mouse_state_t))
+int add_hover_callback_radio_button(ui_radiobutton* radio_button, void(*callback)(ui_radiobutton*, ui_mouse_state))
 {
     return 0;
 }
 
-int add_release_callback_radio_button(ui_radiobutton* radio_button, void(*callback)(ui_radiobutton*, ui_mouse_state_t))
+int add_release_callback_radio_button(ui_radiobutton* radio_button, void(*callback)(ui_radiobutton*, ui_mouse_state))
 {
     return 0;
 }
@@ -361,7 +361,7 @@ int draw_radio_button(ui_window* window, ui_radiobutton* radio_button)
     return 0;
 }
 
-bool radio_button_in_bounds(ui_radiobutton* radio_button, ui_mouse_state_t mouse_state)
+bool radio_button_in_bounds(ui_radiobutton* radio_button, ui_mouse_state mouse_state)
 {
 	// Initialized data
 	i32  x = radio_button->x,

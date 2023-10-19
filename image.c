@@ -175,7 +175,7 @@ int load_image_as_json_value (ui_image** pp_image, json_value* p_value)
 	}
 }
 
-int click_image(ui_image* p_image, ui_mouse_state_t mouse_state)
+int click_image(ui_image* p_image, ui_mouse_state mouse_state)
 {
 
 	// TODO: Argument check
@@ -191,23 +191,7 @@ int click_image(ui_image* p_image, ui_mouse_state_t mouse_state)
 	}
 }
 
-int release_image(ui_image* p_image, ui_mouse_state_t mouse_state)
-{
-
-	// TODO: Argument check
-	//
-
-	// TODO: 
-
-	return 0;
-
-	// TODO: Error handling
-	{
-		
-	}
-}
-
-int add_click_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mouse_state_t))
+int release_image(ui_image* p_image, ui_mouse_state mouse_state)
 {
 
 	// TODO: Argument check
@@ -223,7 +207,7 @@ int add_click_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mo
 	}
 }
 
-int add_hover_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mouse_state_t))
+int add_click_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mouse_state))
 {
 
 	// TODO: Argument check
@@ -239,7 +223,7 @@ int add_hover_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mo
 	}
 }
 
-int add_release_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mouse_state_t))
+int add_hover_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mouse_state))
 {
 
 	// TODO: Argument check
@@ -255,7 +239,23 @@ int add_release_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_
 	}
 }
 
-int hover_image(ui_image* p_image, ui_mouse_state_t mouse_state)
+int add_release_callback_image(ui_image* p_image, void(*callback)(ui_image*, ui_mouse_state))
+{
+
+	// TODO: Argument check
+	//
+
+	// TODO: 
+
+	return 0;
+
+	// TODO: Error handling
+	{
+		
+	}
+}
+
+int hover_image(ui_image* p_image, ui_mouse_state mouse_state)
 {
 
 	// TODO: Argument check
@@ -317,7 +317,7 @@ int draw_image ( ui_window *p_window, ui_image *p_image )
 	}
 }
 
-bool image_in_bounds(ui_image* p_image, ui_mouse_state_t mouse_state)
+bool image_in_bounds(ui_image* p_image, ui_mouse_state mouse_state)
 {
 
 	// TODO: Argument check

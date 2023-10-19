@@ -27,7 +27,7 @@ struct UIElement_s
         ui_label       *label;
         ui_radiobutton *radio_button;
         ui_slider      *slider;
-        UITable_t       *table;
+        ui_table       *table;
         ui_textinput   *text_input;
     };
     char    *name,
@@ -75,17 +75,17 @@ DLLEXPORT int load_element_as_json_value ( ui_element **pp_element, json_value *
 DLLEXPORT int construct_element          ( ui_element **element   , char       *name   , char *type, void *element_data );
 
 // Callbacks
-DLLEXPORT int click_element   ( ui_element *element, ui_mouse_state_t mouse_state );
-DLLEXPORT int hover_element   ( ui_element *element, ui_mouse_state_t mouse_state );
-DLLEXPORT int release_element ( ui_element *element, ui_mouse_state_t mouse_state );
+DLLEXPORT int click_element   ( ui_element *element, ui_mouse_state mouse_state );
+DLLEXPORT int hover_element   ( ui_element *element, ui_mouse_state mouse_state );
+DLLEXPORT int release_element ( ui_element *element, ui_mouse_state mouse_state );
 
 // Add callbacks
-DLLEXPORT int add_click_callback_element   ( ui_element *element, void (*callback)(ui_element*, ui_mouse_state_t) );
-DLLEXPORT int add_hover_callback_element   ( ui_element *element, void (*callback)(ui_element*, ui_mouse_state_t) );
-DLLEXPORT int add_release_callback_element ( ui_element *element, void (*callback)(ui_element*, ui_mouse_state_t) );
+DLLEXPORT int add_click_callback_element   ( ui_element *element, void (*callback)(ui_element*, ui_mouse_state) );
+DLLEXPORT int add_hover_callback_element   ( ui_element *element, void (*callback)(ui_element*, ui_mouse_state) );
+DLLEXPORT int add_release_callback_element ( ui_element *element, void (*callback)(ui_element*, ui_mouse_state) );
 
 // Bounds
-DLLEXPORT bool in_bounds ( ui_element *element, ui_mouse_state_t mouse_state );
+DLLEXPORT bool in_bounds ( ui_element *element, ui_mouse_state mouse_state );
 
 // Drawing
 DLLEXPORT int draw_element ( ui_window *window, ui_element *element );
