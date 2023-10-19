@@ -1,4 +1,4 @@
-#include <UI/slider.h>
+#include <ui/slider.h>
 
 int create_slider ( ui_slider **pp_slider )
 {

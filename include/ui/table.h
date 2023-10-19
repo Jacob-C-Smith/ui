@@ -5,8 +5,8 @@
 
 #include <json/json.h>
 
-#include <UI/typedef.h>
-#include <UI/element.h>
+#include <ui/typedef.h>
+#include <ui/element.h>
 
 // UI Table. 
 struct UITable_s

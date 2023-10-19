@@ -1,4 +1,4 @@
-#include <UI/table.h>
+#include <ui/table.h>
 
 int create_table ( ui_table **pp_table )
 {

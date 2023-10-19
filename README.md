@@ -119,7 +119,7 @@ Here's the source for the above window:
 
 ## A minimal program written with the UI library
 ```c
-#include <UI/ui.h>
+#include <ui/ui.h>
 
 int main ( int argc, const char **argv )
 {

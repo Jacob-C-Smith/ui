@@ -1,4 +1,4 @@
-#include <UI/label.h>
+#include <ui/label.h>
 
 int create_label ( ui_label **pp_label )
 {

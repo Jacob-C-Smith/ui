@@ -1,4 +1,4 @@
-#include <UI/ui.h>
+#include <ui/ui.h>
 //#include <dirent.h>
 //
 //int dirtab_click (ui_table *p_table, ui_mouse_state m);

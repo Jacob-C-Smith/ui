@@ -1,4 +1,4 @@
-#include <UI/fileselector.h>
+#include <ui/fileselector.h>
 /*
 int update_ftab();
 int dirup_click  (ui_button *p_button, ui_mouse_state m);

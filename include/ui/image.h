@@ -11,8 +11,8 @@
 
 #include <json/json.h>
 
-#include <UI/ui.h>
-#include <UI/typedef.h>
+#include <ui/ui.h>
+#include <ui/typedef.h>
 
 struct UIImage_s
 {

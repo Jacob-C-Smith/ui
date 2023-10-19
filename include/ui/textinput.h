@@ -2,8 +2,8 @@
 
 #include <json/json.h>
 
-#include <UI/typedef.h>
-#include <UI/ui.h>
+#include <ui/typedef.h>
+#include <ui/ui.h>
 
 #include <SDL.h>
 

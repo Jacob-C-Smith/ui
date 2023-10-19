@@ -1,6 +1,6 @@
 #include <json/json.h>
 
-#include <UI/typedef.h>
+#include <ui/typedef.h>
 
 struct UIChart_s
 {

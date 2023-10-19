@@ -1,4 +1,4 @@
-#include <UI/button.h>
+#include <ui/button.h>
 
 int create_button ( ui_button **pp_button )
 {

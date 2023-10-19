@@ -1,4 +1,4 @@
-#include <UI/image.h>
+#include <ui/image.h>
 
 int create_image ( ui_image **pp_image )
 {

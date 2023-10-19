@@ -1,4 +1,4 @@
-#include <UI/textinput.h>
+#include <ui/textinput.h>
 
 int create_text_input ( ui_textinput **pp_text_input )
 {

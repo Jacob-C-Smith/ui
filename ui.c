@@ -1,4 +1,4 @@
-#include <UI/ui.h>
+#include <ui/ui.h>
 
 // Each u64 encodes an 8x8 glyph. ASCII values can be used to index characters. Add whatever you want so long as you keep the length under 255
 u64 font[137] = {

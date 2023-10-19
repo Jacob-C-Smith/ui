@@ -6,8 +6,8 @@
 
 #include <json/json.h>
 
-#include <UI/typedef.h>
-#include <UI/element.h>
+#include <ui/typedef.h>
+#include <ui/element.h>
 
 // UI Slider. 
 struct UISlider_s

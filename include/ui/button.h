@@ -19,8 +19,8 @@
 #include <json/json.h>
 
 // UI
-#include <UI/typedef.h>
-#include <UI/element.h>
+#include <ui/typedef.h>
+#include <ui/element.h>
 
 /** !
  * @brief UI button
