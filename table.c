@@ -1,6 +1,6 @@
 #include <UI/table.h>
 
-int create_table ( UITable_t **pp_table )
+int create_table ( ui_table **pp_table )
 {
 	// Argument check
     {
@@ -11,7 +11,7 @@ int create_table ( UITable_t **pp_table )
     }
 
     // Allocate for a table
-    UITable_t *p_table = calloc(1, sizeof(UITable_t));
+    ui_table *p_table = calloc(1, sizeof(ui_table));
 
     // Check memory
     {
@@ -52,7 +52,7 @@ int create_table ( UITable_t **pp_table )
     }
 }
 
-int load_table_as_json_value ( UITable_t **pp_table, json_value *p_value )
+int load_table_as_json_value ( ui_table **pp_table, json_value *p_value )
 {
 
     // Argument errors
@@ -66,7 +66,7 @@ int load_table_as_json_value ( UITable_t **pp_table, json_value *p_value )
     }
 
     // Initialized data
-    UITable_t   *p_table       = 0;
+    ui_table   *p_table       = 0;
     json_value *p_x           = 0,
                 *p_y           = 0,
                 *p_max_rows    = 0,
@@ -268,7 +268,7 @@ int load_table_as_json_value ( UITable_t **pp_table, json_value *p_value )
     }
 }
 
-int hover_table ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
+int hover_table ( ui_table   *p_table , ui_mouse_state  mouse_state)
 {
 
     // Argument check
@@ -284,7 +284,7 @@ int hover_table ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
     {
 
         // Define the callback function
-        void (*callback)(UITable_t *, ui_mouse_state_t) = p_table->on_hover[i];
+        void (*callback)(ui_table *, ui_mouse_state) = p_table->on_hover[i];
 
         // Call the callback function
         if (callback)
@@ -308,7 +308,7 @@ int hover_table ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
     }
 }
  
-int click_table ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
+int click_table ( ui_table   *p_table , ui_mouse_state  mouse_state)
 {
 
     if (mouse_state.button & UI_M1 )
@@ -335,7 +335,7 @@ int click_table ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
         for (size_t i = 0; i < p_table->on_click_count; i++)
         {
             // Define the callback function
-            int (*callback)(UITable_t*, ui_mouse_state_t) = p_table->on_click[i];
+            int (*callback)(ui_table*, ui_mouse_state) = p_table->on_click[i];
 
             // Call the callback function
             if (callback)
@@ -361,14 +361,14 @@ int click_table ( UITable_t   *p_table , ui_mouse_state_t  mouse_state)
     return 0;
 }
 
-int           release_table              ( UITable_t   *p_table, ui_mouse_state_t mouse_state )
+int           release_table              ( ui_table   *p_table, ui_mouse_state mouse_state )
 {
 
     // Iterate through callbacks
     for (size_t i = 0; i < p_table->on_release_count; i++)
     {
         // Define the callback function
-        void (*callback)(UITable_t*, ui_mouse_state_t) = p_table->on_release[i];
+        void (*callback)(ui_table*, ui_mouse_state) = p_table->on_release[i];
 
 
         // Call the callback function
@@ -379,7 +379,7 @@ int           release_table              ( UITable_t   *p_table, ui_mouse_state_
     return 0;
 }
 
-int add_click_callback_table   ( UITable_t  *p_table, void(*callback)(UITable_t*, ui_mouse_state_t))
+int add_click_callback_table   ( ui_table  *p_table, void(*callback)(ui_table*, ui_mouse_state))
 {
     // TODO: Argument check
 
@@ -407,7 +407,7 @@ int add_click_callback_table   ( UITable_t  *p_table, void(*callback)(UITable_t*
     // TODO: Error handling
 }
 
-int add_hover_callback_table   ( UITable_t  *p_table, void(*callback)(UITable_t*, ui_mouse_state_t))
+int add_hover_callback_table   ( ui_table  *p_table, void(*callback)(ui_table*, ui_mouse_state))
 {
     // TODO: Argument check
    
@@ -416,7 +416,7 @@ int add_hover_callback_table   ( UITable_t  *p_table, void(*callback)(UITable_t*
     // TODO: Error handling
 }
 
-int           add_release_callback_table ( UITable_t  *p_table, void(*callback)(UITable_t*, ui_mouse_state_t))
+int           add_release_callback_table ( ui_table  *p_table, void(*callback)(ui_table*, ui_mouse_state))
 {
     // TODO: Argument check
 
@@ -444,13 +444,13 @@ int           add_release_callback_table ( UITable_t  *p_table, void(*callback)(
     // TODO: Error handling
 }
 
-char *get_table_cell(UITable_t* p_table, size_t x, size_t y)
+char *get_table_cell(ui_table* p_table, size_t x, size_t y)
 {
 
     return p_table->data[y*p_table->max_columns+x];
 }
 
-int set_table_cell(UITable_t* p_table, size_t x, size_t y, char* cell_text)
+int set_table_cell(ui_table* p_table, size_t x, size_t y, char* cell_text)
 {
     p_table->data[y * p_table->max_columns + x] = cell_text;
 
@@ -462,7 +462,7 @@ int set_table_cell(UITable_t* p_table, size_t x, size_t y, char* cell_text)
     return 1;
 }
 
-int draw_table ( ui_window  *window, UITable_t *table )
+int draw_table ( ui_window  *window, ui_table *table )
 {
     ui_instance *instance = ui_get_active_instance();
     SDL_Rect      r        = { table->x, table->y, 0, 13 };
@@ -528,7 +528,7 @@ int draw_table ( ui_window  *window, UITable_t *table )
     return 0;
 }
 
-bool          table_in_bounds            ( UITable_t  *table, ui_mouse_state_t mouse_state )
+bool          table_in_bounds            ( ui_table  *table, ui_mouse_state mouse_state )
 {
     // Initialized data
 	i32  x = table->x,
@@ -549,7 +549,7 @@ bool          table_in_bounds            ( UITable_t  *table, ui_mouse_state_t m
 
 }
 
-int           destroy_table              ( UITable_t  *p_button )
+int           destroy_table              ( ui_table  *p_button )
 {
 
     // Argument check
