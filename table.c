@@ -2,28 +2,21 @@
 
 int create_table ( ui_table **pp_table )
 {
+
 	// Argument check
-    {
-        #ifndef NDEBUG
-            if( pp_table == (void *) 0 )
-                goto no_table;
-        #endif
-    }
+    if( pp_table == (void *) 0 ) goto no_table;
 
     // Allocate for a table
     ui_table *p_table = calloc(1, sizeof(ui_table));
 
     // Check memory
-    {
-        #ifndef NDEBUG
-            if(p_table == (void *)0)
-                goto no_mem;
-        #endif
-    }
+    if ( p_table == (void *) 0 ) goto no_mem;
 
+    // Return a pointer to the caller
     *pp_table = p_table;
 
-    return 0;
+    // Success
+    return 1;
 
     // Error handling
     {
@@ -56,48 +49,48 @@ int load_table_as_json_value ( ui_table **pp_table, json_value *p_value )
 {
 
     // Argument errors
-    {
-        #ifndef NDEBUG
-            if ( pp_table == (void *) 0 )
-                goto no_table;
-            if ( p_value == (void *) 0 )
-                goto no_value;
-        #endif
-    }
+    if ( pp_table == (void *) 0 ) goto no_table;
+    if ( p_value  == (void *) 0 ) goto no_value;
 
     // Initialized data
     ui_table   *p_table       = 0;
     json_value *p_x           = 0,
-                *p_y           = 0,
-                *p_max_rows    = 0,
-                *p_max_columns = 0,
-                *p_file        = 0;
+               *p_y           = 0,
+               *p_max_rows    = 0,
+               *p_max_columns = 0,
+               *p_file        = 0;
 
 	// Get properties from the json value
-    if (p_value->type == JSON_VALUE_OBJECT)
+    if ( p_value->type == JSON_VALUE_OBJECT )
     {
 
         // Initialized data
         dict *p_dict = p_value->object;
 
-        p_x           = dict_get(p_dict, "x");
-        p_y           = dict_get(p_dict, "y");
-        p_max_rows    = dict_get(p_dict, "max rows");
+        // Store the x location
+        p_x = dict_get(p_dict, "x");
+
+        // Store the y location
+        p_y = dict_get(p_dict, "y");
+
+        // Store the maximum quantity of rows 
+        p_max_rows = dict_get(p_dict, "max rows");
+
+        // Store the maximum quantity of columns 
 		p_max_columns = dict_get(p_dict, "max columns");
-        p_file        = dict_get(p_dict, "file");
+
+        // Store the file path
+        p_file = dict_get(p_dict, "file");
         
         // Check for missing properties
-        if ( ! ( p_x  && p_y ) )
-            goto missing_properties;
+        if ( ! ( p_x  && p_y ) ) goto missing_properties;
     }
 
     // Construct the table
     {
-        // Allocate the table
-        create_table(pp_table);
 
-        // Return the table
-        p_table = *pp_table;
+        // Allocate the table
+        if ( create_table(&p_table) == 0 ); // goto failed_to_allocate_table;
 
         // Set the x
         if ( p_x->type == JSON_VALUE_INTEGER)
@@ -113,22 +106,21 @@ int load_table_as_json_value ( ui_table **pp_table, json_value *p_value )
         else
             goto wrong_y_type;
         
-        if ( p_file )
-            goto csv_parse;
+        // TODO: Write CSV parser
+        // TODO: Integrate CSV parser
+        //if ( p_file ) goto csv_parse;
 
         // Set the max rows
-        if ( p_max_rows->type == JSON_VALUE_INTEGER)
-            p_table->max_rows = p_max_rows->integer;
+        if ( p_max_rows->type == JSON_VALUE_INTEGER ) p_table->max_rows = p_max_rows->integer;
+        
         // Default
-        else
-            goto wrong_max_rows_type;
+        else goto wrong_max_rows_type;
         
         // Set the max columns
-        if ( p_max_columns->type == JSON_VALUE_INTEGER)
-            p_table->max_columns = p_max_columns->integer;
-        // Default
-        else
-            goto wrong_max_columns_type;
+        if ( p_max_columns->type == JSON_VALUE_INTEGER ) p_table->max_columns = p_max_columns->integer;
+        
+        // Default 
+        else goto wrong_max_columns_type;
 
         csv_parse_done:
         p_table->data          = calloc(p_table->max_rows * p_table->max_columns, sizeof(void *) );
@@ -140,66 +132,12 @@ int load_table_as_json_value ( ui_table **pp_table, json_value *p_value )
             // Set the column width
             p_table->column_widths[i] = 1;
     }
+
+    // Return a pointer to the caller
+    *pp_table = p_table;
+
     // Succses
     return 1;
-
-    // Auxilary branches
-    csv_parse:
-    {
-
-        // Initialized data
-        size_t  len          = ui_load_file(p_file->string, 0, false),
-                column_count = 0,
-                row_count    = 0;
-        char   *buf          = calloc(len+1, sizeof(u8)), 
-               *z_buf        = 0;
-        
-        // Load the CSV file
-        ui_load_file(p_file->string, buf, false);
-        
-        z_buf = buf;
-
-        // Preparse
-        {
-            size_t i           = 0;
-            size_t cols_in_row = 0;
-
-            while (buf[++i] != '\0')
-                if      (buf[i] == ',')  cols_in_row++;
-                else if (buf[i] == '\n')
-                {
-                    if (buf[i + 1] == '\n') continue;
-                    row_count   += 1,
-                    column_count = (cols_in_row > column_count) ? cols_in_row : column_count;
-                    cols_in_row  = 0;
-                }
-        }
-
-        // Allocate 
-        p_table->data = calloc(row_count * column_count, sizeof(void *));
-
-        // Parse
-        {
-            size_t r = 0,
-                   c = 0;
-
-            char *i_val = 0;
-
-            while (*++z_buf)
-            {
-                if (*z_buf == ',')  c++, *z_buf=0, z_buf+=2;
-                if (*z_buf == '\n') r++, c = 0;
-
-                i_val = "ASDF :)";
-
-                p_table->data[c * row_count + r] = i_val;
-
-            }
-        }
-
-        printf("\n");
-        goto csv_parse_done;
-    }
 
     wrong_x_type:
     wrong_y_type:
@@ -268,16 +206,11 @@ int load_table_as_json_value ( ui_table **pp_table, json_value *p_value )
     }
 }
 
-int hover_table ( ui_table   *p_table , ui_mouse_state  mouse_state)
+int hover_table ( ui_table *p_table , ui_mouse_state mouse_state )
 {
 
     // Argument check
-    {
-        #ifndef NDEBUG
-            if ( p_table == (void *) 0 )
-                goto no_table;
-        #endif  
-    }
+    if ( p_table == (void *) 0 ) goto no_table;
 
     // Iterate through hover callbacks
     for (size_t i = 0; i < p_table->on_hover_count; i++)
@@ -287,12 +220,12 @@ int hover_table ( ui_table   *p_table , ui_mouse_state  mouse_state)
         void (*callback)(ui_table *, ui_mouse_state) = p_table->on_hover[i];
 
         // Call the callback function
-        if (callback)
-            (*callback)(p_table, mouse_state);
+        if (callback) (*callback)(p_table, mouse_state);
 
     }
 
-    return 0;
+    // Success
+    return 1;
 
     // Error handling
     {
@@ -303,24 +236,29 @@ int hover_table ( ui_table   *p_table , ui_mouse_state  mouse_state)
                 #ifndef NDEBUG
                     ui_print_error("[UI] [Table] Null pointer provided for \"table\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
+
+                // Error
                 return 0;
         }
     }
 }
  
-int click_table ( ui_table   *p_table , ui_mouse_state  mouse_state)
+int click_table ( ui_table *p_table , ui_mouse_state mouse_state )
 {
 
-    if (mouse_state.button & UI_M1 )
+    // TODO: Argument check
+
+    if ( mouse_state.button & UI_M1 )
     {
 
+        // Initialized data
         size_t last_x = 0,
-               last_y = 0;
-
-        size_t abs_mY = mouse_state.y - p_table->y,
+               last_y = 0,
+               abs_mY = mouse_state.y - p_table->y,
                abs_mX = mouse_state.x - p_table->x,
                a      = 0;
 
+        // Update the last y
         p_table->last_y = abs_mY / 12;
 
         for (size_t i = 0; i < p_table->max_columns; i++)
@@ -358,11 +296,18 @@ int click_table ( ui_table   *p_table , ui_mouse_state  mouse_state)
         }
 
     }
-    return 0;
+
+    // Success
+    return 1;
+
+    // TODO: Error handling
 }
 
-int           release_table              ( ui_table   *p_table, ui_mouse_state mouse_state )
+int release_table ( ui_table *p_table, ui_mouse_state mouse_state )
 {
+    
+    // TODO: Argument check
+    //
 
     // Iterate through callbacks
     for (size_t i = 0; i < p_table->on_release_count; i++)
@@ -376,12 +321,16 @@ int           release_table              ( ui_table   *p_table, ui_mouse_state m
             (*callback)(p_table, mouse_state);
 
     }
-    return 0;
+
+    // Success
+    return 1;
 }
 
-int add_click_callback_table   ( ui_table  *p_table, void(*callback)(ui_table*, ui_mouse_state))
+int add_click_callback_table   ( ui_table *p_table, void(*callback)(ui_table*, ui_mouse_state) )
 {
+
     // TODO: Argument check
+    //
 
     // If this is the first callback, set the max to 1 and 
     if (p_table->on_click_max == 0)
@@ -407,18 +356,23 @@ int add_click_callback_table   ( ui_table  *p_table, void(*callback)(ui_table*, 
     // TODO: Error handling
 }
 
-int add_hover_callback_table   ( ui_table  *p_table, void(*callback)(ui_table*, ui_mouse_state))
+int add_hover_callback_table ( ui_table *p_table, void(*callback)(ui_table*, ui_mouse_state) )
 {
+    
     // TODO: Argument check
-   
+    //   
+
+    // Success
     return 1;
 
     // TODO: Error handling
 }
 
-int           add_release_callback_table ( ui_table  *p_table, void(*callback)(ui_table*, ui_mouse_state))
+int add_release_callback_table ( ui_table *p_table, void(*callback)(ui_table*, ui_mouse_state) )
 {
+    
     // TODO: Argument check
+    //
 
     // If this is the first callback, set the max to 1 and 
     if (p_table->on_release_max == 0)
@@ -439,18 +393,20 @@ int           add_release_callback_table ( ui_table  *p_table, void(*callback)(u
     // Increment the callback counter and install the new callback
     p_table->on_release[p_table->on_release_count++] = callback;
 
+    // Success
     return 1;
 
     // TODO: Error handling
 }
 
-char *get_table_cell(ui_table* p_table, size_t x, size_t y)
+char *get_table_cell ( ui_table* p_table, size_t x, size_t y )
 {
 
+    // Done
     return p_table->data[y*p_table->max_columns+x];
 }
 
-int set_table_cell(ui_table* p_table, size_t x, size_t y, char* cell_text)
+int set_table_cell(ui_table* p_table, size_t x, size_t y, char* cell_text )
 {
     p_table->data[y * p_table->max_columns + x] = cell_text;
 
@@ -462,10 +418,10 @@ int set_table_cell(ui_table* p_table, size_t x, size_t y, char* cell_text)
     return 1;
 }
 
-int draw_table ( ui_window  *window, ui_table *table )
+int draw_table ( ui_window *window, ui_table *table )
 {
     ui_instance *instance = ui_get_active_instance();
-    SDL_Rect      r        = { table->x, table->y, 0, 13 };
+    SDL_Rect     r        = { table->x, table->y, 0, 13 };
 
     for (size_t i = 0; i < table->max_rows; i++)
     {
@@ -525,11 +481,16 @@ int draw_table ( ui_window  *window, ui_table *table )
     //
     //ui_draw_text(button->label, window, r.x + 3, r.y + 1, 1);
 
-    return 0;
+    // Success
+    return 1;
 }
 
-bool          table_in_bounds            ( ui_table  *table, ui_mouse_state mouse_state )
+bool table_in_bounds ( ui_table *table, ui_mouse_state mouse_state )
 {
+    
+    // TODO: Argument check
+    //
+
     // Initialized data
 	i32  x = table->x,
 		 y = table->y,
@@ -542,23 +503,23 @@ bool          table_in_bounds            ( ui_table  *table, ui_mouse_state mous
 
     table->w = w;
 
-	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
-		return true;
+	if ( mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h ) return true;
 
 	return false;
 
 }
 
-int           destroy_table              ( ui_table  *p_button )
+int destroy_table ( ui_table *p_button )
 {
 
     // Argument check
-    {
-        if (p_button == (void*)0)
-            goto no_button;
-    }
-    
-    return 0;
+    if ( p_button == (void *) 0 ) goto no_button;
+
+    // TODO:
+    //
+
+    // Success
+    return 1;
 
     // Error handling
     {

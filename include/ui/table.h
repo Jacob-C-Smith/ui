@@ -1,26 +1,37 @@
+// Header guard
 #pragma once
+
+// Standard library
 #include <stdio.h>
 
+// dict submodule
 #include <dict/dict.h>
 
+// json submodule
 #include <json/json.h>
 
+// table submodule
+#include <table/table.h>
+
+// ui
 #include <ui/typedef.h>
 #include <ui/element.h>
 
-// UI Table. 
+// ui table
 struct UITable_s
 {
 
     // Table location
-	u32      x, 
-		     y, 
-		     w,
-		     h,
-             max_rows,
-             max_columns,
-             last_x,
-             last_y;
+	u32 x, 
+		y, 
+		w,
+		h,
+        max_rows,
+        max_columns,
+        last_x,
+        last_y;
+
+    table *p_table;
 
     char   **data;
     size_t  *column_widths;
@@ -42,25 +53,25 @@ struct UITable_s
   *  Allocate a UI Table
   *
   *  @param pp_table : Pointer to pointer to table
-  *  
+  *
   *  @sa destroy_table
-  *  
-  *  @return 1 on success, 0 on error.  
+  *
+  *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           create_table               ( ui_table  **pp_table );
+DLLEXPORT int create_table ( ui_table  **pp_table );
 
 // Constructors
- /** !
-  *  Load a UI Table from a dict 
-  *
-  *  @param pp_table     : Pointer to pointer to table
-  *  @param p_dictionary : Pointer to dict 
-  * 
-  *  @sa load_element_as_json 
-  *  
-  *  @return 1 on success, 0 on error.  
-  */
-DLLEXPORT int           load_table_as_json_value   ( ui_table  **pp_table, json_value *p_value );
+/** !
+ *  Load a UI Table from a dict 
+ *
+ *  @param pp_table     : Pointer to pointer to table
+ *  @param p_dictionary : Pointer to dict 
+ * 
+ *  @sa load_element_as_json 
+ *
+ *  @return 1 on success, 0 on error.
+ */
+DLLEXPORT int load_table_as_json_value ( ui_table **pp_table, json_value *p_value );
 
 
 // Callbacks
@@ -75,7 +86,7 @@ DLLEXPORT int           load_table_as_json_value   ( ui_table  **pp_table, json_
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           hover_table                ( ui_table   *p_table, ui_mouse_state mouse_state );
+DLLEXPORT int hover_table ( ui_table *p_table, ui_mouse_state mouse_state );
 
 /** !
   *  Fire each click callbacks. 
@@ -88,7 +99,7 @@ DLLEXPORT int           hover_table                ( ui_table   *p_table, ui_mou
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           click_table                ( ui_table   *p_table, ui_mouse_state mouse_state );
+DLLEXPORT int click_table ( ui_table *p_table, ui_mouse_state mouse_state );
 
 /** !
   *  Fire each release callbacks. 
@@ -101,7 +112,7 @@ DLLEXPORT int           click_table                ( ui_table   *p_table, ui_mou
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           release_table              ( ui_table   *p_table , ui_mouse_state mouse_state );
+DLLEXPORT int release_table ( ui_table *p_table, ui_mouse_state mouse_state );
 
 // Add callbacks
 /** !
@@ -115,7 +126,7 @@ DLLEXPORT int           release_table              ( ui_table   *p_table , ui_mo
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           add_click_callback_table   ( ui_table   *p_table , void (*callback) ( ui_table*, ui_mouse_state ) );
+DLLEXPORT int add_click_callback_table ( ui_table *p_table, void (*callback) ( ui_table*, ui_mouse_state ) );
 
 /** !
   *  Add a hover callback.
@@ -128,7 +139,7 @@ DLLEXPORT int           add_click_callback_table   ( ui_table   *p_table , void 
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           add_hover_callback_table   ( ui_table   *p_table, void (*callback) ( ui_table*, ui_mouse_state ) );
+DLLEXPORT int add_hover_callback_table ( ui_table *p_table, void (*callback) ( ui_table*, ui_mouse_state ) );
 
 /** !
   *  Add a release callback.
@@ -141,11 +152,11 @@ DLLEXPORT int           add_hover_callback_table   ( ui_table   *p_table, void (
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           add_release_callback_table ( ui_table   *p_table, void (*callback) ( ui_table*, ui_mouse_state ) );
+DLLEXPORT int add_release_callback_table ( ui_table   *p_table, void (*callback) ( ui_table*, ui_mouse_state ) );
 
-DLLEXPORT char         *get_table_cell ( ui_table   *p_table, size_t x, size_t y );
+DLLEXPORT char *get_table_cell ( ui_table   *p_table, size_t x, size_t y );
 
-DLLEXPORT int           set_table_cell ( ui_table   *p_table, size_t x, size_t y, char *cell_text );
+DLLEXPORT int set_table_cell ( ui_table   *p_table, size_t x, size_t y, char *cell_text );
 
 // Drawing
 /** !
@@ -158,7 +169,7 @@ DLLEXPORT int           set_table_cell ( ui_table   *p_table, size_t x, size_t y
   *
   *  @return 1 on success, 0 on error.
   */
-DLLEXPORT int           draw_table                 ( ui_window   *window   , ui_table *p_table );
+DLLEXPORT int draw_table ( ui_window *window, ui_table *p_table );
 
 // Collision
 /** !
@@ -169,7 +180,7 @@ DLLEXPORT int           draw_table                 ( ui_window   *window   , ui_
   *
   *  @return true if cursor is on the table, and false otherwise
   */
-DLLEXPORT bool          table_in_bounds            ( ui_table   *p_table, ui_mouse_state mouse_state );
+DLLEXPORT bool table_in_bounds ( ui_table *p_table, ui_mouse_state mouse_state );
 
 // Deallocators
 /** !
@@ -178,4 +189,4 @@ DLLEXPORT bool          table_in_bounds            ( ui_table   *p_table, ui_mou
   *
   *  @return 
   */
-DLLEXPORT int           destroy_table              ( ui_table   *p_table);
+DLLEXPORT int destroy_table ( ui_table *p_table );
