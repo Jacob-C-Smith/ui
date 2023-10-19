@@ -45,7 +45,7 @@ int create_button ( ui_button **pp_button )
     }
 }
 
-int load_button_as_json_value ( ui_button **pp_button, json_value *p_value )
+int load_button_as_json_value ( ui_button **const pp_button, const json_value *const p_value )
 {
 
     // Argument check
@@ -98,13 +98,13 @@ int load_button_as_json_value ( ui_button **pp_button, json_value *p_value )
 
 		// Set the x
         if ( p_x->type == JSON_VALUE_INTEGER )
-		    p_button->x = p_x->integer;
+		    p_button->location.x = p_x->integer;
         else
             goto wrong_x_type;
         
 		// Set the y
 		if ( p_y->type == JSON_VALUE_INTEGER )
-		    p_button->y = p_y->integer;
+		    p_button->location.y = p_y->integer;
         else
             goto wrong_y_type;
         
@@ -157,22 +157,21 @@ int load_button_as_json_value ( ui_button **pp_button, json_value *p_value )
 	}
 }
 
-int hover_button ( ui_button  *p_button, ui_mouse_state_t mouse_state)
+int hover_button ( ui_button *const p_button, ui_mouse_state mouse_state)
 {
 
     // Argument check
     if ( p_button == (void *) 0 ) goto no_button;
 
     // Iterate through hover callbacks
-    for (size_t i = 0; i < p_button->on_hover_count; i++)
+    for (size_t i = 0; i < p_button->callback.hover.count; i++)
     {
 
         // Define the callback function
-        void (*callback)(ui_button*, ui_mouse_state_t) = p_button->on_hover[i];
+        void (*callback)(ui_button*, ui_mouse_state) = p_button->callback.hover.callbacks[i];
 
         // Call the callback function
-        if (callback)
-            (*callback)(p_button, mouse_state);
+        if ( callback ) (*callback)(p_button, mouse_state);
 
     }
 
@@ -195,173 +194,209 @@ int hover_button ( ui_button  *p_button, ui_mouse_state_t mouse_state)
     }
 }
 
-int click_button ( ui_button  *p_button, ui_mouse_state_t mouse_state)
+int click_button ( ui_button *const p_button, ui_mouse_state mouse_state)
 {
 
-    // TODO: Argument check
-    //
+    // Argument check
+    if ( p_button == (void *) 0 ) goto no_button;
 
+    // Set the depressed flag
+    // TODO: Figure out how to clear the depressed flag in my brain
     p_button->depressed = true;
 
     // Iterate through callbacks
-    for (size_t i = 0; i < p_button->on_click_count; i++)
+    for (size_t i = 0; i < p_button->callback.click.count; i++)
     {
-        // Define the callback function
-        void (*callback)(ui_button*, ui_mouse_state_t) = p_button->on_click[i];
 
+        // Define the callback function
+        void (*callback)(ui_button*, ui_mouse_state) = p_button->callback.click.callbacks[i];
 
         // Call the callback function
-        if(callback)            
-            (*callback)(p_button, mouse_state);
+        if(callback) (*callback)(p_button, mouse_state);
 
     }
 
     // Success
     return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_button:
+                #ifndef NDEBUG
+                    ui_print_error("[UI] [Button] Null pointer provided for \"p_button\" in call to function \"%s\"\n",__FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+    }
 }
 
-int release_button ( ui_button  *p_button, ui_mouse_state_t mouse_state )
+int release_button ( ui_button *const p_button, ui_mouse_state mouse_state )
 {
 
-    // TODO: Argument check
-    //
+    // Argument check
+    if ( p_button == (void *) 0 ) goto no_button;
 
+    // Clear the depressed flag
     p_button->depressed = false;
 
     // Iterate through callbacks
-    for (size_t i = 0; i < p_button->on_release_count; i++)
+    for (size_t i = 0; i < p_button->callback.release.count; i++)
     {
-        // Define the callback function
-        void (*callback)(ui_button*, ui_mouse_state_t) = p_button->on_release[i];
 
+        // Define the callback function
+        void (*callback)(ui_button*, ui_mouse_state) = p_button->callback.release.callbacks[i];
 
         // Call the callback function
-        if (callback)
-            (*callback)(p_button, mouse_state);
+        if (callback) (*callback)(p_button, mouse_state);
 
     }
 
     // Success
     return 1;
+    
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_button:
+                #ifndef NDEBUG
+                    ui_print_error("[UI] [Button] Null pointer provided for \"p_button\" in call to function \"%s\"\n",__FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+    }
 }
 
-int add_click_callback_button ( ui_button  *p_button, void(*callback)(ui_button*, ui_mouse_state_t))
+int add_click_callback_button ( ui_button  *p_button, void(*callback)(ui_button*, ui_mouse_state) )
 {
 
     // TODO: Argument check
     //
 
     // If this is the first callback, set the max to 1 and 
-    if (p_button->on_click_max == 0)
+    if ( p_button->callback.click.max == 0 )
     {
-        p_button->on_click_max = 1;
-        p_button->on_click = calloc(1, sizeof(void*));
+        p_button->callback.click.max = 1;
+        p_button->callback.click.callbacks = calloc(1, sizeof(void*));
     }
 
     // Simple heuristic that doubles callbacks lists length when there is no space to store the callback pointer
-    if (p_button->on_click_count + 1 > p_button->on_click_max)
+    if ( p_button->callback.click.count + 1 > p_button->callback.click.max )
     {
-        // Double the max
-        p_button->on_click_max *= 2;
 
-        realloc(p_button->on_click, p_button->on_click_max);
+        // Double the max
+        p_button->callback.click.max *= 2;
+
+        // Expand the callback list
+        realloc(p_button->callback.click.callbacks, p_button->callback.click.max);
     }
 
     // Increment the callback counter and install the new callback
-    p_button->on_click[p_button->on_click_count++] = callback;
+    p_button->callback.click.callbacks[p_button->callback.click.count++] = callback;
 
-    return 0;
+    // Success
+    return 1;
 
     // TODO: Error handling
 }
 
-int add_hover_callback_button ( ui_button  *button, void(*callback)(ui_button*, ui_mouse_state_t))
+int add_hover_callback_button ( ui_button *button, void(*callback)(ui_button*, ui_mouse_state) )
 {
 
     // TODO: Argument check
     //
 
     // If this is the first callback, set the max to 1 and 
-    if (button->on_hover_max == 0)
+    if (button->callback.hover.max == 0)
     {
-        button->on_hover_max = 1;
-        button->on_hover     = calloc(1, sizeof(void*));
+        button->callback.hover.max = 1;
+        button->callback.hover.callbacks = calloc(1, sizeof(void*));
     }
 
 
     // Simple heuristic that doubles callbacks lists length if there is no space to 
     // store the callback pointer
-    if (button->on_hover_count + 1 > button->on_hover_max)
+    if (button->callback.hover.count + 1 > button->callback.hover.max)
     {
         // Double the max
-        button->on_hover_max *= 2;
+        button->callback.hover.max *= 2;
 
         // Allocate the maximum number of callbacks
-        void **callbacks = calloc(button->on_hover_max, sizeof(void*)),
-              *t         = button->on_hover;
+        void **callbacks = calloc(button->callback.hover.max, sizeof(void*)),
+              *t         = button->callback.hover.callbacks;
 
         // Copy all the callbacks from the button to the new callback list
-        memcpy(callbacks, button->on_hover, button->on_hover_count * sizeof(void *));
+        memcpy(callbacks, button->callback.hover.callbacks, button->callback.hover.count * sizeof(void *));
 
         // Set the hover callback list pointer to the new list
-        button->on_hover = callbacks;
+        button->callback.hover.callbacks = callbacks;
 
         // Free the old callback list
         free(t);
     }
 
     // Increment the callback counter and install the new callback
-    button->on_hover[button->on_hover_count++] = callback;
+    button->callback.hover.callbacks[button->callback.hover.count++] = callback;
 
-    return 0;
+    // Success
+    return 1;
 
     // TODO: Error handling
 }
 
-int add_release_callback_button ( ui_button  *button, void(*callback)(ui_button*, ui_mouse_state_t))
+int add_release_callback_button ( ui_button *button, void(*callback)(ui_button*, ui_mouse_state) )
 {
 
     // TODO: Argument check
     //
 
     // If this is the first callback, set the max to 1 and 
-    if (button->on_release_max == 0)
+    if (button->callback.release.max == 0)
     {
-        button->on_release_max = 1;
-        button->on_release = calloc(1, sizeof(void*));
+        button->callback.release.max = 1;
+        button->callback.release.callbacks = calloc(1, sizeof(void*));
     }
 
 
     // Simple heuristic that doubles callbacks lists length if there is no space to 
     // store the callback pointer
-    if (button->on_release_count + 1 > button->on_release_max)
+    if (button->callback.release.count + 1 > button->callback.release.max)
     {
         // Double the max
-        button->on_release_max *= 2;
+        button->callback.release.max *= 2;
 
         // Allocate the maximum number of callbacks
-        void** callbacks = calloc(button->on_release_max, sizeof(void*)),
-            * t = button->on_release;
+        void** callbacks = calloc(button->callback.release.max, sizeof(void*)),
+            * t = button->callback.release.callbacks;
 
         // Copy all the callbacks from the button to the new callback list
-        memcpy(callbacks, button->on_release, button->on_release_count * sizeof(void*));
+        memcpy(callbacks, button->callback.release.callbacks, button->callback.release.count * sizeof(void*));
 
         // Set the release callback list pointer to the new list
-        button->on_release = callbacks;
+        button->callback.release.callbacks = callbacks;
 
         // Free the old callback list
         free(t);
     }
 
     // Increment the callback counter and install the new callback
-    button->on_release[button->on_release_count++] = callback;
+    button->callback.release.callbacks[button->callback.release.count++] = callback;
 
-    return 0;
+    // Success
+    return 1;
 
     // TODO: Error handling
 }
 
-int draw_button ( ui_window  *window, ui_button *button )
+int draw_button ( ui_window *window, ui_button *button )
 {
 
     // TODO: Argument check
@@ -370,10 +405,10 @@ int draw_button ( ui_window  *window, ui_button *button )
     // Initialized data
     ui_instance *instance = ui_get_active_instance();
     size_t        l        = strlen(button->label);
-    SDL_Rect      r        = { button->x+1, button->y+1, (l * 8) + 5, 12 };
+    SDL_Rect      r        = { button->location.x+1, button->location.y+1, (l * 8) + 5, 12 };
     
-    button->w  = r.w,
-    button->h = r.h;
+    button->location.w = r.w,
+    button->location.h = r.h;
 
     if ( button->depressed == false )
     {
@@ -394,17 +429,17 @@ int draw_button ( ui_window  *window, ui_button *button )
     return 1;
 }
 
-bool button_in_bounds ( ui_button *button, ui_mouse_state_t mouse_state )
+bool button_in_bounds ( ui_button *button, ui_mouse_state mouse_state )
 {
 
     // TODO: Argument check
     //
 
     // Initialized data
-	i32  x = button->x,
-		 y = button->y,
-		 w = button->w,
-		 h = button->h;
+	i32  x = button->location.x,
+		 y = button->location.y,
+		 w = button->location.w,
+		 h = button->location.h;
 	
 	// Check for bounds
 	if (mouse_state.x >= x && mouse_state.y >= y && mouse_state.x <= x + w && mouse_state.y <= y + h)
@@ -416,7 +451,7 @@ bool button_in_bounds ( ui_button *button, ui_mouse_state_t mouse_state )
 	return false;
 }
 
-int destroy_button ( ui_button  *p_button )
+int destroy_button ( ui_button *p_button )
 {
 
     // Argument check
@@ -426,13 +461,13 @@ int destroy_button ( ui_button  *p_button )
     free(p_button->label);
 
     // Free on click callbacks
-    free(p_button->on_click);
+    free(p_button->callback.click.callbacks);
 
     // Free on hover callbacks
-    free(p_button->on_hover);
+    free(p_button->callback.hover.callbacks);
     
     // Free on release callbacks
-    free(p_button->on_release);
+    free(p_button->callback.release.callbacks);
 
     // Free the button memory
     free(p_button);
