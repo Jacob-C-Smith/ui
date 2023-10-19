@@ -16,3 +16,6 @@
 [submodule "extern/table"]
 	path = extern/table
 	url = https://github.com/Jacob-C-Smith/table
+[submodule "extern/tuple"]
+	path = extern/tuple
+	url = https://github.com/Jacob-C-Smith/tuple

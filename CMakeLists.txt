@@ -56,6 +56,19 @@ if ( NOT "${HAS_SYNC}")
     set(HAS_SYNC true PARENT_SCOPE)
 endif()
 
+# Find the tuple module
+if ( NOT "${HAS_TUPLE}")
+
+    # Log
+    message("[table] Adding tuple project")
+
+    # Add the tuple directory
+    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/tuple ${CMAKE_SOURCE_DIR}/build/tuple)
+
+    # Let any parent project know that this project has tuple
+    set(HAS_TUPLE true PARENT_SCOPE)
+endif()
+
 # Find the json module
 if ( NOT "${HAS_JSON}")
 
@@ -69,6 +82,19 @@ if ( NOT "${HAS_JSON}")
     set(HAS_JSON true PARENT_SCOPE)
 endif()
 
+# Find the table module
+if ( NOT "${HAS_TABLE}")
+
+    # Log
+    message("[ui] Adding table project")
+
+    # Add the table directory
+    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/table ${CMAKE_SOURCE_DIR}/build/table)
+
+    # Let any parent project know that this project has table
+    set(HAS_TABLE true PARENT_SCOPE)
+endif()
+
 if ( NOT "${HAS_UI}")
     set(HAS_UI true PARENT_SCOPE)
 endif()
@@ -79,12 +105,12 @@ find_library(json  NAMES json  HINTS ${CMAKE_SOURCE_DIR}/extern/json/build/Debug
 
 # Add source to this project's executable.
 add_executable (ui_example "main.c")
-add_dependencies(ui_example json array dict)
-target_include_directories(ui_example PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/extern/json/include/ ${CMAKE_SOURCE_DIR}/extern/array/include/ ${CMAKE_SOURCE_DIR}/extern/dict/include/) 
+add_dependencies(ui_example tuple json array dict table crypto sync )
+target_include_directories(ui_example PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/extern/tuple/include/ ${CMAKE_SOURCE_DIR}/extern/json/include/ ${CMAKE_SOURCE_DIR}/extern/array/include/ ${CMAKE_SOURCE_DIR}/extern/dict/include/) 
 IF(WIN32)
-    target_link_libraries(ui_example PUBLIC ui json array dict PRIVATE SDL2_image::SDL2_image ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+    target_link_libraries(ui_example PUBLIC ui tuple tuple json array dict table crypto sync  PRIVATE SDL2_image::SDL2_image ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
 ELSEIF(LINUX)
-    target_link_libraries(ui_example PUBLIC ui json array dict ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+    target_link_libraries(ui_example PUBLIC ui tuple tuple json array dict table crypto sync  ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
 ELSEIF(APPLE)
 
 ENDIF(WIN32)
@@ -92,12 +118,12 @@ ENDIF(WIN32)
 
 # Add source to this project's library
 add_library (ui SHARED "ui.c" "fileselector.c" "window.c" "button.c" "image.c" "checkbox.c" "dropdown.c" "element.c" "radiobutton.c" "label.c" "slider.c" "textinput.c" "table.c") #      
-add_dependencies(ui json array dict )
-target_include_directories(ui PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/extern/json/include/ ${CMAKE_SOURCE_DIR}/extern/array/include/ ${CMAKE_SOURCE_DIR}/extern/dict/include/) 
+add_dependencies(ui tuple json array dict table crypto sync  )
+target_include_directories(ui PUBLIC include ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/extern/tuple/include/ ${CMAKE_SOURCE_DIR}/extern/json/include/ ${CMAKE_SOURCE_DIR}/extern/array/include/ ${CMAKE_SOURCE_DIR}/extern/dict/include/) 
 IF(WIN32)
-    target_link_libraries(ui PUBLIC json array dict PRIVATE SDL2_image::SDL2_image ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+    target_link_libraries(ui PUBLIC tuple json array dict table crypto sync PRIVATE SDL2_image::SDL2_image ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
 ELSEIF(LINUX)
-    target_link_libraries(ui PUBLIC json array dict ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+    target_link_libraries(ui PUBLIC tuple json array dict table crypto sync  ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
 ELSEIF(APPLE)
 
 ENDIF(WIN32)
