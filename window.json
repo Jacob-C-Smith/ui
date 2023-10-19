@@ -1,129 +1,107 @@
 {
-    "name"     : "G10 Input Tool",
-    "width"    : 320,
-    "height"   : 222,
-    "title"    : "AI Tool",
+    "name"     : "Test window",
+    "width"    : 800,
+    "height"   : 720,
+    "title"    : "Window",
     "elements" : [
         {
-            "type"     : "IMAGE",
-            "name"     : "logo",
-            "x"        : 16,
-            "y"        : 12,
-            "width"    : 24,
-            "height"   : 24,
-            "path"     : "ai.ico"
-        },
-        {
             "type"     : "LABEL",
-            "name"     : "G10 ai tool title label",
-            "text"     : "AI Tool", 
-            "x"        : 48,
+            "name"     : "label",
+            "text"     : "Label", 
+            "x"        : 16,
             "y"        : 16,
-            "size"     : 2
+            "size"     : 1
         },
         {
-            "type"      : "LABEL",
-            "name"      : "input tool path label",
-            "text"      : "path",
+            "type"      : "CHECKBOX",
+            "name"      : "checkbox",
             "x"         : 16,
-            "y"         : 44,
-            "size"      : 1
+            "y"         : 32,
+            "labels"    : [
+                "Checkbox 1",
+                "Checkbox 2",
+                "Checkbox 3"
+            ],
+            "checked" : [
+                false,
+                false,
+                false
+            ]
         },
         {
-            "type"        : "TEXT INPUT",
-            "name"        : "shader path",
-            "x"           : 16,
-            "y"           : 60,
-            "width"       : 80,
-            "height"      : 14,
-            "text"        : "",
-            "placeholder" : "",
-            "length"      : 255
-        },
-        {
-            "type"      : "LABEL",
-            "name"      : "ai name label",
-            "text"      : "name",
-            "x"         : 16,
-            "y"         : 76,
-            "size"      : 1
-        },
-        {
-            "type"        : "TEXT INPUT",
-            "name"        : "ai name",
-            "x"           : 16,
-            "y"           : 90,
-            "width"       : 80,
-            "height"      : 14,
-            "placeholder" : "AI",
-            "length"      : 255
-        },
-        {
-            "type"      : "LABEL",
-            "name"      : "ai initial state label",
-            "text"      : "initial state",
-            "x"         : 16,
-            "y"         : 108,
-            "size"      : 1
+            "type"  : "BUTTON",
+            "name"  : "button",
+            "label" : "Button",
+            "x"     : 16,
+            "y"     : 96
         },
         {
             "type"      : "DROPDOWN",
             "name"      : "dropdown",
             "x"         : 16,
-            "y"         : 122,
+            "y"         : 80,
             "options"   : [
-                ""
+                "Option 1",
+                "Option 2",
+                "Option 3"
             ],
             "index"     : 0,
             "collapsed" : true
         },
         {
-            "type"      : "LABEL",
-            "name"      : "ai states label",
-            "text"      : "states",
+            "type"      : "RADIO BUTTON",
+            "name"      : "radiobutton",
             "x"         : 16,
-            "y"         : 140,
-            "size"      : 1
+            "y"         : 112,
+            "labels"    : [
+                "Radio button 1",
+                "Radio button 2",
+                "Radio button 3"
+            ],
+            "index" : 0
+        },
+        {
+            "type"     : "LABEL",
+            "name"     : "label 2",
+            "text"     : "An Image:", 
+            "x"        : 16,
+            "y"        : 180,
+            "size"     : 1
+        },
+        {
+            "type"      : "IMAGE",
+            "name"      : "image",
+            "x"         : 16,
+            "y"         : 192,
+            "width"     : 768,
+            "height"    : 512,
+            "path"      : "image.png"
+        },
+        {
+            "type"        : "TEXT INPUT",
+            "name"        : "text input",
+            "x"           : 16,
+            "y"           : 160,
+            "width"       : 80,
+            "height"      : 14,
+            "placeholder" : "Text Input",
+            "length"      : 255
+        },
+        {
+            "type"     : "LABEL",
+            "name"     : "label 3",
+            "text"     : "A Table:", 
+            "x"        : 160,
+            "y"        : 16,
+            "size"     : 1
         },
         {
             "type"        : "TABLE",
             "name"        : "element table",
-            "x"           : 16,
-            "y"           : 152,
-            "max rows"    : 1,
-            "max columns" : 1
-        },
-        {
-            "type"        : "BUTTON",
-            "name"        : "ai add state button",
-            "label"       : "+",
-            "x"           : 16,
-            "y"           : 169
-        },
-        {
-            "type"        : "BUTTON",
-            "name"        : "ai remove state button",
-            "label"       : "-",
-            "x"           : 16,
-            "y"           : 216
-        },
-        {
-            "type"        : "TEXT INPUT",
-            "name"        : "add state name text input",
-            "x"           : 32,
-            "y"           : 184,
-            "width"       : 80,
-            "height"      : 14,
-            "text"        : "",
-            "placeholder" : "state name",
-            "length"      : 255
-        },
-        {
-            "type"        : "BUTTON",
-            "name"        : "ai save button",
-            "label"       : "Save As...",
-            "x"           : 224,
-            "y"           : 200
+            "x"           : 160,
+            "y"           : 32,
+            "max rows"    : 5,
+            "max columns" : 3
         }
     ]
 }
