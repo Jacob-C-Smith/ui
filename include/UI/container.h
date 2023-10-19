@@ -2,7 +2,7 @@
 
 #include <json/json.h>
 
-#include <UI/UItypedef.h>
+#include <UI/typedef.h>
 
 struct UIContainer_s
 {

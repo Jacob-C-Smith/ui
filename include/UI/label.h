@@ -7,8 +7,8 @@
 
 #include <json/json.h>
 
-#include <UI/UI.h>
-#include <UI/UItypedef.h>
+#include <UI/ui.h>
+#include <UI/typedef.h>
 
 struct UILabel_s
 {

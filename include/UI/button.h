@@ -5,8 +5,8 @@
 
 #include <json/json.h>
 
-#include <UI/UItypedef.h>
-#include <UI/UIElement.h>
+#include <UI/typedef.h>
+#include <UI/element.h>
 
 // UI Button. 
 struct UIButton_s

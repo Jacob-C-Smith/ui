@@ -5,7 +5,7 @@
  * 
  *  @file main.c
 */
-#include <UI/UI.h>
+#include <UI/ui.h>
 
 // Entry point
 int main ( int argc, const char **argv )

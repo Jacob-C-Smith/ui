@@ -24,8 +24,8 @@
 #include <dict/dict.h>
 
 // UI 
-#include <UI/UItypedef.h>
-#include <UI/UIWindow.h>
+#include <UI/typedef.h>
+#include <UI/window.h>
 
 // Preprocessor constants
 #define UI_M1     0x01

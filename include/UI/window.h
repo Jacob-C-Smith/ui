@@ -8,19 +8,19 @@
 #include <dict/dict.h>
 #include <json/json.h>
 
-#include <UI/UItypedef.h>
-#include <UI/UI.h>
+#include <UI/typedef.h>
+#include <UI/ui.h>
 
-#include <UI/UIButton.h>
+#include <UI/button.h>
 //#include <UI/UICanvas.h>
-#include <UI/UICheckbox.h>
+#include <UI/checkbox.h>
 //#include <UI/UIChart.h>
-#include <UI/UIDropdown.h>
-//#include <UI/UIImage.h>
-#include <UI/UIRadioButton.h>
-#include <UI/UISlider.h>
-#include <UI/UITable.h>
-#include <UI/UITextInput.h>
+#include <UI/dropdown.h>
+//#include <UI/image.h>
+#include <UI/radiobutton.h>
+#include <UI/slider.h>
+#include <UI/table.h>
+#include <UI/textinput.h>
 
 struct UIWindow_s {
 	bool               is_open,

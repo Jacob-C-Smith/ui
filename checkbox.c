@@ -1,4 +1,4 @@
-#include <UI/UICheckbox.h>
+#include <UI/checkbox.h>
 
 int create_checkbox ( ui_checkbox **pp_checkbox )
 {

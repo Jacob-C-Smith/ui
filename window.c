@@ -1,4 +1,4 @@
-#include <UI/UIWindow.h>
+#include <UI/window.h>
 
 int create_window ( ui_window **pp_window )
 {

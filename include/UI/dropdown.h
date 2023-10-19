@@ -7,9 +7,9 @@
 
 #include <json/json.h>
 
-#include <UI/UItypedef.h>
-#include <UI/UI.h>
-#include <UI/UIWindow.h>
+#include <UI/typedef.h>
+#include <UI/ui.h>
+#include <UI/window.h>
 
 struct UIDropdown_s
 {
