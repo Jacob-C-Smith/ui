@@ -1,0 +1,3 @@
+[submodule "gsdk"]
+	path = gsdk
+	url = https://github.com/Jacob-C-Smith/gsdk
