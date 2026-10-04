@@ -24,3 +24,6 @@ void         glyph_insert          ( glyph *p_glyph, glyph *p_child, int i );
 void         glyph_remove          ( glyph *p_glyph, glyph *p_child );
 glyph       *glyph_child           ( glyph *p_glyph, int i );
 iterator     glyph_iterator        ( glyph *p_glyph );
+glyph       *glyph_find            ( glyph *p_glyph, point p );
+void         glyph_click           ( glyph *p_glyph );
+void         glyph_key             ( glyph *p_glyph, char c );

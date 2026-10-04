@@ -14,56 +14,77 @@
 #include <glyph/border.h>
 #include <glyph/scroller.h>
 #include <factory/gui_factory.h>
+#include <command/print_command.h>
+
+key_map *setup_key_map ( void );
 
 int main ( int argc, const char *argv[] )
 {
     (void) argc;
     (void) argv;
-    window _window = { 0 };
-    gui_factory *p_gui_factory = gui_factory_instance();
 
-    application_window_construct((application_window *)&_window, "ui");
+    application_window *p_window      = application_window_construct(" UI ");
+    gui_factory        *p_gui_factory = gui_factory_instance();
+    label  *l = p_gui_factory->pfn_label_construct(p_gui_factory, "pq");
+    button *b = p_gui_factory->pfn_button_construct(p_gui_factory, "PQ");
 
-    glyph *l = p_gui_factory->pfn_label_construct(p_gui_factory);
-    glyph *b = p_gui_factory->pfn_button_construct(p_gui_factory);
-    
-    l->pfn_insert(l, (glyph *)row_from_string("pq"), 0);
-    b->pfn_insert(b, (glyph *)row_from_string("PQ"), 0);
+    p_window->p_key_map = setup_key_map();
 
-    glyph *p_border = (glyph *)row_from_arguments(
-        1,
-        (glyph *)border_construct(
-            (glyph *)scroller_construct(
-                (glyph *)column_from_arguments
+    b->pfn_command_set(b, (command *) print_command_construct("hi"));
+
+    p_window->_window.pfn_set_contents
+    (
+        (window *) p_window, 
+        (glyph *) column_from_arguments
+        (
+            1,
+            (glyph *)border_construct
+            (
+                (glyph *)scroller_construct
                 (
-                    3,
-                    row_from_arguments(
-                        4,
-                        character_construct('a'),
-                        rectangle_construct((rect){.origin={0,0},.extent={50,100}}),
-                        column_from_arguments(
-                            3,
-                            character_construct('X'),
-                            l,
-                            character_construct('Z')
-                        ),
-                        character_construct('b')
-                    ),
-                    row_from_arguments(
+                    (glyph *)column_from_arguments
+                    (
                         3,
-                        character_construct('x'),
-                        rectangle_construct((rect){.origin={0,0},.extent={100,50}}),
-                        character_construct('y')
-                    ),
-                    b
-                ), 
-                32
-            ),
-        8)
+                        row_from_arguments
+                        (
+                            4,
+                            character_construct('a'),
+                            rectangle_construct((rect){.origin={0,0},.extent={25,50}}),
+                            column_from_arguments
+                            (
+                                3,
+                                character_construct('X'),
+                                (glyph *) l,
+                                character_construct('Z')
+                            ),
+                            character_construct('b')
+                        ),
+                        row_from_arguments
+                        (
+                            3,
+                            character_construct('x'),
+                            rectangle_construct((rect){.origin={0,0},.extent={50,25}}),
+                            character_construct('y')
+                        ),
+                        (glyph *) b
+                    ), 
+                    32
+                ),
+            8)
+        )
     );
 
-    _window.pfn_set_contents(&_window, p_border);
-    _window.pfn_redraw(&_window);
+    p_window->_window.pfn_redraw((window *)p_window);
     
-    return 0;
+    return EXIT_SUCCESS;
+}
+
+key_map *setup_key_map ( void )
+{
+    key_map *p_key_map = key_map_construct();
+
+    key_map_put(p_key_map, 'h', (command *) print_command_construct("hello"));
+    key_map_put(p_key_map, 'i', (command *) print_command_construct("howdy"));
+
+    return p_key_map;
 }

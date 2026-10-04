@@ -24,6 +24,9 @@ int glyph_construct ( glyph *p_glyph )
         .pfn_remove          = (fn_glyph_remove *)          glyph_remove,
         .pfn_child           = (fn_glyph_child *)           glyph_child,
         .pfn_iterator        = (fn_glyph_iterator *)        glyph_iterator,
+        .pfn_find            = (fn_glyph_find *)            glyph_find,          
+        .pfn_click           = (fn_glyph_click *)           glyph_click,            
+        .pfn_key             = (fn_glyph_key *)             glyph_key,        
     };
 
     return 1;
@@ -38,7 +41,10 @@ void         glyph_size            ( glyph *p_glyph, window *p_window ) { (void)
 rect         glyph_bounds_get      ( glyph *p_glyph ) { return p_glyph->_bounds; }
 glyph       *glyph_parent_get      ( glyph *p_glyph ) { return p_glyph->p_parent; }
 composition *glyph_composition_get ( glyph *p_glyph ) { (void) p_glyph; return NULL; }
-bool         glyph_intersects      ( glyph *p_glyph, point p ) { (void) p_glyph; (void) p; return false; }
+bool         glyph_intersects      ( glyph *p_glyph, point p ) {
+    rect b = p_glyph->_bounds; 
+    return ( b.origin.x < p.x && (b.origin.x + b.extent.x) > p.x && b.origin.y < p.y && (b.origin.y + b.extent.y) > p.y );
+}
 void         glyph_parent_set      ( glyph *p_glyph, glyph *p_parent ) { p_glyph->p_parent = p_parent; }
 void         glyph_window_set      ( glyph *p_glyph, window *p_window ) { p_glyph->p_window = p_window; }
 void         glyph_bounds_set      ( glyph *p_glyph, rect bounds ) { p_glyph->_bounds = bounds; }
@@ -49,3 +55,6 @@ void         glyph_insert          ( glyph *p_glyph, glyph *p_child, int i ) { (
 void         glyph_remove          ( glyph *p_glyph, glyph *p_child ) { (void) p_glyph; (void) p_child;}
 glyph       *glyph_child           ( glyph *p_glyph, int i ) { (void) p_glyph; (void) i; return NULL; }
 iterator     glyph_iterator        ( glyph *p_glyph ) { (void) p_glyph; return (iterator){ }; }
+glyph       *glyph_find            ( glyph *p_glyph, point p ) { if ( p_glyph->pfn_intersects(p_glyph, p) ) return p_glyph; return NULL; }
+void         glyph_click           ( glyph *p_glyph ) { if ( p_glyph->p_parent ) p_glyph->p_parent->pfn_click(p_glyph->p_parent); }
+void         glyph_key             ( glyph *p_glyph, char c ) { if ( p_glyph->p_parent ) p_glyph->p_parent->pfn_key(p_glyph->p_parent, c); }

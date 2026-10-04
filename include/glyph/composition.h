@@ -22,3 +22,5 @@ point composition_adjust_child (  composition *p_composition, glyph *p_child, po
 point composition_cursor ( composition *p_composition );
 void composition_size ( composition *p_composition, window *p_window );
 iterator composition_iterator ( composition *p_composition );
+glyph *composition_find ( composition *p_composition, point p );
+bool composition_intersects ( composition *p_composition, point p );

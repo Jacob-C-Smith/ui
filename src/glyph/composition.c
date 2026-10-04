@@ -18,7 +18,9 @@ int composition_construct ( composition *p_composition )
     p_composition->_glyph.pfn_cursor          = (fn_glyph_cursor *)          composition_cursor;
     p_composition->_glyph.pfn_size            = (fn_glyph_size *)            composition_size;
     p_composition->_glyph.pfn_iterator        = (fn_glyph_iterator *)        composition_iterator;
-    
+    p_composition->_glyph.pfn_find            = (fn_glyph_find *)            composition_find;
+    p_composition->_glyph.pfn_intersects      = (fn_glyph_intersects *)      composition_intersects;
+
     array_construct(&p_composition->p_array, 32);
     p_composition->_size = (rect){ 0 };
     p_composition->_position = (point){ 0 };
@@ -150,4 +152,35 @@ void composition_size (composition *p_composition, window *p_window)
 iterator composition_iterator (composition *p_composition)
 {
     return array_iterator(p_composition->p_array);
+}
+
+glyph *composition_find ( composition *p_composition, point p )
+{
+
+    if ( p_composition->_glyph.pfn_intersects((glyph *)p_composition, p) )
+    {
+        for ( iterator it = composition_iterator(p_composition); !it.done(&it); it.next(&it))
+        {
+            glyph *p_glyph = it.item(&it);
+            p_glyph = p_glyph->pfn_find(p_glyph, p);
+            if ( p_glyph ) 
+                return p_glyph;
+        }
+        
+        return (glyph *) p_composition;
+    }
+
+    return NULL;
+}
+
+bool composition_intersects ( composition *p_composition, point p )
+{
+    for ( iterator it = composition_iterator(p_composition); !it.done(&it); it.next(&it))
+    {
+        glyph *p_glyph = it.item(&it);
+        if ( p_glyph->pfn_intersects(p_glyph, p) )
+            return true;
+    }
+
+    return false;
 }

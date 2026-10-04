@@ -4,4 +4,4 @@
 #include <glyph/mono_glyph.h>
 #include <glyph/row.h>
 
-label *label_construct ( void );
+label *label_construct ( const char *text );

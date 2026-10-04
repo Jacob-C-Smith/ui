@@ -6,8 +6,10 @@ void sdl_window_fill_rect   ( sdl_window *p_window, int x, int y, int w, int h )
 int  sdl_window_char_width  ( sdl_window *p_window, char c );
 int  sdl_window_char_height ( sdl_window *p_window, char c );
 void sdl_window_char_draw   ( sdl_window *p_window, char c, int x, int y );
-void sdl_window_draw_button ( sdl_window *p_window, int x, int y, int w, int h, const char *p_button);
-void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, const char *p_label);
+void sdl_window_draw_button ( sdl_window *p_window, int x, int y, int w, int h, const char *p_button );
+void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, const char *p_label );
+void sdl_window_click       ( sdl_window *p_window, int x, int y );
+void sdl_window_key         ( sdl_window *p_window, char c );
 
 window_impl *sdl_window_construct ( const char *title, window *w)
 {
@@ -20,6 +22,8 @@ window_impl *sdl_window_construct ( const char *title, window *w)
     
     SDL_CreateWindowAndRenderer(title,800,600,SDL_WINDOW_HIGH_PIXEL_DENSITY, &_w, &_r);
 
+    SDL_SetRenderVSync(_r, 1);
+
     TTF_Init();
 
     *p_sdl_window = (sdl_window)
@@ -30,16 +34,18 @@ window_impl *sdl_window_construct ( const char *title, window *w)
             .pfn_draw_rect   = (fn_window_impl_draw_rect *)   sdl_window_draw_rect,
             .pfn_fill_rect   = (fn_window_impl_fill_rect *)   sdl_window_fill_rect,
             .pfn_char_width  = (fn_window_impl_char_width *)  sdl_window_char_width,
-            .pfn_draw_button = (fn_window_impl_draw_button *)  sdl_window_draw_button,
+            .pfn_draw_button = (fn_window_impl_draw_button *) sdl_window_draw_button,
             .pfn_draw_label  = (fn_window_impl_draw_label *)  sdl_window_draw_label,
             .pfn_char_height = (fn_window_impl_char_height *) sdl_window_char_height,
             .pfn_draw_char   = (fn_window_impl_draw_char *)   sdl_window_char_draw,
+            .pfn_key         = (fn_window_impl_key *)         sdl_window_key,
+            .pfn_click       = (fn_window_impl_click *)       sdl_window_click,
         },
         .p_w = _w,
         .p_r = _r,
-        .p_f = TTF_OpenFont("/System/Library/Fonts/Supplemental/Arial.ttf", 60.0f),
+        .p_f = TTF_OpenFont("/System/Library/Fonts/Supplemental/Arial.ttf", 30.0f),
         .p_window = w,
-        .tite = title,
+        .title = title,
     };
 
     return (window_impl *)p_sdl_window;
@@ -52,7 +58,32 @@ int sdl_window_redraw ( sdl_window *p_window )
     while (!done) 
     {
         SDL_Event event;
-        while (SDL_PollEvent(&event)) done = (event.type == SDL_EVENT_QUIT);
+        while (SDL_PollEvent(&event))
+        {
+            switch (event.type)
+            {
+                case SDL_EVENT_QUIT:
+                    done = true;
+                    break;
+                
+                case SDL_EVENT_KEY_DOWN:
+                {
+                    char c = (char) event.key.key;
+                    c = (event.key.mod & SDL_KMOD_SHIFT) ? c - 0x20 : c;
+                    c = (event.key.mod & SDL_KMOD_CTRL)  ? c & 0x1f : c;
+                    p_window->_window_impl.pfn_key((window_impl *)p_window, c);
+                }
+                    break;
+                case SDL_EVENT_MOUSE_BUTTON_DOWN:
+                {
+                    SDL_ConvertEventToRenderCoordinates(p_window->p_r, &event);
+                    p_window->_window_impl.pfn_click((window_impl *)p_window, event.motion.x, event.motion.y);
+                }
+                    break;
+                default:
+                    break;
+            }
+        } 
 
         SDL_SetRenderDrawColor(p_window->p_r,255,255,255,255);
         SDL_RenderClear(p_window->p_r);
@@ -116,7 +147,6 @@ void sdl_window_draw_button ( sdl_window *p_window, int x, int y, int w, int h, 
     sdl_window_fill_rect(p_window, x, y, w, h);
 
     SDL_SetRenderDrawColor(p_window->p_r,lc.r,lc.g,lc.b,lc.a);
-
 }
 
 void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, const char *p_label)
@@ -124,14 +154,12 @@ void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, 
     SDL_Color lc = { 0 };
     SDL_GetRenderDrawColor(p_window->p_r,&lc.r,&lc.g,&lc.b,&lc.a);
 
-    if ( 0 == strcmp("light", p_label) ) 
-    {
+    if ( 0 == strcmp("red", p_label) ) 
         SDL_SetRenderDrawColor(p_window->p_r, 255,0,0,255);
-    }
-    else if ( 0 == strcmp("dark", p_label) ) 
-    {
+    else if ( 0 == strcmp("green", p_label) ) 
+        SDL_SetRenderDrawColor(p_window->p_r, 0,255,0,255);
+    else
         SDL_SetRenderDrawColor(p_window->p_r, 0,0,255,255);
-    }
 
     sdl_window_draw_rect(p_window, x, y, w, h);
 
@@ -158,3 +186,12 @@ int sdl_window_char_height ( sdl_window *p_window, char c )
     return height;
 }
 
+void sdl_window_click ( sdl_window *p_window, int x, int y )
+{
+    p_window->p_window->pfn_click(p_window->p_window, x, y);
+}
+
+void sdl_window_key ( sdl_window *p_window, char c )
+{
+    p_window->p_window->pfn_key(p_window->p_window, c);
+}
