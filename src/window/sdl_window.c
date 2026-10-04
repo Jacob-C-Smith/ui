@@ -6,6 +6,8 @@ void sdl_window_fill_rect   ( sdl_window *p_window, int x, int y, int w, int h )
 int  sdl_window_char_width  ( sdl_window *p_window, char c );
 int  sdl_window_char_height ( sdl_window *p_window, char c );
 void sdl_window_char_draw   ( sdl_window *p_window, char c, int x, int y );
+void sdl_window_draw_button ( sdl_window *p_window, int x, int y, int w, int h, const char *p_button);
+void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, const char *p_label);
 
 window_impl *sdl_window_construct ( const char *title, window *w)
 {
@@ -28,6 +30,8 @@ window_impl *sdl_window_construct ( const char *title, window *w)
             .pfn_draw_rect   = (fn_window_impl_draw_rect *)   sdl_window_draw_rect,
             .pfn_fill_rect   = (fn_window_impl_fill_rect *)   sdl_window_fill_rect,
             .pfn_char_width  = (fn_window_impl_char_width *)  sdl_window_char_width,
+            .pfn_draw_button = (fn_window_impl_draw_button *)  sdl_window_draw_button,
+            .pfn_draw_label  = (fn_window_impl_draw_label *)  sdl_window_draw_label,
             .pfn_char_height = (fn_window_impl_char_height *) sdl_window_char_height,
             .pfn_draw_char   = (fn_window_impl_draw_char *)   sdl_window_char_draw,
         },
@@ -95,6 +99,43 @@ void sdl_window_char_draw ( sdl_window *p_window, char c, int x, int y )
 
     SDL_DestroyTexture(u);
     SDL_DestroySurface(t);
+}
+
+void sdl_window_draw_button ( sdl_window *p_window, int x, int y, int w, int h, const char *p_button)
+{
+    SDL_Color lc = { 0 };
+    SDL_GetRenderDrawColor(p_window->p_r,&lc.r,&lc.g,&lc.b,&lc.a);
+
+    if ( 0 == strcmp("red", p_button) ) 
+        SDL_SetRenderDrawColor(p_window->p_r, 255,0,0,255);
+    else if ( 0 == strcmp("green", p_button) ) 
+        SDL_SetRenderDrawColor(p_window->p_r, 0,255,0,255);
+    else
+        SDL_SetRenderDrawColor(p_window->p_r, 0,0,255,255);
+        
+    sdl_window_fill_rect(p_window, x, y, w, h);
+
+    SDL_SetRenderDrawColor(p_window->p_r,lc.r,lc.g,lc.b,lc.a);
+
+}
+
+void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, const char *p_label)
+{
+    SDL_Color lc = { 0 };
+    SDL_GetRenderDrawColor(p_window->p_r,&lc.r,&lc.g,&lc.b,&lc.a);
+
+    if ( 0 == strcmp("light", p_label) ) 
+    {
+        SDL_SetRenderDrawColor(p_window->p_r, 255,0,0,255);
+    }
+    else if ( 0 == strcmp("dark", p_label) ) 
+    {
+        SDL_SetRenderDrawColor(p_window->p_r, 0,0,255,255);
+    }
+
+    sdl_window_draw_rect(p_window, x, y, w, h);
+
+    SDL_SetRenderDrawColor(p_window->p_r,lc.r,lc.g,lc.b,lc.a);
 }
 
 int sdl_window_char_width ( sdl_window *p_window, char c )

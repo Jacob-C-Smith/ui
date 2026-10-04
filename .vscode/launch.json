@@ -2,14 +2,38 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ui",
+            "name": "ui > red",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/ui",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            "environment": [],
+            "environment": [ {"name": "UI_THEME","value": "red"} ],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
+            "name": "ui > green",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/ui",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [ {"name": "UI_THEME","value": "green"} ],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
+            "name": "ui > blue",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/ui",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [ {"name": "UI_THEME","value": "blue"} ],
             "externalConsole": false,
             "MIMode": "lldb"
         }

@@ -26,6 +26,18 @@ struct scroller_s;
 struct compositor_s;
 struct null_compositor_s;
 struct simple_compositor_s;
+struct gui_factory_s;
+struct red_gui_factory_s;
+struct green_gui_factory_s;
+struct blue_gui_factory_s;
+struct button_s;
+struct red_button_s;
+struct green_button_s;
+struct blue_button_s;
+struct label_s;
+struct red_label_s;
+struct green_label_s;
+struct blue_label_s;
 
 typedef struct point_s point;
 typedef struct rect_s rect;
@@ -47,6 +59,19 @@ typedef struct scroller_s scroller;
 typedef struct compositor_s compositor;
 typedef struct null_compositor_s null_compositor;
 typedef struct simple_compositor_s simple_compositor; 
+typedef struct gui_factory_s gui_factory;
+typedef struct red_gui_factory_s red_gui_factory;
+typedef struct green_gui_factory_s green_gui_factory;
+typedef struct blue_gui_factory_s blue_gui_factory;
+typedef struct button_s button;
+typedef struct red_button_s red_button;
+typedef struct green_button_s green_button;
+typedef struct blue_button_s blue_button;
+typedef struct label_s label;
+typedef struct red_label_s red_label;
+typedef struct green_label_s green_label;
+typedef struct blue_label_s blue_label;
+
 
 typedef int(fn_window_draw)(window *p_window);
 typedef int(fn_window_redraw)(window *p_window);
@@ -101,6 +126,9 @@ typedef iterator(fn_glyph_iterator)(glyph *p_glyph);
 
 typedef void (fn_compositor_composition_set)(compositor *p_compositor, composition *p_composition);
 typedef void (fn_compositor_compose)(compositor *p_compositor);
+
+typedef button *(fn_gui_factory_button_construct)( gui_factory *p_gui_factory );
+typedef label *(fn_gui_factory_label_construct)( gui_factory *p_gui_factory );
 
 struct point_s 
 {
@@ -269,4 +297,72 @@ struct null_compositor_s
 struct simple_compositor_s 
 {
     compositor _compositor;
+};
+
+struct gui_factory_s
+{
+    gui_factory                     *p_unique_instance;
+    fn_gui_factory_button_construct *pfn_button_construct;
+    fn_gui_factory_label_construct  *pfn_label_construct;
+};
+
+struct red_gui_factory_s
+{
+    red_gui_factory *p_unique_instance;
+    fn_gui_factory_button_construct *pfn_button_construct;
+    fn_gui_factory_label_construct  *pfn_label_construct;
+};
+
+struct green_gui_factory_s
+{
+    green_gui_factory *p_unique_instance;
+    fn_gui_factory_button_construct *pfn_button_construct;
+    fn_gui_factory_label_construct  *pfn_label_construct;
+};
+
+struct blue_gui_factory_s
+{
+    blue_gui_factory *p_unique_instance;
+    fn_gui_factory_button_construct *pfn_button_construct;
+    fn_gui_factory_label_construct  *pfn_label_construct;
+};
+
+struct button_s
+{
+    mono_glyph _mono_glyph;
+};
+
+struct red_button_s
+{
+    button _button;
+};
+
+struct green_button_s
+{
+    button _button;
+};
+
+struct blue_button_s
+{
+    button _button;
+};
+
+struct label_s 
+{
+    mono_glyph _mono_glyph;
+};
+
+struct red_label_s
+{
+    label _label;
+};
+
+struct green_label_s
+{
+    label _label;
+};
+
+struct blue_label_s
+{
+    label _label;
 };
