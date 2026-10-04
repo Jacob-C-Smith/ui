@@ -1,0 +1,17 @@
+#include <glyph/red_button.h>
+
+void red_button_draw ( red_button *p_red_button, window *p_window )
+{
+    rect b = p_red_button->_button._mono_glyph._composition._glyph._bounds;
+
+    p_window->pfn_draw_button(
+        p_window, 
+        b.origin.x,
+        b.origin.y, 
+        b.extent.x, 
+        b.extent.y, 
+        "red"
+    );
+
+    composition_draw((composition *)p_red_button, p_window);
+}
