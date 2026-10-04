@@ -4,4 +4,4 @@
 #include <glyph/mono_glyph.h>
 #include <glyph/row.h>
 
-button *button_construct ( void );
+button *button_construct ( const char *text );

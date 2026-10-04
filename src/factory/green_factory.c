@@ -4,8 +4,8 @@
 
 static green_gui_factory _green_gui_factory = { 0 };
 
-button *green_button_construct ( green_gui_factory *p_green_factory );
-label  *green_label_construct ( green_gui_factory *p_green_factory );
+button *green_button_construct ( green_gui_factory *p_green_factory, const char *text );
+label  *green_label_construct ( green_gui_factory *p_green_factory, const char *text );
 
 int green_gui_factory_construct ( )
 {
@@ -25,16 +25,16 @@ gui_factory *green_gui_factory_instance ( void )
     return (gui_factory *)&_green_gui_factory;
 }
 
-button *green_button_construct ( green_gui_factory *p_green_factory )
+button *green_button_construct ( green_gui_factory *p_green_factory, const char *text )
 {
-    button *p_button = button_construct();
+    button *p_button = button_construct(text);
     p_button->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)green_button_draw;
     return p_button;
 }
 
-label *green_label_construct ( green_gui_factory *p_green_factory )
+label *green_label_construct ( green_gui_factory *p_green_factory, const char *text )
 {
-    label *p_label = label_construct();
+    label *p_label = label_construct(text);
     p_label->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)green_label_draw;
     return p_label;
 }

@@ -2,8 +2,8 @@
 
 static gui_factory _gui_factory = { 0 };
 
-button *gui_factory_button_construct ( gui_factory *p_gui_factory );
-label *gui_factory_label_construct ( gui_factory *p_gui_factory );
+button *gui_factory_button_construct ( gui_factory *p_gui_factory, const char *text );
+label  *gui_factory_label_construct  ( gui_factory *p_gui_factory, const char *text );
 
 gui_factory *gui_factory_instance ( void )
 {
@@ -30,12 +30,12 @@ gui_factory *gui_factory_instance ( void )
     return &_gui_factory;
 }
 
-button *gui_factory_button_construct ( gui_factory *p_gui_factory )
+button *gui_factory_button_construct ( gui_factory *p_gui_factory, const char *text )
 {
-    return p_gui_factory->p_unique_instance->pfn_button_construct(p_gui_factory->p_unique_instance);
+    return p_gui_factory->p_unique_instance->pfn_button_construct(p_gui_factory->p_unique_instance, text);
 }
 
-label *gui_factory_label_construct ( gui_factory *p_gui_factory )
+label *gui_factory_label_construct ( gui_factory *p_gui_factory, const char *text )
 {
-    return p_gui_factory->p_unique_instance->pfn_label_construct(p_gui_factory->p_unique_instance);
+    return p_gui_factory->p_unique_instance->pfn_label_construct(p_gui_factory->p_unique_instance, text);
 }

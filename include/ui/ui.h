@@ -38,6 +38,8 @@ struct label_s;
 struct red_label_s;
 struct green_label_s;
 struct blue_label_s;
+struct command_s;
+struct print_command_s;
 
 typedef struct point_s point;
 typedef struct rect_s rect;
@@ -71,7 +73,9 @@ typedef struct label_s label;
 typedef struct red_label_s red_label;
 typedef struct green_label_s green_label;
 typedef struct blue_label_s blue_label;
-
+typedef struct command_s command;
+typedef struct print_command_s print_command;
+typedef array key_map;
 
 typedef int(fn_window_draw)(window *p_window);
 typedef int(fn_window_redraw)(window *p_window);
@@ -87,6 +91,8 @@ typedef void(fn_window_draw_button)(window *p_window, int x, int y, int w, int h
 typedef void(fn_window_draw_label)(window *p_window, int x, int y, int w, int h, const char *p_label);
 typedef int(fn_window_char_width)(window *p_window, char c);
 typedef int(fn_window_char_height)(window *p_window, char c);
+typedef void(fn_window_key)(window *p_window, char c);
+typedef void(fn_window_click)(window *p_window, int x, int y);
 
 typedef window_impl *(fn_window_impl_construct)(window_factory *p_window_factory, const char *p_title, window *p_window);
 typedef int(fn_window_impl_redraw)(window_impl *p_window_impl);
@@ -102,6 +108,8 @@ typedef void(fn_window_impl_draw_button)(window_impl *p_window_impl, int x, int 
 typedef void(fn_window_impl_draw_label)(window_impl *p_window_impl, int x, int y, int w, int h, const char *p_label);
 typedef int(fn_window_impl_char_width)(window_impl *p_window_impl, char c);
 typedef int(fn_window_impl_char_height)(window_impl *p_window_impl, char c);
+typedef void(fn_window_impl_key)(window_impl *p_window_impl, char c);
+typedef void(fn_window_impl_click)(window_impl *p_window_impl, int x, int y);
 
 typedef void(fn_glyph_draw)(glyph *p_glyph, window *p_window);
 typedef window *(fn_glyph_window_get)(glyph *p_glyph);
@@ -123,12 +131,21 @@ typedef void (fn_glyph_insert)(glyph *p_glyph, glyph *p_child, int i);
 typedef void (fn_glyph_remove)(glyph *p_glyph, glyph *p_child);
 typedef glyph *(fn_glyph_child)(glyph *p_glyph, int i);
 typedef iterator(fn_glyph_iterator)(glyph *p_glyph);
+typedef glyph *(fn_glyph_find)(glyph *p_glyph, point p);
+typedef void(fn_glyph_click)(glyph *p_glyph);
+typedef void(fn_glyph_key)(glyph *p_glyph, char c);
 
 typedef void (fn_compositor_composition_set)(compositor *p_compositor, composition *p_composition);
 typedef void (fn_compositor_compose)(compositor *p_compositor);
 
-typedef button *(fn_gui_factory_button_construct)( gui_factory *p_gui_factory );
-typedef label *(fn_gui_factory_label_construct)( gui_factory *p_gui_factory );
+typedef button *(fn_gui_factory_button_construct)( gui_factory *p_gui_factory, const char *text );
+typedef label *(fn_gui_factory_label_construct)( gui_factory *p_gui_factory, const char *text );
+
+typedef void (fn_button_command_set)( button *p_button, command *p_command );
+typedef command *(fn_button_command_get)( button *p_button );
+typedef void (fn_command_execute)( command *p_command );
+typedef void (fn_command_unexecute)( command *p_command );
+typedef command *(fn_command_clone)( command *p_command );
 
 struct point_s 
 {
@@ -154,6 +171,8 @@ struct window_impl_s
     fn_window_impl_draw_label  *pfn_draw_label;
     fn_window_impl_char_width  *pfn_char_width;
     fn_window_impl_char_height *pfn_char_height;
+    fn_window_impl_key         *pfn_key;
+    fn_window_impl_click       *pfn_click;
 };
 
 struct window_s
@@ -172,6 +191,8 @@ struct window_s
     fn_window_draw_label   *pfn_draw_label;
     fn_window_char_width   *pfn_char_width;
     fn_window_char_height  *pfn_char_height;
+    fn_window_key          *pfn_key;
+    fn_window_click        *pfn_click;
     const char *p_title;
     window_impl *p_impl;
     glyph *p_contents;
@@ -180,7 +201,7 @@ struct window_s
 struct application_window_s
 {
     window _window;
-    int i;
+    key_map *p_key_map;
 };
 
 struct window_factory_s
@@ -200,7 +221,7 @@ struct sdl_window_s
 {
     window_impl _window_impl;
 
-    const char *tite;
+    const char *title;
     window *p_window;
     SDL_Window *p_w;
     SDL_Renderer *p_r;
@@ -228,7 +249,10 @@ struct glyph_s
     fn_glyph_insert          *pfn_insert;        
     fn_glyph_remove          *pfn_remove;        
     fn_glyph_child           *pfn_child;       
-    fn_glyph_iterator        *pfn_iterator;          
+    fn_glyph_iterator        *pfn_iterator;  
+    fn_glyph_find            *pfn_find;   
+    fn_glyph_click           *pfn_click;    
+    fn_glyph_key             *pfn_key;          
     window                   *p_window;
     glyph                    *p_parent;
     rect                      _bounds;
@@ -308,28 +332,31 @@ struct gui_factory_s
 
 struct red_gui_factory_s
 {
-    red_gui_factory *p_unique_instance;
+    red_gui_factory                 *p_unique_instance;
     fn_gui_factory_button_construct *pfn_button_construct;
     fn_gui_factory_label_construct  *pfn_label_construct;
 };
 
 struct green_gui_factory_s
 {
-    green_gui_factory *p_unique_instance;
+    green_gui_factory               *p_unique_instance;
     fn_gui_factory_button_construct *pfn_button_construct;
     fn_gui_factory_label_construct  *pfn_label_construct;
 };
 
 struct blue_gui_factory_s
 {
-    blue_gui_factory *p_unique_instance;
+    blue_gui_factory                *p_unique_instance;
     fn_gui_factory_button_construct *pfn_button_construct;
     fn_gui_factory_label_construct  *pfn_label_construct;
 };
 
 struct button_s
 {
-    mono_glyph _mono_glyph;
+    mono_glyph             _mono_glyph;
+    command               *p_command;
+    fn_button_command_set *pfn_command_set;
+    fn_button_command_get *pfn_command_get;
 };
 
 struct red_button_s
@@ -365,4 +392,18 @@ struct green_label_s
 struct blue_label_s
 {
     label _label;
+};
+
+struct command_s 
+{
+    fn_command_execute   *pfn_execute;
+    fn_command_unexecute *pfn_unexecute;
+    fn_command_clone     *pfn_clone;
+    bool reversable;
+};
+
+struct print_command_s
+{
+    command _command;
+    const char *text;
 };

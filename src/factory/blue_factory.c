@@ -4,8 +4,8 @@
 
 static blue_gui_factory _blue_gui_factory = { 0 };
 
-button *blue_button_construct ( blue_gui_factory *p_blue_factory );
-label  *blue_label_construct ( blue_gui_factory *p_blue_factory );
+button *blue_button_construct ( blue_gui_factory *p_blue_factory, const char *text );
+label  *blue_label_construct ( blue_gui_factory *p_blue_factory, const char *text );
 
 int blue_gui_factory_construct ( )
 {
@@ -25,16 +25,16 @@ gui_factory *blue_gui_factory_instance ( void )
     return (gui_factory *)&_blue_gui_factory;
 }
 
-button *blue_button_construct ( blue_gui_factory *p_blue_factory )
+button *blue_button_construct ( blue_gui_factory *p_blue_factory, const char *text )
 {
-    button *p_button = button_construct();
+    button *p_button = button_construct(text);
     p_button->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)blue_button_draw;
     return p_button;
 }
 
-label *blue_label_construct ( blue_gui_factory *p_blue_factory )
+label *blue_label_construct ( blue_gui_factory *p_blue_factory, const char *text )
 {
-    label *p_label = label_construct();
+    label *p_label = label_construct(text);
     p_label->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)blue_label_draw;
     return p_label;
 }
