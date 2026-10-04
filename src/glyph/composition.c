@@ -1,29 +1,8 @@
 #include <glyph/composition.h>
 
-void composition_window_set (composition *p_composition, window *p_window);
-void composition_insert (composition *p_composition, glyph *p_child, int i);
-glyph *composition_child (composition *p_composition, int i);
-void composition_draw (composition *p_composition, window *p_window);
-rect composition_bounds_get (composition *p_composition);
-composition *composition_composition_get (composition *p_composition);
-void composition_compose (composition *p_composition);
-point composition_position_get (composition *p_composition);
-void composition_position_set (composition *p_composition, point _point);
-void composition_adjust ( composition *p_composition, point cursor );
-point composition_adjust_child ( composition *p_composition, glyph *p_child, point cursor );
-point composition_cursor (composition *p_composition);
-void composition_size (composition *p_composition, window *p_window);
-iterator composition_iterator (composition *p_composition);
-
 int composition_construct ( composition *p_composition )
 {
     glyph_construct((glyph *)p_composition);
-
-    array_construct(&p_composition->p_array, 32);
-    p_composition->_size = (rect){ 0 };
-    p_composition->_position = (point){ 0 };
-    p_composition->p_compositor = (compositor *) simple_compositor_construct();
-    p_composition->p_compositor->pfn_compositor_composition_set(p_composition->p_compositor, p_composition);
 
     p_composition->_glyph.pfn_window_set      = (fn_glyph_window_set *)      composition_window_set;
     p_composition->_glyph.pfn_insert          = (fn_glyph_insert *)          composition_insert;
@@ -39,6 +18,13 @@ int composition_construct ( composition *p_composition )
     p_composition->_glyph.pfn_cursor          = (fn_glyph_cursor *)          composition_cursor;
     p_composition->_glyph.pfn_size            = (fn_glyph_size *)            composition_size;
     p_composition->_glyph.pfn_iterator        = (fn_glyph_iterator *)        composition_iterator;
+    
+    array_construct(&p_composition->p_array, 32);
+    p_composition->_size = (rect){ 0 };
+    p_composition->_position = (point){ 0 };
+    p_composition->p_compositor = (compositor *) simple_compositor_construct();
+    p_composition->p_compositor->pfn_compositor_composition_set(p_composition->p_compositor, p_composition);
+
     return 1;
 }
 
@@ -147,8 +133,16 @@ void composition_size (composition *p_composition, window *p_window)
         (glyph *)p_composition, 
         (rect)
         {
-            .origin = { p_composition->_position.x, p_composition->_position.y },
-            .extent = { p_composition->_size.extent.x, p_composition->_size.extent.y }
+            .origin = 
+            { 
+                p_composition->_position.x, 
+                p_composition->_position.y 
+            },
+            .extent = 
+            { 
+                p_composition->_size.extent.x, 
+                p_composition->_size.extent.y 
+            }
         }
     );
 }

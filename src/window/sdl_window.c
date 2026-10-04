@@ -2,6 +2,7 @@
 
 int  sdl_window_redraw      ( sdl_window *p_window );
 void sdl_window_draw_rect   ( sdl_window *p_window, int x, int y, int w, int h );
+void sdl_window_fill_rect   ( sdl_window *p_window, int x, int y, int w, int h );
 int  sdl_window_char_width  ( sdl_window *p_window, char c );
 int  sdl_window_char_height ( sdl_window *p_window, char c );
 void sdl_window_char_draw   ( sdl_window *p_window, char c, int x, int y );
@@ -23,11 +24,12 @@ window_impl *sdl_window_construct ( const char *title, window *w)
     {
         ._window_impl = 
         {
-            .pfn_redraw      = (fn_window_impl_redraw *)   sdl_window_redraw,
-            .pfn_draw_rect   = (fn_window_impl_draw_rect *)sdl_window_draw_rect,
-            .pfn_char_width  = (fn_window_impl_char_width *)    sdl_window_char_width,
-            .pfn_char_height = (fn_window_impl_char_height *)   sdl_window_char_height,
-            .pfn_draw_char   = (fn_window_impl_draw_char *)     sdl_window_char_draw,
+            .pfn_redraw      = (fn_window_impl_redraw *)      sdl_window_redraw,
+            .pfn_draw_rect   = (fn_window_impl_draw_rect *)   sdl_window_draw_rect,
+            .pfn_fill_rect   = (fn_window_impl_fill_rect *)   sdl_window_fill_rect,
+            .pfn_char_width  = (fn_window_impl_char_width *)  sdl_window_char_width,
+            .pfn_char_height = (fn_window_impl_char_height *) sdl_window_char_height,
+            .pfn_draw_char   = (fn_window_impl_draw_char *)   sdl_window_char_draw,
         },
         .p_w = _w,
         .p_r = _r,
@@ -70,6 +72,13 @@ void sdl_window_draw_rect ( sdl_window *p_window, int x, int y, int w, int h )
     SDL_FRect r = {(float)x,(float)y,(float)w,(float)h};
     
     SDL_RenderRect(p_window->p_r, &r);
+}
+
+void sdl_window_fill_rect ( sdl_window *p_window, int x, int y, int w, int h )
+{
+    SDL_FRect r = {(float)x,(float)y,(float)w,(float)h};
+    
+    SDL_RenderFillRect(p_window->p_r, &r);
 }
 
 void sdl_window_char_draw ( sdl_window *p_window, char c, int x, int y )

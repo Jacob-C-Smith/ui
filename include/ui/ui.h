@@ -20,6 +20,9 @@ struct character_s;
 struct composition_s;
 struct row_s;
 struct column_s;
+struct mono_glyph_s;
+struct border_s;
+struct scroller_s;
 struct compositor_s;
 struct null_compositor_s;
 struct simple_compositor_s;
@@ -38,6 +41,9 @@ typedef struct character_s character;
 typedef struct composition_s composition;
 typedef struct row_s row;
 typedef struct column_s column;
+typedef struct mono_glyph_s mono_glyph;
+typedef struct border_s border;
+typedef struct scroller_s scroller;
 typedef struct compositor_s compositor;
 typedef struct null_compositor_s null_compositor;
 typedef struct simple_compositor_s simple_compositor; 
@@ -229,6 +235,23 @@ struct row_s
 struct column_s
 {
     composition _composition;
+};
+
+struct mono_glyph_s
+{
+    composition _composition;
+};
+
+struct border_s
+{
+    mono_glyph _mono_glyph;
+    int _s;
+};
+
+struct scroller_s
+{
+    mono_glyph _mono_glyph;
+    int _w;
 };
 
 struct compositor_s 
