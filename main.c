@@ -11,7 +11,9 @@
 #include <glyph/row.h>
 #include <glyph/column.h>
 #include <glyph/mono_glyph.h>
+#include <glyph/margin.h>
 #include <glyph/border.h>
+#include <glyph/padding.h>
 #include <glyph/scroller.h>
 #include <factory/gui_factory.h>
 #include <command/print_command.h>
@@ -25,52 +27,57 @@ int main ( int argc, const char *argv[] )
 
     application_window *p_window      = application_window_construct(" UI ");
     gui_factory        *p_gui_factory = gui_factory_instance();
-    label  *l = p_gui_factory->pfn_label_construct(p_gui_factory, "pq");
-    button *b = p_gui_factory->pfn_button_construct(p_gui_factory, "PQ");
+    label              *l             = p_gui_factory->pfn_label_construct(p_gui_factory, "pq");
+    button             *b             = p_gui_factory->pfn_button_construct(p_gui_factory, "PQ");
 
     p_window->p_key_map = setup_key_map();
 
     b->pfn_command_set(b, (command *) print_command_construct("hi"));
 
-    p_window->_window.pfn_set_contents
+        p_window->_window.pfn_set_contents
     (
         (window *) p_window, 
         (glyph *) column_from_arguments
         (
             1,
-            (glyph *)border_construct
+            (glyph *)margin_construct
             (
-                (glyph *)scroller_construct
+                (glyph *)border_construct
                 (
-                    (glyph *)column_from_arguments
+                    (glyph *)scroller_construct
                     (
-                        3,
-                        row_from_arguments
+                        (glyph *)padding_construct
                         (
-                            4,
-                            character_construct('a'),
-                            rectangle_construct((rect){.origin={0,0},.extent={25,50}}),
-                            column_from_arguments
+                            (glyph *)column_from_arguments
                             (
                                 3,
-                                character_construct('X'),
-                                (glyph *) l,
-                                character_construct('Z')
-                            ),
-                            character_construct('b')
-                        ),
-                        row_from_arguments
-                        (
-                            3,
-                            character_construct('x'),
-                            rectangle_construct((rect){.origin={0,0},.extent={50,25}}),
-                            character_construct('y')
-                        ),
-                        (glyph *) b
-                    ), 
-                    32
-                ),
-            8)
+                                row_from_arguments
+                                (
+                                    4,
+                                    character_construct('a'),
+                                    rectangle_construct((rect){.origin={0,0},.extent={25,50}}),
+                                    column_from_arguments
+                                    (
+                                        3,
+                                        character_construct('X'),
+                                        (glyph *) l,
+                                        character_construct('Z')
+                                    ),
+                                    character_construct('b')
+                                ),
+                                row_from_arguments
+                                (
+                                    3,
+                                    character_construct('x'),
+                                    rectangle_construct((rect){.origin={0,0},.extent={50,25}}),
+                                    character_construct('y')
+                                ),
+                                (glyph *) b
+                            ), 
+                        128),
+                    32),
+                8),
+            64)
         )
     );
 
