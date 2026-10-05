@@ -1,20 +1,63 @@
 #include <window/sdl_window.h>
+#include <data/avl.h>
+
+struct font_cache_entry_s
+{
+    char c;
+    bool bold;
+    bool italic;
+    float size;
+    int width;
+    int height;
+    SDL_Texture *texture;
+};
 
 int  sdl_window_redraw      ( sdl_window *p_window );
 void sdl_window_draw_rect   ( sdl_window *p_window, int x, int y, int w, int h );
 void sdl_window_fill_rect   ( sdl_window *p_window, int x, int y, int w, int h );
-int  sdl_window_char_width  ( sdl_window *p_window, char c );
-int  sdl_window_char_height ( sdl_window *p_window, char c );
-void sdl_window_char_draw   ( sdl_window *p_window, char c, int x, int y );
+int  sdl_window_char_width  ( sdl_window *p_window, char c, bool bold, bool italic, float size );
+int  sdl_window_char_height ( sdl_window *p_window, char c, bool bold, bool italic, float size );
+void sdl_window_char_draw   ( sdl_window *p_window, char c, bool bold, bool italic, float size, int x, int y );
 void sdl_window_draw_button ( sdl_window *p_window, int x, int y, int w, int h, const char *p_button );
 void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, const char *p_label );
 void sdl_window_click       ( sdl_window *p_window, int x, int y );
 void sdl_window_key         ( sdl_window *p_window, char c );
 
+typedef struct font_cache_entry_s font_cache_entry;
+
+int font_cache_comparator(const void *const p_a, const void *const p_b) 
+{
+    const font_cache_entry *a = p_a;
+    const font_cache_entry *b = p_b;
+
+    if (a->c      != b->c)      return a->c      - b->c;
+    if (a->bold   != b->bold)   return a->bold   - b->bold;
+    if (a->italic != b->italic) return a->italic - b->italic;
+    if (a->size   != b->size)   return (a->size > b->size) ? 1 : -1;
+
+    return 0;
+}
+
+void *font_cache_key_accessor(const void *const p_value) 
+{
+    return (void *)p_value;
+}
+
+void *font_cache_destroyer(void *p_value, unsigned long long size) 
+{
+    font_cache_entry *p_entry = (font_cache_entry *)p_value;
+
+    if (p_entry) 
+        if ( p_entry->texture )
+            SDL_DestroyTexture(p_entry->texture);
+    
+    return default_allocator(p_value, (size_t)size);
+}
+
 window_impl *sdl_window_construct ( const char *title, window *w)
 {
     sdl_window *p_sdl_window = default_allocator(NULL, sizeof(sdl_window));
-    
+    avl_tree *p_glyph_cache = NULL;
     SDL_Window *_w = NULL;
     SDL_Renderer *_r = NULL;
 
@@ -25,6 +68,8 @@ window_impl *sdl_window_construct ( const char *title, window *w)
     SDL_SetRenderVSync(_r, 1);
 
     TTF_Init();
+    
+    avl_tree_construct(&p_glyph_cache, sizeof(font_cache_entry), font_cache_comparator, font_cache_key_accessor);
 
     *p_sdl_window = (sdl_window)
     {
@@ -46,6 +91,7 @@ window_impl *sdl_window_construct ( const char *title, window *w)
         .p_f = TTF_OpenFont("/System/Library/Fonts/Supplemental/Arial.ttf", 30.0f),
         .p_window = w,
         .title = title,
+        .p_glyph_cache = p_glyph_cache,
     };
 
     return (window_impl *)p_sdl_window;
@@ -95,6 +141,8 @@ int sdl_window_redraw ( sdl_window *p_window )
         SDL_RenderPresent(p_window->p_r);
     }
 
+    avl_tree_destroy(&p_window->p_glyph_cache, font_cache_destroyer);
+
     SDL_DestroyRenderer(p_window->p_r);
     SDL_DestroyWindow(p_window->p_w);
     SDL_Quit();
@@ -116,20 +164,58 @@ void sdl_window_fill_rect ( sdl_window *p_window, int x, int y, int w, int h )
     SDL_RenderFillRect(p_window->p_r, &r);
 }
 
-void sdl_window_char_draw ( sdl_window *p_window, char c, int x, int y )
+font_cache_entry *sdl_window_get_or_create_glyph ( sdl_window *p_window, char c, bool bold, bool italic, float size ) 
 {
-    char _c[2] = { c, '\0' };
+    font_cache_entry search_key = { .c = c, .bold = bold, .italic = italic, .size = size };
+    font_cache_entry *p_entry = NULL;
+    avl_tree *tree = (avl_tree *)p_window->p_glyph_cache;
     
+    avl_tree_search(tree, &search_key, (void **)&p_entry);
+
+    if (p_entry) return p_entry;
+    
+    font_cache_entry *p_new_entry = default_allocator(NULL, sizeof(font_cache_entry));
+    *p_new_entry = search_key;
+    
+    int style = TTF_STYLE_NORMAL;
+    if (bold) style |= TTF_STYLE_BOLD;
+    if (italic) style |= TTF_STYLE_ITALIC;
+    
+    TTF_SetFontSize(p_window->p_f, size);
+    TTF_SetFontStyle(p_window->p_f, style);
+
+    char _c[2] = { c, '\0' };
     SDL_Surface *t = TTF_RenderText_Blended(p_window->p_f, _c, 1,(SDL_Color){0,0,0,255});
-    SDL_Texture *u = SDL_CreateTextureFromSurface(p_window->p_r, t);
-    SDL_FRect dst = {(float)x,(float)y,0,0};
 
-    SDL_GetTextureSize(u, &dst.w, &dst.h);
+    if (t) 
+    {
+        p_new_entry->texture = SDL_CreateTextureFromSurface(p_window->p_r, t);
+        p_new_entry->width = t->w;
+        p_new_entry->height = t->h;
+        SDL_DestroySurface(t);
+    } 
+    else
+    {
+        p_new_entry->texture = NULL;
+        p_new_entry->width = 0;
+        p_new_entry->height = 0;
+    }
+    
+    avl_tree_insert(tree, p_new_entry);
 
-    SDL_RenderTexture(p_window->p_r, u, NULL, &dst);
+    return p_new_entry;
+}
 
-    SDL_DestroyTexture(u);
-    SDL_DestroySurface(t);
+void sdl_window_char_draw ( sdl_window *p_window, char c, bool bold, bool italic, float size, int x, int y )
+{
+    font_cache_entry *p_entry = sdl_window_get_or_create_glyph(p_window, c, bold, italic, size);
+    
+    if ( NULL ==          p_entry ) return;
+    if ( NULL == p_entry->texture ) return;
+    
+    SDL_FRect dst = {(float)x,(float)y,(float)p_entry->width,(float)p_entry->height};
+
+    SDL_RenderTexture(p_window->p_r, p_entry->texture, NULL, &dst);
 }
 
 void sdl_window_draw_button ( sdl_window *p_window, int x, int y, int w, int h, const char *p_button)
@@ -166,24 +252,16 @@ void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, 
     SDL_SetRenderDrawColor(p_window->p_r,lc.r,lc.g,lc.b,lc.a);
 }
 
-int sdl_window_char_width ( sdl_window *p_window, char c )
+int sdl_window_char_width ( sdl_window *p_window, char c, bool bold, bool italic, float size )
 {
-    int width, height;
-    char _c[2] = { c, '\0' };
-
-    TTF_GetStringSize(p_window->p_f, _c, 1, &width, &height);
-
-    return width;
+    font_cache_entry *p_entry = sdl_window_get_or_create_glyph(p_window, c, bold, italic, size);
+    return p_entry ? p_entry->width : 0;
 }
 
-int sdl_window_char_height ( sdl_window *p_window, char c )
+int sdl_window_char_height ( sdl_window *p_window, char c, bool bold, bool italic, float size )
 {
-    int width, height;
-    char _c[2] = { c, '\0' };
-
-    TTF_GetStringSize(p_window->p_f, _c, 1, &width, &height);
-
-    return height;
+    font_cache_entry *p_entry = sdl_window_get_or_create_glyph(p_window, c, bold, italic, size);
+    return p_entry ? p_entry->height : 0;
 }
 
 void sdl_window_click ( sdl_window *p_window, int x, int y )

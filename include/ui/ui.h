@@ -2,6 +2,7 @@
 
 #include <core/interfaces.h>
 #include <data/array.h>
+#include <data/avl.h>
 
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -88,13 +89,13 @@ typedef int(fn_window_lower)(window *p_window);
 typedef int(fn_window_iconify)(window *p_window);
 typedef int(fn_window_deiconify)(window *p_window);
 typedef int(fn_window_set_contents)(window *p_window, glyph *p_glyph);
-typedef void(fn_window_draw_char)(window *p_window, char c, int x, int y);
+typedef void(fn_window_draw_char)(window *p_window, char c, bool bold, bool italic, float size, int x, int y);
 typedef void(fn_window_draw_rect)(window *p_window, int x, int y, int w, int h);
 typedef void(fn_window_fill_rect)(window *p_window, int x, int y, int w, int h);
 typedef void(fn_window_draw_button)(window *p_window, int x, int y, int w, int h, const char *p_button);
 typedef void(fn_window_draw_label)(window *p_window, int x, int y, int w, int h, const char *p_label);
-typedef int(fn_window_char_width)(window *p_window, char c);
-typedef int(fn_window_char_height)(window *p_window, char c);
+typedef int(fn_window_char_width)(window *p_window, char c, bool bold, bool italic, float size);
+typedef int(fn_window_char_height)(window *p_window, char c, bool bold, bool italic, float size);
 typedef void(fn_window_key)(window *p_window, char c);
 typedef void(fn_window_click)(window *p_window, int x, int y);
 
@@ -105,13 +106,13 @@ typedef int(fn_window_impl_lower)(window_impl *p_window_impl);
 typedef int(fn_window_impl_iconify)(window_impl *p_window_impl);
 typedef int(fn_window_impl_deiconify)(window_impl *p_window_impl);
 typedef int(fn_window_impl_set_contents)(window_impl *p_window_impl);
-typedef void(fn_window_impl_draw_char)(window_impl *p_window_impl, char c, int x, int y);
+typedef void(fn_window_impl_draw_char)(window_impl *p_window_impl, char c, bool bold, bool italic, float size, int x, int y);
 typedef void(fn_window_impl_draw_rect)(window_impl *p_window_impl, int x, int y, int w, int h);
 typedef void(fn_window_impl_fill_rect)(window_impl *p_window_impl, int x, int y, int w, int h);
 typedef void(fn_window_impl_draw_button)(window_impl *p_window_impl, int x, int y, int w, int h, const char *p_button);
 typedef void(fn_window_impl_draw_label)(window_impl *p_window_impl, int x, int y, int w, int h, const char *p_label);
-typedef int(fn_window_impl_char_width)(window_impl *p_window_impl, char c);
-typedef int(fn_window_impl_char_height)(window_impl *p_window_impl, char c);
+typedef int(fn_window_impl_char_width)(window_impl *p_window_impl, char c, bool bold, bool italic, float size);
+typedef int(fn_window_impl_char_height)(window_impl *p_window_impl, char c, bool bold, bool italic, float size);
 typedef void(fn_window_impl_key)(window_impl *p_window_impl, char c);
 typedef void(fn_window_impl_click)(window_impl *p_window_impl, int x, int y);
 
@@ -230,6 +231,7 @@ struct sdl_window_s
     SDL_Window *p_w;
     SDL_Renderer *p_r;
     TTF_Font *p_f;
+    avl_tree *p_glyph_cache;
 };
 
 struct glyph_s
@@ -272,6 +274,9 @@ struct character_s
 {
     glyph _glyph;
     char _c;
+    bool _bold;
+    bool _italic;
+    float _size;
 };
 
 struct composition_s

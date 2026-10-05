@@ -8,7 +8,7 @@ button *button_construct ( const char *text )
 {
     button *p_button = default_allocator(NULL, sizeof(button));
 
-    mono_glyph_construct((mono_glyph *)p_button, (glyph *)row_from_string(text));
+    mono_glyph_construct((mono_glyph *)p_button, (glyph *)row_from_string(text, false, false, 30.0f));
 
     p_button->pfn_command_get = button_command_get;
     p_button->pfn_command_set = button_command_set;
