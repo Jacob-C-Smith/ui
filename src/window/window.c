@@ -62,7 +62,7 @@ int window_set_contents ( window *p_window, glyph *p_glyph )
 { 
     p_window->p_contents = p_glyph;
     p_window->p_contents->pfn_window_set(p_glyph, p_window);
-    // p_window->p_impl->pfn_set_contents();
+    p_window->p_impl->pfn_set_contents(p_window->p_impl);
     return 1;
 }
 

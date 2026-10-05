@@ -12,17 +12,18 @@ struct font_cache_entry_s
     SDL_Texture *texture;
 };
 
-int  sdl_window_redraw      ( sdl_window *p_window );
-void sdl_window_draw_rect   ( sdl_window *p_window, int x, int y, int w, int h );
-void sdl_window_fill_rect   ( sdl_window *p_window, int x, int y, int w, int h );
-void sdl_window_clear_rect  ( sdl_window *p_window, int x, int y, int w, int h );
-int  sdl_window_char_width  ( sdl_window *p_window, char c, bool bold, bool italic, float size );
-int  sdl_window_char_height ( sdl_window *p_window, char c, bool bold, bool italic, float size );
-void sdl_window_char_draw   ( sdl_window *p_window, char c, bool bold, bool italic, float size, int x, int y );
-void sdl_window_draw_button ( sdl_window *p_window, int x, int y, int w, int h, const char *p_button );
-void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, const char *p_label );
-void sdl_window_click       ( sdl_window *p_window, int x, int y );
-void sdl_window_key         ( sdl_window *p_window, char c );
+int  sdl_window_set_contents ( sdl_window *p_window );
+int  sdl_window_redraw       ( sdl_window *p_window );
+void sdl_window_draw_rect    ( sdl_window *p_window, int x, int y, int w, int h );
+void sdl_window_fill_rect    ( sdl_window *p_window, int x, int y, int w, int h );
+void sdl_window_clear_rect   ( sdl_window *p_window, int x, int y, int w, int h );
+int  sdl_window_char_width   ( sdl_window *p_window, char c, bool bold, bool italic, float size );
+int  sdl_window_char_height  ( sdl_window *p_window, char c, bool bold, bool italic, float size );
+void sdl_window_char_draw    ( sdl_window *p_window, char c, bool bold, bool italic, float size, int x, int y );
+void sdl_window_draw_button  ( sdl_window *p_window, int x, int y, int w, int h, const char *p_button );
+void sdl_window_draw_label   ( sdl_window *p_window, int x, int y, int w, int h, const char *p_label );
+void sdl_window_click        ( sdl_window *p_window, int x, int y );
+void sdl_window_key          ( sdl_window *p_window, char c );
 
 typedef struct font_cache_entry_s font_cache_entry;
 
@@ -76,17 +77,18 @@ window_impl *sdl_window_construct ( const char *title, window *w)
     {
         ._window_impl = 
         {
-            .pfn_redraw      = (fn_window_impl_redraw *)      sdl_window_redraw,
-            .pfn_draw_rect   = (fn_window_impl_draw_rect *)   sdl_window_draw_rect,
-            .pfn_fill_rect   = (fn_window_impl_fill_rect *)   sdl_window_fill_rect,
-            .pfn_clear_rect  = (fn_window_impl_clear_rect *)  sdl_window_clear_rect,
-            .pfn_char_width  = (fn_window_impl_char_width *)  sdl_window_char_width,
-            .pfn_draw_button = (fn_window_impl_draw_button *) sdl_window_draw_button,
-            .pfn_draw_label  = (fn_window_impl_draw_label *)  sdl_window_draw_label,
-            .pfn_char_height = (fn_window_impl_char_height *) sdl_window_char_height,
-            .pfn_draw_char   = (fn_window_impl_draw_char *)   sdl_window_char_draw,
-            .pfn_key         = (fn_window_impl_key *)         sdl_window_key,
-            .pfn_click       = (fn_window_impl_click *)       sdl_window_click,
+            .pfn_set_contents = (fn_window_impl_set_contents *) sdl_window_set_contents,
+            .pfn_redraw       = (fn_window_impl_redraw *)       sdl_window_redraw,
+            .pfn_draw_rect    = (fn_window_impl_draw_rect *)    sdl_window_draw_rect,
+            .pfn_fill_rect    = (fn_window_impl_fill_rect *)    sdl_window_fill_rect,
+            .pfn_clear_rect   = (fn_window_impl_clear_rect *)   sdl_window_clear_rect,
+            .pfn_char_width   = (fn_window_impl_char_width *)   sdl_window_char_width,
+            .pfn_draw_button  = (fn_window_impl_draw_button *)  sdl_window_draw_button,
+            .pfn_draw_label   = (fn_window_impl_draw_label *)   sdl_window_draw_label,
+            .pfn_char_height  = (fn_window_impl_char_height *)  sdl_window_char_height,
+            .pfn_draw_char    = (fn_window_impl_draw_char *)    sdl_window_char_draw,
+            .pfn_key          = (fn_window_impl_key *)          sdl_window_key,
+            .pfn_click        = (fn_window_impl_click *)        sdl_window_click,
         },
         .p_w = _w,
         .p_r = _r,
@@ -97,6 +99,16 @@ window_impl *sdl_window_construct ( const char *title, window *w)
     };
 
     return (window_impl *)p_sdl_window;
+}
+
+int sdl_window_set_contents ( sdl_window *p_window )
+{
+    float scale = SDL_GetWindowDisplayScale(p_window->p_w);
+    rect b = p_window->p_window->p_contents->_bounds;
+
+    SDL_SetWindowSize(p_window->p_w, b.extent.x / scale, b.extent.y / scale);
+
+    return 1;
 }
 
 int sdl_window_redraw ( sdl_window *p_window )

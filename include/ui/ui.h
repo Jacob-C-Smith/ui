@@ -188,21 +188,22 @@ struct rect_s
 
 struct window_impl_s
 {
-    fn_window_impl_redraw      *pfn_redraw;
-    fn_window_impl_raise       *pfn_raise;
-    fn_window_impl_lower       *pfn_lower;
-    fn_window_impl_iconify     *pfn_iconify;
-    fn_window_impl_deiconify   *pfn_deiconify;
-    fn_window_impl_draw_char   *pfn_draw_char;
-    fn_window_impl_draw_rect   *pfn_draw_rect;
-    fn_window_impl_fill_rect   *pfn_fill_rect;
-    fn_window_impl_clear_rect  *pfn_clear_rect;
-    fn_window_impl_draw_button *pfn_draw_button;
-    fn_window_impl_draw_label  *pfn_draw_label;
-    fn_window_impl_char_width  *pfn_char_width;
-    fn_window_impl_char_height *pfn_char_height;
-    fn_window_impl_key         *pfn_key;
-    fn_window_impl_click       *pfn_click;
+    fn_window_impl_redraw       *pfn_redraw;
+    fn_window_impl_raise        *pfn_raise;
+    fn_window_impl_lower        *pfn_lower;
+    fn_window_impl_iconify      *pfn_iconify;
+    fn_window_impl_deiconify    *pfn_deiconify;
+    fn_window_impl_set_contents *pfn_set_contents;
+    fn_window_impl_draw_char    *pfn_draw_char;
+    fn_window_impl_draw_rect    *pfn_draw_rect;
+    fn_window_impl_fill_rect    *pfn_fill_rect;
+    fn_window_impl_clear_rect   *pfn_clear_rect;
+    fn_window_impl_draw_button  *pfn_draw_button;
+    fn_window_impl_draw_label   *pfn_draw_label;
+    fn_window_impl_char_width   *pfn_char_width;
+    fn_window_impl_char_height  *pfn_char_height;
+    fn_window_impl_key          *pfn_key;
+    fn_window_impl_click        *pfn_click;
 };
 
 struct window_s
