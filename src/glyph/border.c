@@ -35,9 +35,9 @@ void border_position_set (border *p_border, point _point)
 
 void border_draw (border *p_border, window *p_window)
 {
-    composition_draw((composition *)p_border, p_window);
-
     draw_border(p_border, p_window);
+    
+    composition_draw((composition *)p_border, p_window);
 }
 
 rect border_bounds_get (border *p_border)
@@ -62,6 +62,14 @@ rect border_bounds_get (border *p_border)
 int draw_border( border *p_border, window *p_window )
 {
     rect b = p_border->_mono_glyph._composition._glyph.pfn_bounds_get((glyph *)p_border);
+
+    p_window->pfn_clear_rect(
+        p_window,
+        b.origin.x + p_border->_s,
+        b.origin.y + p_border->_s,
+        b.extent.x - 2 * p_border->_s,
+        b.extent.y - 2 * p_border->_s
+    );
 
     for (int i = 0; i < p_border->_s; i++)
         p_window->pfn_draw_rect(
