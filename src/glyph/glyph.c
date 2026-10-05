@@ -26,7 +26,9 @@ int glyph_construct ( glyph *p_glyph )
         .pfn_iterator        = (fn_glyph_iterator *)        glyph_iterator,
         .pfn_find            = (fn_glyph_find *)            glyph_find,          
         .pfn_click           = (fn_glyph_click *)           glyph_click,            
-        .pfn_key             = (fn_glyph_key *)             glyph_key,        
+        .pfn_key             = (fn_glyph_key *)             glyph_key, 
+        .pfn_command_set     = (fn_glyph_command_set *)     glyph_command_set,
+        .pfn_command_get     = (fn_glyph_command_get *)     glyph_command_get 
     };
 
     return 1;
@@ -58,3 +60,5 @@ iterator     glyph_iterator        ( glyph *p_glyph ) { (void) p_glyph; return (
 glyph       *glyph_find            ( glyph *p_glyph, point p ) { if ( p_glyph->pfn_intersects(p_glyph, p) ) return p_glyph; return NULL; }
 void         glyph_click           ( glyph *p_glyph ) { if ( p_glyph->p_parent ) p_glyph->p_parent->pfn_click(p_glyph->p_parent); }
 void         glyph_key             ( glyph *p_glyph, char c ) { if ( p_glyph->p_parent ) p_glyph->p_parent->pfn_key(p_glyph->p_parent, c); }
+void         glyph_command_set     ( glyph *p_glyph, command *p_command ) { p_glyph->p_command = p_command; }
+glyph       *glyph_command_get     ( glyph *p_glyph ) { return p_glyph->p_command; }

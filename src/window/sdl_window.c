@@ -15,6 +15,7 @@ struct font_cache_entry_s
 int  sdl_window_redraw      ( sdl_window *p_window );
 void sdl_window_draw_rect   ( sdl_window *p_window, int x, int y, int w, int h );
 void sdl_window_fill_rect   ( sdl_window *p_window, int x, int y, int w, int h );
+void sdl_window_clear_rect  ( sdl_window *p_window, int x, int y, int w, int h );
 int  sdl_window_char_width  ( sdl_window *p_window, char c, bool bold, bool italic, float size );
 int  sdl_window_char_height ( sdl_window *p_window, char c, bool bold, bool italic, float size );
 void sdl_window_char_draw   ( sdl_window *p_window, char c, bool bold, bool italic, float size, int x, int y );
@@ -78,6 +79,7 @@ window_impl *sdl_window_construct ( const char *title, window *w)
             .pfn_redraw      = (fn_window_impl_redraw *)      sdl_window_redraw,
             .pfn_draw_rect   = (fn_window_impl_draw_rect *)   sdl_window_draw_rect,
             .pfn_fill_rect   = (fn_window_impl_fill_rect *)   sdl_window_fill_rect,
+            .pfn_clear_rect  = (fn_window_impl_clear_rect *)  sdl_window_clear_rect,
             .pfn_char_width  = (fn_window_impl_char_width *)  sdl_window_char_width,
             .pfn_draw_button = (fn_window_impl_draw_button *) sdl_window_draw_button,
             .pfn_draw_label  = (fn_window_impl_draw_label *)  sdl_window_draw_label,
@@ -162,6 +164,20 @@ void sdl_window_fill_rect ( sdl_window *p_window, int x, int y, int w, int h )
     SDL_FRect r = {(float)x,(float)y,(float)w,(float)h};
     
     SDL_RenderFillRect(p_window->p_r, &r);
+}
+
+void sdl_window_clear_rect ( sdl_window *p_window, int x, int y, int w, int h )
+{
+    SDL_Color lc = { 0 };
+    SDL_FRect r = {(float)x,(float)y,(float)w,(float)h};
+
+    SDL_GetRenderDrawColor(p_window->p_r,&lc.r,&lc.g,&lc.b,&lc.a);
+
+    SDL_SetRenderDrawColor(p_window->p_r, 255,255,255,255);
+
+    sdl_window_fill_rect(p_window, x, y, w, h);
+
+    SDL_SetRenderDrawColor(p_window->p_r,lc.r,lc.g,lc.b,lc.a);
 }
 
 font_cache_entry *sdl_window_get_or_create_glyph ( sdl_window *p_window, char c, bool bold, bool italic, float size ) 

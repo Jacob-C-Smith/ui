@@ -27,3 +27,5 @@ iterator     glyph_iterator        ( glyph *p_glyph );
 glyph       *glyph_find            ( glyph *p_glyph, point p );
 void         glyph_click           ( glyph *p_glyph );
 void         glyph_key             ( glyph *p_glyph, char c );
+void         glyph_command_set     ( glyph *p_glyph, command *p_command );
+glyph       *glyph_command_get     ( glyph *p_glyph );
