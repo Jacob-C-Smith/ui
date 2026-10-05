@@ -12,14 +12,14 @@ column *column_construct ( void )
 
     return p_column;
 }
-column *column_from_strings ( int count, const char *string[] )
+column *column_from_strings ( int count, const char *string[], bool bold, bool italic, float size )
 {
     column *p_column = column_construct();
 
     for (int i = 0; i < count; i++)
         p_column->_composition._glyph.pfn_insert(
             (glyph *)p_column, 
-            (glyph *)row_from_string(string[i]),
+            (glyph *)row_from_string(string[i],bold, italic, size),
             i
         );
     

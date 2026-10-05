@@ -7,5 +7,5 @@
 #include <glyph/row.h>
 
 column *column_construct ( void );
-column *column_from_strings ( int count, const char *string[] );
+column *column_from_strings ( int count, const char *string[], bool bold, bool italic, float size );
 column *column_from_arguments ( size_t count, ... );

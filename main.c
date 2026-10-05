@@ -34,7 +34,7 @@ int main ( int argc, const char *argv[] )
 
     b->pfn_command_set(b, (command *) print_command_construct("hi"));
 
-        p_window->_window.pfn_set_contents
+    p_window->_window.pfn_set_contents
     (
         (window *) p_window, 
         (glyph *) column_from_arguments
@@ -54,23 +54,23 @@ int main ( int argc, const char *argv[] )
                                 row_from_arguments
                                 (
                                     4,
-                                    character_construct('a'),
+                                    character_construct('a', false, false, 30.0),
                                     rectangle_construct((rect){.origin={0,0},.extent={25,50}}),
                                     column_from_arguments
                                     (
                                         3,
-                                        character_construct('X'),
+                                        character_construct('X', false, false, 30.0),
                                         (glyph *) l,
-                                        character_construct('Z')
+                                        character_construct('Z', false, false, 30.0)
                                     ),
-                                    character_construct('b')
+                                    character_construct('b', false, false, 30.0)
                                 ),
                                 row_from_arguments
                                 (
                                     3,
-                                    character_construct('x'),
+                                    character_construct('x', false, false, 30.0),
                                     rectangle_construct((rect){.origin={0,0},.extent={50,25}}),
-                                    character_construct('y')
+                                    character_construct('y', false, false, 30.0)
                                 ),
                                 (glyph *) b
                             ), 

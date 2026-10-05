@@ -13,14 +13,14 @@ row *row_construct ( void )
     return p_row;
 }
 
-row *row_from_string ( const char *string )
+row *row_from_string ( const char *string, bool bold, bool italic, float size )
 {
     row *p_row = row_construct();
 
     for (size_t i = 0; i < strlen(string); i++)
         p_row->_composition._glyph.pfn_insert(
             (glyph *)p_row, 
-            (glyph *)character_construct(string[i]),
+            (glyph *)character_construct(string[i], bold, italic, size),
             i
         );
     
