@@ -2,10 +2,11 @@
 
 static gui_factory _gui_factory = { 0 };
 
-button *gui_factory_button_construct ( gui_factory *p_gui_factory, const char *text );
-label  *gui_factory_label_construct  ( gui_factory *p_gui_factory, const char *text );
-menu *gui_factory_menu_construct ( gui_factory *p_gui_factory );
+button    *gui_factory_button_construct    ( gui_factory *p_gui_factory, const char *text );
+label     *gui_factory_label_construct     ( gui_factory *p_gui_factory, const char *text );
+menu      *gui_factory_menu_construct      ( gui_factory *p_gui_factory );
 menu_item *gui_factory_menu_item_construct ( gui_factory *p_gui_factory, const char *text );
+checkbox   *gui_factory_checkbox_construct   ( gui_factory *p_gui_factory, int choices, const char *options[] );
 
 gui_factory *gui_factory_instance ( void )
 {
@@ -25,10 +26,11 @@ gui_factory *gui_factory_instance ( void )
         else
             _gui_factory.p_unique_instance = blue_gui_factory_instance();
         
-        _gui_factory.pfn_button_construct = gui_factory_button_construct;
-        _gui_factory.pfn_label_construct = gui_factory_label_construct;
-        _gui_factory.pfn_menu_construct = gui_factory_menu_construct;
+        _gui_factory.pfn_button_construct    = gui_factory_button_construct;
+        _gui_factory.pfn_label_construct     = gui_factory_label_construct;
+        _gui_factory.pfn_menu_construct      = gui_factory_menu_construct;
         _gui_factory.pfn_menu_item_construct = gui_factory_menu_item_construct;
+        _gui_factory.pfn_checkbox_construct  = gui_factory_checkbox_construct;
     }
 
     return &_gui_factory;
@@ -52,4 +54,9 @@ menu *gui_factory_menu_construct ( gui_factory *p_gui_factory )
 menu_item *gui_factory_menu_item_construct ( gui_factory *p_gui_factory, const char *text )
 {
     return p_gui_factory->p_unique_instance->pfn_menu_item_construct(p_gui_factory->p_unique_instance, text);
+}
+
+checkbox *gui_factory_checkbox_construct ( gui_factory *p_gui_factory, int choices, const char *options[] )
+{
+    return p_gui_factory->p_unique_instance->pfn_checkbox_construct(p_gui_factory->p_unique_instance, choices, options);
 }

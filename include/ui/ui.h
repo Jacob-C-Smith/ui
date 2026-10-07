@@ -53,6 +53,12 @@ struct menu_item_s;
 struct red_menu_item_s;
 struct green_menu_item_s;
 struct blue_menu_item_s;
+struct checkbox_s;
+struct red_checkbox_s;
+struct green_checkbox_s;
+struct blue_checkbox_s;
+struct checkbox_command_s;
+struct checkbox_set_command_s;
 
 typedef struct point_s point;
 typedef struct rect_s rect;
@@ -92,7 +98,6 @@ typedef struct blue_label_s blue_label;
 typedef struct command_s command;
 typedef struct print_command_s print_command;
 typedef struct menu_toggle_s menu_toggle;
-typedef array key_map;
 typedef struct menu_s menu;
 typedef struct red_menu_s red_menu;
 typedef struct green_menu_s green_menu;
@@ -101,6 +106,13 @@ typedef struct menu_item_s menu_item;
 typedef struct red_menu_item_s red_menu_item;
 typedef struct green_menu_item_s green_menu_item;
 typedef struct blue_menu_item_s blue_menu_item;
+typedef struct checkbox_s checkbox;
+typedef struct red_checkbox_s red_checkbox;
+typedef struct green_checkbox_s green_checkbox;
+typedef struct blue_checkbox_s blue_checkbox;
+typedef struct checkbox_command_s checkbox_command;
+typedef struct checkbox_set_command_s checkbox_set_command;
+typedef array key_map;
 
 typedef int(fn_window_draw)(window *p_window);
 typedef int(fn_window_redraw)(window *p_window);
@@ -171,6 +183,7 @@ typedef button *(fn_gui_factory_button_construct)( gui_factory *p_gui_factory, c
 typedef label *(fn_gui_factory_label_construct)( gui_factory *p_gui_factory, const char *text );
 typedef menu *(fn_gui_factory_menu_construct)( gui_factory *p_gui_factory );
 typedef menu_item *(fn_gui_factory_menu_item_construct)( gui_factory *p_gui_factory, const char *text );
+typedef checkbox *(fn_gui_factory_checkbox_construct)( gui_factory *p_gui_factory, int count, const char *options[] );
 
 typedef void (fn_command_execute)( command *p_command );
 typedef void (fn_command_unexecute)( command *p_command );
@@ -298,6 +311,7 @@ struct rectangle_s
 {
     glyph _glyph;
     rect _dimensions;
+    bool fill;
 };
 
 struct character_s
@@ -318,25 +332,10 @@ struct composition_s
     compositor *p_compositor;
 };
 
-struct row_s
-{
-    composition _composition;
-};
-
-struct column_s
-{
-    composition _composition;
-};
-
-struct overlay_s
-{
-    composition _composition;
-};
-
-struct mono_glyph_s
-{
-    composition _composition;
-};
+struct row_s        { composition _composition; };
+struct column_s     { composition _composition; };
+struct overlay_s    { composition _composition; };
+struct mono_glyph_s { composition _composition; };
 
 struct margin_s
 {
@@ -369,50 +368,47 @@ struct compositor_s
     composition                   *p_composition;
 };
 
-struct null_compositor_s 
-{
-    compositor _compositor;
-};
-
-struct simple_compositor_s 
-{
-    compositor _compositor;
-};
+struct null_compositor_s   { compositor _compositor; };
+struct simple_compositor_s { compositor _compositor; };
 
 struct gui_factory_s
 {
-    gui_factory                     *p_unique_instance;
-    fn_gui_factory_button_construct *pfn_button_construct;
-    fn_gui_factory_label_construct  *pfn_label_construct;
-    fn_gui_factory_menu_construct   *pfn_menu_construct;
+    gui_factory                        *p_unique_instance;
+    fn_gui_factory_button_construct    *pfn_button_construct;
+    fn_gui_factory_label_construct     *pfn_label_construct;
+    fn_gui_factory_menu_construct      *pfn_menu_construct;
     fn_gui_factory_menu_item_construct *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_construct  *pfn_checkbox_construct;
 };
 
 struct red_gui_factory_s
 {
-    red_gui_factory                 *p_unique_instance;
-    fn_gui_factory_button_construct *pfn_button_construct;
-    fn_gui_factory_label_construct  *pfn_label_construct;
-    fn_gui_factory_menu_construct   *pfn_menu_construct;
+    red_gui_factory                    *p_unique_instance;
+    fn_gui_factory_button_construct    *pfn_button_construct;
+    fn_gui_factory_label_construct     *pfn_label_construct;
+    fn_gui_factory_menu_construct      *pfn_menu_construct;
     fn_gui_factory_menu_item_construct *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_construct  *pfn_checkbox_construct;
 };
 
 struct green_gui_factory_s
 {
-    green_gui_factory               *p_unique_instance;
-    fn_gui_factory_button_construct *pfn_button_construct;
-    fn_gui_factory_label_construct  *pfn_label_construct;
-    fn_gui_factory_menu_construct   *pfn_menu_construct;
+    green_gui_factory                  *p_unique_instance;
+    fn_gui_factory_button_construct    *pfn_button_construct;
+    fn_gui_factory_label_construct     *pfn_label_construct;
+    fn_gui_factory_menu_construct      *pfn_menu_construct;
     fn_gui_factory_menu_item_construct *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_construct  *pfn_checkbox_construct;
 };
 
 struct blue_gui_factory_s
 {
-    blue_gui_factory                *p_unique_instance;
-    fn_gui_factory_button_construct *pfn_button_construct;
-    fn_gui_factory_label_construct  *pfn_label_construct;
-    fn_gui_factory_menu_construct   *pfn_menu_construct;
+    blue_gui_factory                   *p_unique_instance;
+    fn_gui_factory_button_construct    *pfn_button_construct;
+    fn_gui_factory_label_construct     *pfn_label_construct;
+    fn_gui_factory_menu_construct      *pfn_menu_construct;
     fn_gui_factory_menu_item_construct *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_construct  *pfn_checkbox_construct;
 };
 
 struct button_s
@@ -420,40 +416,18 @@ struct button_s
     mono_glyph _mono_glyph;
 };
 
-struct red_button_s
-{
-    button _button;
-};
-
-struct green_button_s
-{
-    button _button;
-};
-
-struct blue_button_s
-{
-    button _button;
-};
+struct red_button_s   { button _button; };
+struct green_button_s { button _button; };
+struct blue_button_s  { button _button; };
 
 struct label_s 
 {
     mono_glyph _mono_glyph;
 };
 
-struct red_label_s
-{
-    label _label;
-};
-
-struct green_label_s
-{
-    label _label;
-};
-
-struct blue_label_s
-{
-    label _label;
-};
+struct red_label_s   { label _label; };
+struct green_label_s { label _label; };
+struct blue_label_s  { label _label; };
 
 struct menu_s
 {
@@ -461,18 +435,21 @@ struct menu_s
     bool _open;
 };
 
-struct red_menu_s { menu _menu; };
+struct red_menu_s   { menu _menu; };
 struct green_menu_s { menu _menu; };
-struct blue_menu_s { menu _menu; };
+struct blue_menu_s  { menu _menu; };
 
-struct menu_item_s
-{
-    row _item;
-};
+struct menu_item_s { row _item; };
 
-struct red_menu_item_s { menu_item _menu_item; };
+struct red_menu_item_s   { menu_item _menu_item; };
 struct green_menu_item_s { menu_item _menu_item; };
-struct blue_menu_item_s { menu_item _menu_item; };
+struct blue_menu_item_s  { menu_item _menu_item; };
+
+struct checkbox_s { mono_glyph _mono_glyph; int count; };
+
+struct red_checkbox_s   { checkbox _checkbox; };
+struct green_checkbox_s { checkbox _checkbox; };
+struct blue_checkbox_s  { checkbox _checkbox; };
 
 struct command_s 
 {
@@ -492,4 +469,17 @@ struct menu_toggle_s
 {
     command _command;
     menu *p_menu;
+};
+
+struct checkbox_command_s
+{
+    command _command;
+    int choice;
+};
+
+struct checkbox_set_command_s
+{
+    command _command;
+    checkbox *p_checkbox;
+    int set;
 };

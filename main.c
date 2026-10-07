@@ -21,6 +21,7 @@
 #include <factory/gui_factory.h>
 #include <command/print_command.h>
 #include <command/menu_toggle.h>
+#include <glyph/checkbox.h>
 
 key_map *setup_key_map ( void );
 glyph   *setup_menu_bar ( void );
@@ -30,10 +31,14 @@ int main ( int argc, const char *argv[] )
     (void) argc;
     (void) argv;
 
+    char _text[128] = { 'p', 'q', '\0' };
+    char *p_text = _text;
+
     application_window *p_window      = application_window_construct(" UI ");
     gui_factory        *p_gui_factory = gui_factory_instance();
     label              *l             = p_gui_factory->pfn_label_construct(p_gui_factory, "pq");
     button             *b             = p_gui_factory->pfn_button_construct(p_gui_factory, "PQ");
+    checkbox           *cbox          = p_gui_factory->pfn_checkbox_construct(p_gui_factory, 3, (const char *[]){"aAa","bBb","cCc"});
 
     p_window->p_key_map = setup_key_map();
 
@@ -52,7 +57,7 @@ int main ( int argc, const char *argv[] )
                         (
                             (glyph *)column_from_arguments
                             (
-                                3,
+                                4,
                                 row_from_arguments
                                 (
                                     4,
@@ -74,7 +79,8 @@ int main ( int argc, const char *argv[] )
                                     rectangle_construct((rect){.origin={0,0},.extent={50,25}}),
                                     character_construct('y', false, false, 30.0)
                                 ),
-                                (glyph *) b
+                                (glyph *) b,
+                                (glyph *) cbox
                             ), 
                         128),
                     32),
@@ -114,7 +120,7 @@ glyph *setup_menu_bar ( void )
 
     glyph *p_file_menu  = p_gui_factory->pfn_menu_construct(p_gui_factory);
     {
-        glyph *p_file_title = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " File ");
+        glyph *p_file_title = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "   File   ");
         glyph *p_file_new   = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " New ");
         glyph *p_file_open  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " Open ");
         glyph *p_file_save  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " Save ");
@@ -136,7 +142,7 @@ glyph *setup_menu_bar ( void )
 
     glyph *p_edit_menu  = p_gui_factory->pfn_menu_construct(p_gui_factory);
     {
-        glyph *p_edit_title = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " Edit ");
+        glyph *p_edit_title = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "   Edit   ");
         glyph *p_edit_undo  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "Undo");
         glyph *p_edit_redo  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "Redo");
         glyph *p_edit_cut   = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "Cut");
