@@ -17,6 +17,9 @@ int  sdl_window_redraw       ( sdl_window *p_window );
 void sdl_window_draw_rect    ( sdl_window *p_window, int x, int y, int w, int h );
 void sdl_window_fill_rect    ( sdl_window *p_window, int x, int y, int w, int h );
 void sdl_window_clear_rect   ( sdl_window *p_window, int x, int y, int w, int h );
+void sdl_window_draw_circle  ( sdl_window *p_window, int x, int y, int w, int h );
+void sdl_window_fill_circle  ( sdl_window *p_window, int x, int y, int w, int h );
+void sdl_window_clear_circle ( sdl_window *p_window, int x, int y, int w, int h );
 int  sdl_window_char_width   ( sdl_window *p_window, char c, bool bold, bool italic, float size );
 int  sdl_window_char_height  ( sdl_window *p_window, char c, bool bold, bool italic, float size );
 void sdl_window_char_draw    ( sdl_window *p_window, char c, bool bold, bool italic, float size, int x, int y );
@@ -82,6 +85,9 @@ window_impl *sdl_window_construct ( const char *title, window *w)
             .pfn_draw_rect    = (fn_window_impl_draw_rect *)    sdl_window_draw_rect,
             .pfn_fill_rect    = (fn_window_impl_fill_rect *)    sdl_window_fill_rect,
             .pfn_clear_rect   = (fn_window_impl_clear_rect *)   sdl_window_clear_rect,
+            .pfn_draw_circle  = (fn_window_impl_draw_circle *)  sdl_window_draw_circle,
+            .pfn_fill_circle  = (fn_window_impl_fill_circle *)  sdl_window_fill_circle,
+            .pfn_clear_circle = (fn_window_impl_clear_circle *) sdl_window_clear_circle,
             .pfn_char_width   = (fn_window_impl_char_width *)   sdl_window_char_width,
             .pfn_draw_button  = (fn_window_impl_draw_button *)  sdl_window_draw_button,
             .pfn_draw_label   = (fn_window_impl_draw_label *)   sdl_window_draw_label,
@@ -188,6 +194,150 @@ void sdl_window_clear_rect ( sdl_window *p_window, int x, int y, int w, int h )
     SDL_SetRenderDrawColor(p_window->p_r, 255,255,255,255);
 
     sdl_window_fill_rect(p_window, x, y, w, h);
+
+    SDL_SetRenderDrawColor(p_window->p_r,lc.r,lc.g,lc.b,lc.a);
+}
+
+void sdl_window_draw_circle(sdl_window *p_window, int x, int y, int w, int h)
+{
+    long rx = w / 2;
+    long ry = h / 2;
+
+    if (rx <= 0 || ry <= 0) {
+        return;
+    }
+
+    int cx = x + rx;
+    int cy = y + ry;
+
+    long rx_sq = rx * rx;
+    long ry_sq = ry * ry;
+
+    long curr_x = 0;
+    long curr_y = ry;
+
+    long d1 = ry_sq - (rx_sq * ry) + (rx_sq / 4);
+    long dx = 2 * ry_sq * curr_x;
+    long dy = 2 * rx_sq * curr_y;
+
+    while (dx < dy) {
+        SDL_RenderPoint(p_window->p_r, cx + curr_x, cy + curr_y);
+        SDL_RenderPoint(p_window->p_r, cx - curr_x, cy + curr_y);
+        SDL_RenderPoint(p_window->p_r, cx + curr_x, cy - curr_y);
+        SDL_RenderPoint(p_window->p_r, cx - curr_x, cy - curr_y);
+
+        curr_x++;
+        dx += 2 * ry_sq;
+
+        if (d1 < 0) {
+            d1 += dx + ry_sq;
+        } else {
+            curr_y--;
+            dy -= 2 * rx_sq;
+            d1 += dx - dy + ry_sq;
+        }
+    }
+
+    long d2 = ry_sq * (curr_x * curr_x + curr_x) + (ry_sq / 4) +
+              rx_sq * (curr_y - 1) * (curr_y - 1) -
+              rx_sq * ry_sq;
+
+    while (curr_y >= 0) {
+        SDL_RenderPoint(p_window->p_r, cx + curr_x, cy + curr_y);
+        SDL_RenderPoint(p_window->p_r, cx - curr_x, cy + curr_y);
+        SDL_RenderPoint(p_window->p_r, cx + curr_x, cy - curr_y);
+        SDL_RenderPoint(p_window->p_r, cx - curr_x, cy - curr_y);
+
+        curr_y--;
+        dy -= 2 * rx_sq;
+
+        if (d2 > 0) {
+            d2 += rx_sq - dy;
+        } else {
+            curr_x++;
+            dx += 2 * ry_sq;
+            d2 += dx - dy + rx_sq;
+        }
+    }
+}
+
+void sdl_window_fill_circle(sdl_window *p_window, int x, int y, int w, int h)
+{
+    long rx = w / 2;
+    long ry = h / 2;
+
+    if (rx <= 0 || ry <= 0) {
+        return;
+    }
+
+    int cx = x + rx;
+    int cy = y + ry;
+
+    long rx_sq = rx * rx;
+    long ry_sq = ry * ry;
+
+    long curr_x = 0;
+    long curr_y = ry;
+
+    long d1 = ry_sq - (rx_sq * ry) + (rx_sq / 4);
+    long dx = 2 * ry_sq * curr_x;
+    long dy = 2 * rx_sq * curr_y;
+
+    long last_drawn_y = -1;
+
+    while (dx < dy) {
+        if (curr_y != last_drawn_y) {
+            SDL_RenderLine(p_window->p_r, cx - curr_x, cy + curr_y, cx + curr_x, cy + curr_y);
+            SDL_RenderLine(p_window->p_r, cx - curr_x, cy - curr_y, cx + curr_x, cy - curr_y);
+            last_drawn_y = curr_y;
+        }
+
+        curr_x++;
+        dx += 2 * ry_sq;
+
+        if (d1 < 0) {
+            d1 += dx + ry_sq;
+        } else {
+            curr_y--;
+            dy -= 2 * rx_sq;
+            d1 += dx - dy + ry_sq;
+        }
+    }
+
+    long d2 = ry_sq * (curr_x * curr_x + curr_x) + (ry_sq / 4) +
+              rx_sq * (curr_y - 1) * (curr_y - 1) -
+              rx_sq * ry_sq;
+
+    while (curr_y >= 0) {
+        if (curr_y != last_drawn_y) {
+            SDL_RenderLine(p_window->p_r, cx - curr_x, cy + curr_y, cx + curr_x, cy + curr_y);
+            SDL_RenderLine(p_window->p_r, cx - curr_x, cy - curr_y, cx + curr_x, cy - curr_y);
+            last_drawn_y = curr_y;
+        }
+
+        curr_y--;
+        dy -= 2 * rx_sq;
+
+        if (d2 > 0) {
+            d2 += rx_sq - dy;
+        } else {
+            curr_x++;
+            dx += 2 * ry_sq;
+            d2 += dx - dy + rx_sq;
+        }
+    }
+}
+
+void sdl_window_clear_circle(sdl_window *p_window, int x, int y, int w, int h)
+{
+    SDL_Color lc = { 0 };
+    SDL_FRect r = {(float)x,(float)y,(float)w,(float)h};
+
+    SDL_GetRenderDrawColor(p_window->p_r,&lc.r,&lc.g,&lc.b,&lc.a);
+
+    SDL_SetRenderDrawColor(p_window->p_r, 255,255,255,255);
+
+    sdl_window_fill_circle(p_window, x, y, w, h);
 
     SDL_SetRenderDrawColor(p_window->p_r,lc.r,lc.g,lc.b,lc.a);
 }

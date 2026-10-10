@@ -1,10 +1,15 @@
 #include <factory/green_factory.h>
 #include <glyph/button.h>
 #include <glyph/label.h>
+#include <glyph/checkbox.h>
+#include <glyph/radio_button.h>
 #include <glyph/green_menu.h>
 #include <glyph/green_menu_item.h>
 #include <glyph/green_checkbox.h>
-#include <glyph/checkbox.h>
+#include <glyph/green_radio_button.h>
+#include <glyph/green_button.h>
+#include <glyph/green_label.h>
+
 
 static green_gui_factory _green_gui_factory = { 0 };
 
@@ -13,6 +18,7 @@ label  *green_label_construct ( green_gui_factory *p_green_factory, const char *
 checkbox *green_checkbox_construct ( green_gui_factory *p_green_factory, int count, const char *options[] );
 menu *green_menu_construct_factory ( green_gui_factory *p_green_factory );
 menu_item *green_menu_item_construct_factory ( green_gui_factory *p_green_factory, const char *text );
+radio_button  *green_radio_button_construct      ( green_gui_factory *p_green_factory, int count, const char *options[] );
 
 int green_gui_factory_construct ( )
 {
@@ -22,6 +28,7 @@ int green_gui_factory_construct ( )
     _green_gui_factory.pfn_menu_construct = (fn_gui_factory_menu_construct *) green_menu_construct_factory;
     _green_gui_factory.pfn_menu_item_construct = (fn_gui_factory_menu_item_construct *) green_menu_item_construct_factory;
     _green_gui_factory.pfn_checkbox_construct = (fn_gui_factory_checkbox_construct *) green_checkbox_construct;
+    _green_gui_factory.pfn_radio_button_construct = (fn_gui_factory_radio_button_construct *) green_radio_button_construct;
     return 1;
 }
 
@@ -73,4 +80,12 @@ checkbox *green_checkbox_construct ( green_gui_factory *p_green_factory, int cou
     checkbox *p_checkbox = checkbox_construct(count, options);
     p_checkbox->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)green_checkbox_draw;
     return p_checkbox;
+}
+
+radio_button *green_radio_button_construct ( green_gui_factory *p_green_factory, int count, const char *options[] )
+{
+    (void)p_green_factory;
+    radio_button *p_radio_button = radio_button_construct(count, options);
+    p_radio_button->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)green_radio_button_draw;
+    return p_radio_button;
 }

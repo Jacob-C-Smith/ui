@@ -22,6 +22,7 @@
 #include <command/print_command.h>
 #include <command/menu_toggle.h>
 #include <glyph/checkbox.h>
+#include <glyph/radio_button.h>
 
 key_map *setup_key_map ( void );
 glyph   *setup_menu_bar ( void );
@@ -39,6 +40,7 @@ int main ( int argc, const char *argv[] )
     label              *l             = p_gui_factory->pfn_label_construct(p_gui_factory, "pq");
     button             *b             = p_gui_factory->pfn_button_construct(p_gui_factory, "PQ");
     checkbox           *cbox          = p_gui_factory->pfn_checkbox_construct(p_gui_factory, 3, (const char *[]){"aAa","bBb","cCc"});
+    radio_button       *rbut          = p_gui_factory->pfn_radio_button_construct(p_gui_factory, 3, (const char *[]){"AaA","BbB","CcC"});
 
     p_window->p_key_map = setup_key_map();
 
@@ -57,7 +59,7 @@ int main ( int argc, const char *argv[] )
                         (
                             (glyph *)column_from_arguments
                             (
-                                4,
+                                5,
                                 row_from_arguments
                                 (
                                     4,
@@ -80,7 +82,8 @@ int main ( int argc, const char *argv[] )
                                     character_construct('y', false, false, 30.0)
                                 ),
                                 (glyph *) b,
-                                (glyph *) cbox
+                                (glyph *) cbox,
+                                (glyph *) rbut
                             ), 
                         128),
                     32),
