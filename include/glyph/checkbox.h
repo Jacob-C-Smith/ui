@@ -9,4 +9,4 @@
 #include <command/checkbox_command.h>
 #include <command/checkbox_set_command.h>
 
-checkbox *checkbox_construct( int count, const char *options[] );
+checkbox *checkbox_construct( const char *text );
