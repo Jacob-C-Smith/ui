@@ -6,7 +6,7 @@ radio_button *radio_button_construct( radio_button_group *p_group, const char *t
 {
     radio_button *p_radio_button = default_allocator(NULL, sizeof(radio_button));
 
-    glyph *p_circle = (glyph *)circle_construct((rect){{0}, {25, 25}});
+    glyph *p_circle = (glyph *)circle_construct((rect){{0}, {30, 30}});
     p_circle->pfn_command_set(p_circle, (command *)radio_button_set_command_construct(p_group, p_radio_button));
     p_circle->pfn_click = (fn_glyph_click *) radio_button_click;
 

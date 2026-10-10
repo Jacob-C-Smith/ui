@@ -24,5 +24,14 @@ void red_menu_draw ( red_menu *p_red_menu, window *p_window )
         b.extent.y
     );
 
+    p_window->pfn_draw_label(
+        p_window, 
+        b.origin.x,
+        b.origin.y, 
+        b.extent.x, 
+        b.extent.y,
+        "red"
+    );
+
     menu_draw(p_menu, p_window);
 }

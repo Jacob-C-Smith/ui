@@ -33,9 +33,9 @@ void simple_compositor_compose ( compositor *p_compositor )
     {
         glyph *p_child = it.item(&it);
 
-        p_child->pfn_size(p_child, p_window);
         p_child->pfn_position_set(p_child, c);
         p_child->pfn_compose(p_child);
+        p_child->pfn_size(p_child, p_window);
 
         c = p_comp->pfn_adjust_child(p_comp, p_child, c);
     }
