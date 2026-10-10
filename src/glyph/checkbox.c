@@ -6,7 +6,7 @@ checkbox *checkbox_construct( const char *text )
 {
     checkbox *p_checkbox = default_allocator(NULL, sizeof(checkbox));
 
-    glyph *p_rectangle = (glyph *)rectangle_construct((rect){{0}, {25, 25}});
+    glyph *p_rectangle = (glyph *)rectangle_construct((rect){{0}, {30, 30}});
     p_rectangle->pfn_command_set(p_rectangle, (command *)checkbox_set_command_construct(p_checkbox, 0));
     p_rectangle->pfn_click = (fn_glyph_click *) checkbox_click;
 

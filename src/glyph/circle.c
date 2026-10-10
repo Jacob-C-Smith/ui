@@ -31,7 +31,7 @@ void circle_draw ( circle *p_circle, window *p_window )
             p_window,
             p_circle->_glyph.pfn_bounds_get((glyph *)p_circle).origin.x + p_circle->_dimensions.origin.x + p_circle->_dimensions.extent.x / 4,
             p_circle->_glyph.pfn_bounds_get((glyph *)p_circle).origin.y + p_circle->_dimensions.origin.y + p_circle->_dimensions.extent.y / 4,
-            p_circle->_dimensions.extent.x / 2,
-            p_circle->_dimensions.extent.y / 2
+            (p_circle->_dimensions.extent.x / 2) + 1,
+            (p_circle->_dimensions.extent.y / 2) + 1
         );
 }

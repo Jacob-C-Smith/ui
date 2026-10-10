@@ -15,6 +15,7 @@ void green_menu_draw ( green_menu *p_green_menu, window *p_window )
         if ( p_first ) b = p_first->pfn_bounds_get(p_first);
         else b = p_menu->_column._composition._glyph._bounds;
     }
+
     p_window->pfn_clear_rect(
         p_window, 
         b.origin.x,
@@ -22,6 +23,15 @@ void green_menu_draw ( green_menu *p_green_menu, window *p_window )
         b.extent.x, 
         b.extent.y
     );
-    
+   
+    p_window->pfn_draw_label(
+        p_window, 
+        b.origin.x,
+        b.origin.y, 
+        b.extent.x, 
+        b.extent.y,
+        "green"
+    );
+ 
     menu_draw(p_menu, p_window);
 }

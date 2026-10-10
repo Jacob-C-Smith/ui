@@ -172,11 +172,11 @@ glyph *setup_menu_bar ( void )
     glyph *p_edit_menu  = p_gui_factory->pfn_menu_construct(p_gui_factory);
     {
         glyph *p_edit_title = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "   Edit   ");
-        glyph *p_edit_undo  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "Undo");
-        glyph *p_edit_redo  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "Redo");
-        glyph *p_edit_cut   = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "Cut");
-        glyph *p_edit_copy  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "Copy");
-        glyph *p_edit_paste = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, "Paste");
+        glyph *p_edit_undo  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " Undo ");
+        glyph *p_edit_redo  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " Redo ");
+        glyph *p_edit_cut   = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " Cut ");
+        glyph *p_edit_copy  = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " Copy ");
+        glyph *p_edit_paste = (glyph *) p_gui_factory->pfn_menu_item_construct(p_gui_factory, " Paste ");
         
         p_edit_undo->pfn_command_set(p_edit_undo,   (command *) print_command_construct("Edit > Undo"));
         p_edit_redo->pfn_command_set(p_edit_redo,   (command *) print_command_construct("Edit > Redo"));
@@ -195,7 +195,7 @@ glyph *setup_menu_bar ( void )
     }
 
     return (glyph *) row_from_arguments(2,
-        (glyph *)border_construct(p_file_menu, 1),
-        (glyph *)border_construct(p_edit_menu, 1)
+            p_file_menu,
+            p_edit_menu
     );
 }
