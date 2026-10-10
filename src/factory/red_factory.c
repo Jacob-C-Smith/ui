@@ -4,7 +4,9 @@
 #include <glyph/red_menu.h>
 #include <glyph/red_menu_item.h>
 #include <glyph/red_checkbox.h>
+#include <glyph/red_radio_button.h>
 #include <glyph/checkbox.h>
+#include <glyph/radio_button.h>
 
 static red_gui_factory _red_gui_factory = { 0 };
 
@@ -13,6 +15,7 @@ label  *red_label_construct ( red_gui_factory *p_red_factory, const char *text )
 checkbox *red_checkbox_construct ( red_gui_factory *p_red_factory, int choices, const char *options[] );
 menu *red_menu_construct_factory ( red_gui_factory *p_red_factory );
 menu_item *red_menu_item_construct_factory ( red_gui_factory *p_red_factory, const char *text );
+radio_button  *red_radio_button_construct      ( red_gui_factory *p_red_factory, int count, const char *options[] );
 
 int red_gui_factory_construct ( )
 {
@@ -22,6 +25,7 @@ int red_gui_factory_construct ( )
     _red_gui_factory.pfn_menu_construct = (fn_gui_factory_menu_construct *) red_menu_construct_factory;
     _red_gui_factory.pfn_menu_item_construct = (fn_gui_factory_menu_item_construct *) red_menu_item_construct_factory;
     _red_gui_factory.pfn_checkbox_construct = (fn_gui_factory_checkbox_construct *) red_checkbox_construct;
+    _red_gui_factory.pfn_radio_button_construct = (fn_gui_factory_radio_button_construct *) red_radio_button_construct;
     return 1;
 }
 
@@ -72,4 +76,12 @@ checkbox *red_checkbox_construct ( red_gui_factory *p_red_factory, int choices, 
     checkbox *p_checkbox = checkbox_construct(choices, options);
     p_checkbox->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)red_checkbox_draw;
     return p_checkbox;
+}
+
+radio_button *red_radio_button_construct ( red_gui_factory *p_red_factory, int count, const char *options[] )
+{
+    (void)p_red_factory;
+    radio_button *p_radio_button = radio_button_construct(count, options);
+    p_radio_button->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)red_radio_button_draw;
+    return p_radio_button;
 }

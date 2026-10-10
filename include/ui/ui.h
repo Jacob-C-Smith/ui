@@ -17,6 +17,7 @@ struct window_impl_s;
 struct window_s;
 struct glyph_s;
 struct rectangle_s;
+struct circle_s;
 struct character_s;
 struct composition_s;
 struct row_s;
@@ -59,6 +60,12 @@ struct green_checkbox_s;
 struct blue_checkbox_s;
 struct checkbox_command_s;
 struct checkbox_set_command_s;
+struct radio_button_command_s;
+struct radio_button_set_command_s;
+struct radio_button_s;
+struct red_radio_button_s;
+struct green_radio_button_s;
+struct blue_radio_button_s;
 
 typedef struct point_s point;
 typedef struct rect_s rect;
@@ -70,6 +77,7 @@ typedef struct window_impl_s window_impl;
 typedef struct window_s window;
 typedef struct glyph_s glyph;
 typedef struct rectangle_s rectangle;
+typedef struct circle_s circle;
 typedef struct character_s character;
 typedef struct composition_s composition;
 typedef struct row_s row;
@@ -112,6 +120,13 @@ typedef struct green_checkbox_s green_checkbox;
 typedef struct blue_checkbox_s blue_checkbox;
 typedef struct checkbox_command_s checkbox_command;
 typedef struct checkbox_set_command_s checkbox_set_command;
+typedef struct radio_button_command_s radio_button_command;
+typedef struct radio_button_set_command_s radio_button_set_command;
+typedef struct radio_button_s radio_button;
+typedef struct red_radio_button_s red_radio_button;
+typedef struct green_radio_button_s green_radio_button;
+typedef struct blue_radio_button_s blue_radio_button;
+
 typedef array key_map;
 
 typedef int(fn_window_draw)(window *p_window);
@@ -125,6 +140,9 @@ typedef void(fn_window_draw_char)(window *p_window, char c, bool bold, bool ital
 typedef void(fn_window_draw_rect)(window *p_window, int x, int y, int w, int h);
 typedef void(fn_window_clear_rect)(window *p_window, int x, int y, int w, int h);
 typedef void(fn_window_fill_rect)(window *p_window, int x, int y, int w, int h);
+typedef void(fn_window_draw_circle)(window *p_window, int x, int y, int w, int h);
+typedef void(fn_window_clear_circle)(window *p_window, int x, int y, int w, int h);
+typedef void(fn_window_fill_circle)(window *p_window, int x, int y, int w, int h);
 typedef void(fn_window_draw_button)(window *p_window, int x, int y, int w, int h, const char *p_button);
 typedef void(fn_window_draw_label)(window *p_window, int x, int y, int w, int h, const char *p_label);
 typedef int(fn_window_char_width)(window *p_window, char c, bool bold, bool italic, float size);
@@ -143,6 +161,9 @@ typedef void(fn_window_impl_draw_char)(window_impl *p_window_impl, char c, bool 
 typedef void(fn_window_impl_draw_rect)(window_impl *p_window_impl, int x, int y, int w, int h);
 typedef void(fn_window_impl_clear_rect)(window_impl *p_window_impl, int x, int y, int w, int h);
 typedef void(fn_window_impl_fill_rect)(window_impl *p_window_impl, int x, int y, int w, int h);
+typedef void(fn_window_impl_draw_circle)(window *p_window, int x, int y, int w, int h);
+typedef void(fn_window_impl_clear_circle)(window *p_window, int x, int y, int w, int h);
+typedef void(fn_window_impl_fill_circle)(window *p_window, int x, int y, int w, int h);
 typedef void(fn_window_impl_draw_button)(window_impl *p_window_impl, int x, int y, int w, int h, const char *p_button);
 typedef void(fn_window_impl_draw_label)(window_impl *p_window_impl, int x, int y, int w, int h, const char *p_label);
 typedef int(fn_window_impl_char_width)(window_impl *p_window_impl, char c, bool bold, bool italic, float size);
@@ -184,6 +205,7 @@ typedef label *(fn_gui_factory_label_construct)( gui_factory *p_gui_factory, con
 typedef menu *(fn_gui_factory_menu_construct)( gui_factory *p_gui_factory );
 typedef menu_item *(fn_gui_factory_menu_item_construct)( gui_factory *p_gui_factory, const char *text );
 typedef checkbox *(fn_gui_factory_checkbox_construct)( gui_factory *p_gui_factory, int count, const char *options[] );
+typedef radio_button *(fn_gui_factory_radio_button_construct)( gui_factory *p_gui_factory, int count, const char *options[] );
 
 typedef void (fn_command_execute)( command *p_command );
 typedef void (fn_command_unexecute)( command *p_command );
@@ -211,6 +233,9 @@ struct window_impl_s
     fn_window_impl_draw_rect    *pfn_draw_rect;
     fn_window_impl_fill_rect    *pfn_fill_rect;
     fn_window_impl_clear_rect   *pfn_clear_rect;
+    fn_window_impl_draw_circle  *pfn_draw_circle;
+    fn_window_impl_clear_circle *pfn_clear_circle;
+    fn_window_impl_fill_circle  *pfn_fill_circle;
     fn_window_impl_draw_button  *pfn_draw_button;
     fn_window_impl_draw_label   *pfn_draw_label;
     fn_window_impl_char_width   *pfn_char_width;
@@ -232,6 +257,9 @@ struct window_s
     fn_window_draw_rect    *pfn_draw_rect;
     fn_window_fill_rect    *pfn_fill_rect;
     fn_window_clear_rect   *pfn_clear_rect;
+    fn_window_draw_circle  *pfn_draw_circle;
+    fn_window_clear_circle *pfn_clear_circle;
+    fn_window_fill_circle  *pfn_fill_circle;
     fn_window_draw_button  *pfn_draw_button;
     fn_window_draw_label   *pfn_draw_label;
     fn_window_char_width   *pfn_char_width;
@@ -314,6 +342,13 @@ struct rectangle_s
     bool fill;
 };
 
+struct circle_s 
+{
+    glyph _glyph;
+    rect _dimensions;
+    bool fill;
+};
+
 struct character_s
 {
     glyph _glyph;
@@ -373,42 +408,46 @@ struct simple_compositor_s { compositor _compositor; };
 
 struct gui_factory_s
 {
-    gui_factory                        *p_unique_instance;
-    fn_gui_factory_button_construct    *pfn_button_construct;
-    fn_gui_factory_label_construct     *pfn_label_construct;
-    fn_gui_factory_menu_construct      *pfn_menu_construct;
-    fn_gui_factory_menu_item_construct *pfn_menu_item_construct;
-    fn_gui_factory_checkbox_construct  *pfn_checkbox_construct;
+    gui_factory                           *p_unique_instance;
+    fn_gui_factory_button_construct       *pfn_button_construct;
+    fn_gui_factory_label_construct        *pfn_label_construct;
+    fn_gui_factory_menu_construct         *pfn_menu_construct;
+    fn_gui_factory_menu_item_construct    *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
+    fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
 };
 
 struct red_gui_factory_s
 {
-    red_gui_factory                    *p_unique_instance;
-    fn_gui_factory_button_construct    *pfn_button_construct;
-    fn_gui_factory_label_construct     *pfn_label_construct;
-    fn_gui_factory_menu_construct      *pfn_menu_construct;
-    fn_gui_factory_menu_item_construct *pfn_menu_item_construct;
-    fn_gui_factory_checkbox_construct  *pfn_checkbox_construct;
+    red_gui_factory                       *p_unique_instance;
+    fn_gui_factory_button_construct       *pfn_button_construct;
+    fn_gui_factory_label_construct        *pfn_label_construct;
+    fn_gui_factory_menu_construct         *pfn_menu_construct;
+    fn_gui_factory_menu_item_construct    *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
+    fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
 };
 
 struct green_gui_factory_s
 {
-    green_gui_factory                  *p_unique_instance;
-    fn_gui_factory_button_construct    *pfn_button_construct;
-    fn_gui_factory_label_construct     *pfn_label_construct;
-    fn_gui_factory_menu_construct      *pfn_menu_construct;
-    fn_gui_factory_menu_item_construct *pfn_menu_item_construct;
-    fn_gui_factory_checkbox_construct  *pfn_checkbox_construct;
+    green_gui_factory                     *p_unique_instance;
+    fn_gui_factory_button_construct       *pfn_button_construct;
+    fn_gui_factory_label_construct        *pfn_label_construct;
+    fn_gui_factory_menu_construct         *pfn_menu_construct;
+    fn_gui_factory_menu_item_construct    *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
+    fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
 };
 
 struct blue_gui_factory_s
 {
-    blue_gui_factory                   *p_unique_instance;
-    fn_gui_factory_button_construct    *pfn_button_construct;
-    fn_gui_factory_label_construct     *pfn_label_construct;
-    fn_gui_factory_menu_construct      *pfn_menu_construct;
-    fn_gui_factory_menu_item_construct *pfn_menu_item_construct;
-    fn_gui_factory_checkbox_construct  *pfn_checkbox_construct;
+    blue_gui_factory                      *p_unique_instance;
+    fn_gui_factory_button_construct       *pfn_button_construct;
+    fn_gui_factory_label_construct        *pfn_label_construct;
+    fn_gui_factory_menu_construct         *pfn_menu_construct;
+    fn_gui_factory_menu_item_construct    *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
+    fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
 };
 
 struct button_s
@@ -451,6 +490,12 @@ struct red_checkbox_s   { checkbox _checkbox; };
 struct green_checkbox_s { checkbox _checkbox; };
 struct blue_checkbox_s  { checkbox _checkbox; };
 
+struct radio_button_s { mono_glyph _mono_glyph; int count; };
+
+struct red_radio_button_s   { radio_button _radio_button; };
+struct green_radio_button_s { radio_button _radio_button; };
+struct blue_radio_button_s  { radio_button _radio_button; };
+
 struct command_s 
 {
     fn_command_execute   *pfn_execute;
@@ -481,5 +526,19 @@ struct checkbox_set_command_s
 {
     command _command;
     checkbox *p_checkbox;
+    int set;
+};
+
+struct radio_button_command_s
+{
+    command _command;
+    int choice;
+};
+
+struct radio_button_set_command_s
+{
+    command _command;
+    radio_button *p_radio_button;
+    void *p_last;
     int set;
 };
