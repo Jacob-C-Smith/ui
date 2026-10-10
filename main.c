@@ -37,8 +37,8 @@ int main ( int argc, const char *argv[] )
 
     application_window *p_window      = application_window_construct(" UI ");
     gui_factory        *p_gui_factory = gui_factory_instance();
-    label              *l             = p_gui_factory->pfn_label_construct(p_gui_factory, "pq");
-    button             *b             = p_gui_factory->pfn_button_construct(p_gui_factory, "PQ");
+    label              *l             = p_gui_factory->pfn_label_construct(p_gui_factory, " Label ");
+    button             *b             = p_gui_factory->pfn_button_construct(p_gui_factory, " Button ");
     radio_button_group *r             = p_gui_factory->pfn_radio_button_group_construct(p_gui_factory);
     checkbox_group     *c             = p_gui_factory->pfn_checkbox_group_construct(p_gui_factory);
 
@@ -49,7 +49,7 @@ int main ( int argc, const char *argv[] )
     r->_composition._glyph.pfn_insert
     (
         (glyph *)r,
-        row_from_arguments
+        column_from_arguments
         (
             3,
             p_gui_factory->pfn_radio_button_construct(p_gui_factory, r, " ABC "),
@@ -62,7 +62,7 @@ int main ( int argc, const char *argv[] )
     c->_composition._glyph.pfn_insert
     (
         (glyph *)c,
-        column_from_arguments
+        row_from_arguments
         (
             3,
             p_gui_factory->pfn_checkbox_construct(p_gui_factory, " 123 "),
@@ -85,31 +85,47 @@ int main ( int argc, const char *argv[] )
                         (
                             (glyph *)column_from_arguments
                             (
-                                5,
-                                (glyph *)row_from_arguments
-                                (
-                                    4,
-                                    character_construct('a', false, false, 30.0),
-                                    rectangle_construct((rect){.origin={0,0},.extent={25,50}}),
-                                    column_from_arguments
-                                    (
-                                        3,
-                                        character_construct('X', false, false, 30.0),
-                                        (glyph *) l,
-                                        character_construct('Z', false, false, 30.0)
-                                    ),
-                                    character_construct('b', false, false, 30.0)
-                                ),
-                                (glyph *)row_from_arguments
-                                (
-                                    3,
-                                    character_construct('x', false, false, 30.0),
-                                    rectangle_construct((rect){.origin={0,0},.extent={50,25}}),
-                                    character_construct('y', false, false, 30.0)
-                                ),
+                                8,
+                                (glyph *)row_from_string("User Interface",true,false,48.0),
+                                (glyph *)row_from_string("Elements",false,false,40.0),
                                 (glyph *)b,
+                                (glyph *)l,
                                 (glyph *)r,
-                                (glyph *)c
+                                (glyph *)c,
+                                (glyph *)row_from_string("Compositor",false,false,40.0),
+                                (glyph *)border_construct
+                                (
+                                    (glyph *)padding_construct
+                                    (
+                                        (glyph *)column_from_arguments
+                                        (
+                                            2,
+                                            (glyph *)row_from_arguments
+                                            (
+                                                4,
+                                                character_construct('a', false, false, 30.0),
+                                                rectangle_construct((rect){.origin={0,0},.extent={25,50}}),
+                                                column_from_arguments
+                                                (
+                                                    3,
+                                                    character_construct('X', false, false, 30.0),
+                                                    character_construct('Y', false, false, 30.0),
+                                                    character_construct('Z', false, false, 30.0)
+                                                ),
+                                                character_construct('b', false, false, 30.0)
+                                            ),
+                                            (glyph *)row_from_arguments
+                                            (
+                                                3,
+                                                character_construct('x', false, false, 30.0),
+                                                rectangle_construct((rect){.origin={0,0},.extent={50,25}}),
+                                                character_construct('y', false, false, 30.0)
+                                            )
+                                        ),
+                                        32
+                                    ),
+                                    4
+                                )
                             ), 
                         128),
                     32),
