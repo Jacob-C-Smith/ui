@@ -39,12 +39,38 @@ int main ( int argc, const char *argv[] )
     gui_factory        *p_gui_factory = gui_factory_instance();
     label              *l             = p_gui_factory->pfn_label_construct(p_gui_factory, "pq");
     button             *b             = p_gui_factory->pfn_button_construct(p_gui_factory, "PQ");
-    checkbox           *cbox          = p_gui_factory->pfn_checkbox_construct(p_gui_factory, 3, (const char *[]){"aAa","bBb","cCc"});
-    radio_button       *rbut          = p_gui_factory->pfn_radio_button_construct(p_gui_factory, 3, (const char *[]){"AaA","BbB","CcC"});
+    radio_button_group *r             = p_gui_factory->pfn_radio_button_group_construct(p_gui_factory);
+    checkbox_group     *c             = p_gui_factory->pfn_checkbox_group_construct(p_gui_factory);
 
     p_window->p_key_map = setup_key_map();
-
+    
     b->_mono_glyph._composition._glyph.pfn_command_set(b, (command *) print_command_construct("hi"));
+
+    r->_composition._glyph.pfn_insert
+    (
+        (glyph *)r,
+        row_from_arguments
+        (
+            3,
+            p_gui_factory->pfn_radio_button_construct(p_gui_factory, r, " ABC "),
+            p_gui_factory->pfn_radio_button_construct(p_gui_factory, r, " IJK "),
+            p_gui_factory->pfn_radio_button_construct(p_gui_factory, r, " XYZ ")
+        ),
+        0
+    );
+
+    c->_composition._glyph.pfn_insert
+    (
+        (glyph *)c,
+        column_from_arguments
+        (
+            3,
+            p_gui_factory->pfn_checkbox_construct(p_gui_factory, " 123 "),
+            p_gui_factory->pfn_checkbox_construct(p_gui_factory, " 456 "),
+            p_gui_factory->pfn_checkbox_construct(p_gui_factory, " 789 ")
+        ),
+        0
+    );
 
     glyph *main_doc = (glyph *)column_from_arguments
         (
@@ -60,7 +86,7 @@ int main ( int argc, const char *argv[] )
                             (glyph *)column_from_arguments
                             (
                                 5,
-                                row_from_arguments
+                                (glyph *)row_from_arguments
                                 (
                                     4,
                                     character_construct('a', false, false, 30.0),
@@ -74,16 +100,16 @@ int main ( int argc, const char *argv[] )
                                     ),
                                     character_construct('b', false, false, 30.0)
                                 ),
-                                row_from_arguments
+                                (glyph *)row_from_arguments
                                 (
                                     3,
                                     character_construct('x', false, false, 30.0),
                                     rectangle_construct((rect){.origin={0,0},.extent={50,25}}),
                                     character_construct('y', false, false, 30.0)
                                 ),
-                                (glyph *) b,
-                                (glyph *) cbox,
-                                (glyph *) rbut
+                                (glyph *)b,
+                                (glyph *)r,
+                                (glyph *)c
                             ), 
                         128),
                     32),

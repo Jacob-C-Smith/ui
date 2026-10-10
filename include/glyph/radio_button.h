@@ -1,7 +1,5 @@
 #pragma once
-
 #include <ui/ui.h>
-
 #include <glyph/circle.h>
 #include <glyph/column.h>
 #include <glyph/row.h>
@@ -9,4 +7,4 @@
 #include <command/radio_button_command.h>
 #include <command/radio_button_set_command.h>
 
-radio_button *radio_button_construct( int count, const char *options[] );
+radio_button *radio_button_construct( radio_button_group *p_group, const char *text );

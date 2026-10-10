@@ -54,6 +54,10 @@ struct menu_item_s;
 struct red_menu_item_s;
 struct green_menu_item_s;
 struct blue_menu_item_s;
+struct checkbox_group_s;
+struct red_checkbox_group_s;
+struct green_checkbox_group_s;
+struct blue_checkbox_group_s;
 struct checkbox_s;
 struct red_checkbox_s;
 struct green_checkbox_s;
@@ -62,6 +66,10 @@ struct checkbox_command_s;
 struct checkbox_set_command_s;
 struct radio_button_command_s;
 struct radio_button_set_command_s;
+struct radio_button_group_s;
+struct red_radio_button_group_s;
+struct green_radio_button_group_s;
+struct blue_radio_button_group_s;
 struct radio_button_s;
 struct red_radio_button_s;
 struct green_radio_button_s;
@@ -114,6 +122,10 @@ typedef struct menu_item_s menu_item;
 typedef struct red_menu_item_s red_menu_item;
 typedef struct green_menu_item_s green_menu_item;
 typedef struct blue_menu_item_s blue_menu_item;
+typedef struct checkbox_group_s checkbox_group;
+typedef struct red_checkbox_group_s red_checkbox_group;
+typedef struct green_checkbox_group_s green_checkbox_group;
+typedef struct blue_checkbox_group_s blue_checkbox_group;
 typedef struct checkbox_s checkbox;
 typedef struct red_checkbox_s red_checkbox;
 typedef struct green_checkbox_s green_checkbox;
@@ -122,6 +134,10 @@ typedef struct checkbox_command_s checkbox_command;
 typedef struct checkbox_set_command_s checkbox_set_command;
 typedef struct radio_button_command_s radio_button_command;
 typedef struct radio_button_set_command_s radio_button_set_command;
+typedef struct radio_button_group_s radio_button_group;
+typedef struct red_radio_button_group_s red_radio_button_group;
+typedef struct green_radio_button_group_s green_radio_button_group;
+typedef struct blue_radio_button_group_s blue_radio_button_group;
 typedef struct radio_button_s radio_button;
 typedef struct red_radio_button_s red_radio_button;
 typedef struct green_radio_button_s green_radio_button;
@@ -204,8 +220,10 @@ typedef button *(fn_gui_factory_button_construct)( gui_factory *p_gui_factory, c
 typedef label *(fn_gui_factory_label_construct)( gui_factory *p_gui_factory, const char *text );
 typedef menu *(fn_gui_factory_menu_construct)( gui_factory *p_gui_factory );
 typedef menu_item *(fn_gui_factory_menu_item_construct)( gui_factory *p_gui_factory, const char *text );
-typedef checkbox *(fn_gui_factory_checkbox_construct)( gui_factory *p_gui_factory, int count, const char *options[] );
-typedef radio_button *(fn_gui_factory_radio_button_construct)( gui_factory *p_gui_factory, int count, const char *options[] );
+typedef checkbox_group *(fn_gui_factory_checkbox_group_construct)( gui_factory *p_gui_factory );
+typedef checkbox *(fn_gui_factory_checkbox_construct)( gui_factory *p_gui_factory, const char *text );
+typedef radio_button_group *(fn_gui_factory_radio_button_group_construct)( gui_factory *p_gui_factory );
+typedef radio_button *(fn_gui_factory_radio_button_construct)( gui_factory *p_gui_factory, radio_button_group *p_group, const char *text );
 
 typedef void (fn_command_execute)( command *p_command );
 typedef void (fn_command_unexecute)( command *p_command );
@@ -413,7 +431,9 @@ struct gui_factory_s
     fn_gui_factory_label_construct        *pfn_label_construct;
     fn_gui_factory_menu_construct         *pfn_menu_construct;
     fn_gui_factory_menu_item_construct    *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_group_construct *pfn_checkbox_group_construct;
     fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
+    fn_gui_factory_radio_button_group_construct *pfn_radio_button_group_construct;
     fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
 };
 
@@ -424,7 +444,9 @@ struct red_gui_factory_s
     fn_gui_factory_label_construct        *pfn_label_construct;
     fn_gui_factory_menu_construct         *pfn_menu_construct;
     fn_gui_factory_menu_item_construct    *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_group_construct *pfn_checkbox_group_construct;
     fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
+    fn_gui_factory_radio_button_group_construct *pfn_radio_button_group_construct;
     fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
 };
 
@@ -435,7 +457,9 @@ struct green_gui_factory_s
     fn_gui_factory_label_construct        *pfn_label_construct;
     fn_gui_factory_menu_construct         *pfn_menu_construct;
     fn_gui_factory_menu_item_construct    *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_group_construct *pfn_checkbox_group_construct;
     fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
+    fn_gui_factory_radio_button_group_construct *pfn_radio_button_group_construct;
     fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
 };
 
@@ -446,7 +470,9 @@ struct blue_gui_factory_s
     fn_gui_factory_label_construct        *pfn_label_construct;
     fn_gui_factory_menu_construct         *pfn_menu_construct;
     fn_gui_factory_menu_item_construct    *pfn_menu_item_construct;
+    fn_gui_factory_checkbox_group_construct *pfn_checkbox_group_construct;
     fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
+    fn_gui_factory_radio_button_group_construct *pfn_radio_button_group_construct;
     fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
 };
 
@@ -484,13 +510,21 @@ struct red_menu_item_s   { menu_item _menu_item; };
 struct green_menu_item_s { menu_item _menu_item; };
 struct blue_menu_item_s  { menu_item _menu_item; };
 
-struct checkbox_s { mono_glyph _mono_glyph; int count; };
+struct checkbox_group_s { composition _composition; };
+struct red_checkbox_group_s { checkbox_group _checkbox_group; };
+struct green_checkbox_group_s { checkbox_group _checkbox_group; };
+struct blue_checkbox_group_s { checkbox_group _checkbox_group; };
+struct checkbox_s { row _row; };
 
 struct red_checkbox_s   { checkbox _checkbox; };
 struct green_checkbox_s { checkbox _checkbox; };
 struct blue_checkbox_s  { checkbox _checkbox; };
 
-struct radio_button_s { mono_glyph _mono_glyph; int count; };
+struct radio_button_group_s { composition _composition; array *p_buttons; command *p_command; };
+struct red_radio_button_group_s { radio_button_group _group; };
+struct green_radio_button_group_s { radio_button_group _group; };
+struct blue_radio_button_group_s { radio_button_group _group; };
+struct radio_button_s { row _row; };
 
 struct red_radio_button_s   { radio_button _radio_button; };
 struct green_radio_button_s { radio_button _radio_button; };
@@ -538,7 +572,6 @@ struct radio_button_command_s
 struct radio_button_set_command_s
 {
     command _command;
-    radio_button *p_radio_button;
-    void *p_last;
-    int set;
+    radio_button_group *p_group;
+    radio_button *p_button;
 };
