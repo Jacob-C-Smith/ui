@@ -31,6 +31,7 @@ struct scroller_s;
 struct compositor_s;
 struct null_compositor_s;
 struct simple_compositor_s;
+struct array_compositor_s;
 struct gui_factory_s;
 struct red_gui_factory_s;
 struct green_gui_factory_s;
@@ -99,6 +100,7 @@ typedef struct scroller_s scroller;
 typedef struct compositor_s compositor;
 typedef struct null_compositor_s null_compositor;
 typedef struct simple_compositor_s simple_compositor; 
+typedef struct array_compositor_s array_compositor;
 typedef struct gui_factory_s gui_factory;
 typedef struct red_gui_factory_s red_gui_factory;
 typedef struct green_gui_factory_s green_gui_factory;
@@ -423,6 +425,7 @@ struct compositor_s
 
 struct null_compositor_s   { compositor _compositor; };
 struct simple_compositor_s { compositor _compositor; };
+struct array_compositor_s  { compositor _compositor; int _columns; };
 
 struct gui_factory_s
 {
