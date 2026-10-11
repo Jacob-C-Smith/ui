@@ -23,6 +23,7 @@
 #include <command/menu_toggle.h>
 #include <glyph/checkbox.h>
 #include <glyph/radio_button.h>
+#include <glyph/textbox.h>
 #include <compositor/array_compositor.h>
 
 key_map *setup_key_map ( void );
@@ -39,6 +40,7 @@ int main ( int argc, const char *argv[] )
     button             *b             = p_gui_factory->pfn_button_construct(p_gui_factory, " Button ");
     radio_button_group *r             = p_gui_factory->pfn_radio_button_group_construct(p_gui_factory);
     checkbox_group     *c             = p_gui_factory->pfn_checkbox_group_construct(p_gui_factory);
+    textbox            *t             = p_gui_factory->pfn_textbox_construct(p_gui_factory, " Textbox ");
 
     p_window->p_key_map = setup_key_map();
     
@@ -103,16 +105,17 @@ int main ( int argc, const char *argv[] )
                         (
                             (glyph *)column_from_arguments
                             (
-                                10,
+                                11,
                                 (glyph *)row_from_string("User Interface",true,false,48.0),
                                 (glyph *)row_from_string("Elements",false,false,40.0),
                                 (glyph *)b,
                                 (glyph *)l,
                                 (glyph *)r,
                                 (glyph *)c,
-                                (glyph *)row_from_string("Array Compositor Grid",false,false,40.0),
+                                (glyph *)t,
+                                (glyph *)row_from_string("Array Compositor",false,false,40.0),
                                 (glyph *)array_grid,
-                                (glyph *)row_from_string("Compositor",false,false,40.0),
+                                (glyph *)row_from_string("Simple Compositor",false,false,40.0),
                                 (glyph *)border_construct
                                 (
                                     (glyph *)padding_construct

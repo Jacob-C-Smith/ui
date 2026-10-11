@@ -25,6 +25,7 @@ int  sdl_window_char_height  ( sdl_window *p_window, char c, bool bold, bool ita
 void sdl_window_char_draw    ( sdl_window *p_window, char c, bool bold, bool italic, float size, int x, int y );
 void sdl_window_draw_button  ( sdl_window *p_window, int x, int y, int w, int h, const char *p_button );
 void sdl_window_draw_label   ( sdl_window *p_window, int x, int y, int w, int h, const char *p_label );
+void sdl_window_draw_textbox ( sdl_window *p_window, int x, int y, int w, int h, const char *p_color, bool is_focused );
 void sdl_window_click        ( sdl_window *p_window, int x, int y );
 void sdl_window_key          ( sdl_window *p_window, char c );
 
@@ -91,6 +92,7 @@ window_impl *sdl_window_construct ( const char *title, window *w)
             .pfn_char_width   = (fn_window_impl_char_width *)   sdl_window_char_width,
             .pfn_draw_button  = (fn_window_impl_draw_button *)  sdl_window_draw_button,
             .pfn_draw_label   = (fn_window_impl_draw_label *)   sdl_window_draw_label,
+            .pfn_draw_textbox = (fn_window_impl_draw_textbox *) sdl_window_draw_textbox,
             .pfn_char_height  = (fn_window_impl_char_height *)  sdl_window_char_height,
             .pfn_draw_char    = (fn_window_impl_draw_char *)    sdl_window_char_draw,
             .pfn_key          = (fn_window_impl_key *)          sdl_window_key,
@@ -134,10 +136,50 @@ int sdl_window_redraw ( sdl_window *p_window )
                 
                 case SDL_EVENT_KEY_DOWN:
                 {
-                    char c = (char) event.key.key;
-                    c = (event.key.mod & SDL_KMOD_SHIFT) ? c - 0x20 : c;
-                    c = (event.key.mod & SDL_KMOD_CTRL)  ? c & 0x1f : c;
-                    p_window->_window_impl.pfn_key((window_impl *)p_window, c);
+                    char c = 0;
+                    if      ( event.key.key == SDLK_LEFT )      c = (char)UI_KEY_LEFT;
+                    else if ( event.key.key == SDLK_RIGHT )     c = (char)UI_KEY_RIGHT;
+                    else if ( event.key.key == SDLK_UP )        c = (char)UI_KEY_UP;
+                    else if ( event.key.key == SDLK_DOWN )      c = (char)UI_KEY_DOWN;
+                    else if ( event.key.key == SDLK_HOME )      c = (char)UI_KEY_HOME;
+                    else if ( event.key.key == SDLK_END )       c = (char)UI_KEY_END;
+                    else if ( event.key.key == SDLK_DELETE )    c = (char)UI_KEY_DELETE;
+                    else if ( event.key.key == SDLK_BACKSPACE ) c = (char)UI_KEY_BACKSPACE;
+                    else if ( event.key.key >= 0x40000000 )     c = 0;
+                    else
+                    {
+                        c = (char) event.key.key;
+                        if ( c == '\b' || (unsigned char)c == 127 ) c = (char)UI_KEY_BACKSPACE;
+                        else if ( event.key.mod & SDL_KMOD_SHIFT )
+                        {
+                            if      ( c >= 'a' && c <= 'z' ) c -= 0x20;
+                            else if ( c == '1' )             c = '!';
+                            else if ( c == '2' )             c = '@';
+                            else if ( c == '3' )             c = '#';
+                            else if ( c == '4' )             c = '$';
+                            else if ( c == '5' )             c = '%';
+                            else if ( c == '6' )             c = '^';
+                            else if ( c == '7' )             c = '&';
+                            else if ( c == '8' )             c = '*';
+                            else if ( c == '9' )             c = '(';
+                            else if ( c == '0' )             c = ')';
+                            else if ( c == '-' )             c = '_';
+                            else if ( c == '=' )             c = '+';
+                            else if ( c == ';' )             c = ':';
+                            else if ( c == '\'' )            c = '"';
+                            else if ( c == ',' )             c = '<';
+                            else if ( c == '.' )             c = '>';
+                            else if ( c == '/' )             c = '?';
+                            else if ( c == '`' )             c = '~';
+                            else if ( c == '[' )             c = '{';
+                            else if ( c == ']' )             c = '}';
+                            else if ( c == '\\' )            c = '|';
+                        }
+                        else if ( event.key.mod & SDL_KMOD_CTRL )
+                            c = c & 0x1f;
+                    }
+                    if ( c != 0 )
+                        p_window->_window_impl.pfn_key((window_impl *)p_window, c);
                 }
                     break;
                 case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -428,6 +470,28 @@ void sdl_window_draw_label  ( sdl_window *p_window, int x, int y, int w, int h, 
     sdl_window_draw_rect(p_window, x, y, w, h);
 
     SDL_SetRenderDrawColor(p_window->p_r,lc.r,lc.g,lc.b,lc.a);
+}
+
+void sdl_window_draw_textbox ( sdl_window *p_window, int x, int y, int w, int h, const char *p_color, bool is_focused )
+{
+    SDL_Color lc = { 0 };
+    SDL_GetRenderDrawColor(p_window->p_r, &lc.r, &lc.g, &lc.b, &lc.a);
+
+    SDL_SetRenderDrawColor(p_window->p_r, 255, 255, 255, 255);
+    sdl_window_fill_rect(p_window, x, y, w, h);
+
+    if ( 0 == strcmp("red", p_color) ) 
+        SDL_SetRenderDrawColor(p_window->p_r, 255, 0, 0, 255);
+    else if ( 0 == strcmp("green", p_color) ) 
+        SDL_SetRenderDrawColor(p_window->p_r, 0, 200, 0, 255);
+    else
+        SDL_SetRenderDrawColor(p_window->p_r, 0, 100, 255, 255);
+
+    sdl_window_draw_rect(p_window, x, y, w, h);
+    if ( is_focused )
+        sdl_window_draw_rect(p_window, x + 1, y + 1, w - 2, h - 2);
+
+    SDL_SetRenderDrawColor(p_window->p_r, lc.r, lc.g, lc.b, lc.a);
 }
 
 int sdl_window_char_width ( sdl_window *p_window, char c, bool bold, bool italic, float size )
