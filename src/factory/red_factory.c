@@ -1,16 +1,18 @@
 #include <factory/red_factory.h>
 #include <glyph/button.h>
 #include <glyph/label.h>
+#include <glyph/checkbox.h>
+#include <glyph/checkbox_group.h>
+#include <glyph/radio_button.h>
+#include <glyph/radio_button_group.h>
+#include <glyph/textbox.h>
 #include <glyph/red_menu.h>
 #include <glyph/red_menu_item.h>
 #include <glyph/red_checkbox.h>
 #include <glyph/red_checkbox_group.h>
 #include <glyph/red_radio_button.h>
 #include <glyph/red_radio_button_group.h>
-#include <glyph/checkbox.h>
-#include <glyph/checkbox_group.h>
-#include <glyph/radio_button.h>
-#include <glyph/radio_button_group.h>
+#include <glyph/red_textbox.h>
 
 static red_gui_factory _red_gui_factory = { 0 };
 
@@ -22,6 +24,7 @@ menu               *red_menu_construct_factory       ( red_gui_factory *p_red_fa
 menu_item          *red_menu_item_construct_factory  ( red_gui_factory *p_red_factory, const char *text );
 radio_button_group *red_radio_button_group_construct ( red_gui_factory *p_red_factory );
 radio_button       *red_radio_button_construct       ( red_gui_factory *p_red_factory, radio_button_group *p_group, const char *text );
+textbox            *red_textbox_construct            ( red_gui_factory *p_red_factory, const char *text );
 
 int red_gui_factory_construct ( )
 {
@@ -37,6 +40,7 @@ int red_gui_factory_construct ( )
         .pfn_checkbox_construct           = (fn_gui_factory_checkbox_construct *)           red_checkbox_construct,
         .pfn_radio_button_group_construct = (fn_gui_factory_radio_button_group_construct *) red_radio_button_group_construct,
         .pfn_radio_button_construct       = (fn_gui_factory_radio_button_construct *)       red_radio_button_construct,
+        .pfn_textbox_construct            = (fn_gui_factory_textbox_construct *)            red_textbox_construct,
     };
 
     return 1;
@@ -111,4 +115,12 @@ radio_button *red_radio_button_construct ( red_gui_factory *p_red_factory, radio
     radio_button *p_radio_button = radio_button_construct(p_group, text);
     p_radio_button->_row._composition._glyph.pfn_draw = (fn_glyph_draw *)red_radio_button_draw;
     return p_radio_button;
+}
+
+textbox *red_textbox_construct ( red_gui_factory *p_red_factory, const char *text )
+{
+    (void)p_red_factory;
+    textbox *p_textbox = textbox_construct(text);
+    p_textbox->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)red_textbox_draw;
+    return p_textbox;
 }

@@ -10,6 +10,7 @@ checkbox_group     *gui_factory_checkbox_group_construct     ( gui_factory *p_gu
 checkbox           *gui_factory_checkbox_construct           ( gui_factory *p_gui_factory, const char *text );
 radio_button_group *gui_factory_radio_button_group_construct ( gui_factory *p_gui_factory );
 radio_button       *gui_factory_radio_button_construct       ( gui_factory *p_gui_factory, radio_button_group *p_group, const char *text );
+textbox            *gui_factory_textbox_construct            ( gui_factory *p_gui_factory, const char *text );
 
 gui_factory *gui_factory_instance ( void )
 {
@@ -37,6 +38,7 @@ gui_factory *gui_factory_instance ( void )
         _gui_factory.pfn_checkbox_construct           = gui_factory_checkbox_construct;
         _gui_factory.pfn_radio_button_group_construct = gui_factory_radio_button_group_construct;
         _gui_factory.pfn_radio_button_construct       = gui_factory_radio_button_construct;
+        _gui_factory.pfn_textbox_construct            = gui_factory_textbox_construct;
     }
 
     return &_gui_factory;
@@ -80,4 +82,9 @@ radio_button_group *gui_factory_radio_button_group_construct ( gui_factory *p_gu
 radio_button *gui_factory_radio_button_construct ( gui_factory *p_gui_factory, radio_button_group *p_group, const char *text )
 {
     return p_gui_factory->p_unique_instance->pfn_radio_button_construct(p_gui_factory->p_unique_instance, p_group, text);
+}
+
+textbox *gui_factory_textbox_construct ( gui_factory *p_gui_factory, const char *text )
+{
+    return p_gui_factory->p_unique_instance->pfn_textbox_construct(p_gui_factory->p_unique_instance, text);
 }

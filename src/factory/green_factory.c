@@ -5,6 +5,7 @@
 #include <glyph/checkbox_group.h>
 #include <glyph/radio_button.h>
 #include <glyph/radio_button_group.h>
+#include <glyph/textbox.h>
 #include <glyph/green_menu.h>
 #include <glyph/green_menu_item.h>
 #include <glyph/green_checkbox.h>
@@ -13,6 +14,7 @@
 #include <glyph/green_radio_button_group.h>
 #include <glyph/green_button.h>
 #include <glyph/green_label.h>
+#include <glyph/green_textbox.h>
 
 static green_gui_factory _green_gui_factory = { 0 };
 
@@ -24,6 +26,7 @@ menu               *green_menu_construct_factory       ( green_gui_factory *p_gr
 menu_item          *green_menu_item_construct_factory  ( green_gui_factory *p_green_factory, const char *text );
 radio_button_group *green_radio_button_group_construct ( green_gui_factory *p_green_factory );
 radio_button       *green_radio_button_construct       ( green_gui_factory *p_green_factory, radio_button_group *p_group, const char *text );
+textbox            *green_textbox_construct            ( green_gui_factory *p_green_factory, const char *text );
 
 int green_gui_factory_construct ( )
 {
@@ -39,6 +42,7 @@ int green_gui_factory_construct ( )
         .pfn_checkbox_construct           = (fn_gui_factory_checkbox_construct *)           green_checkbox_construct,
         .pfn_radio_button_group_construct = (fn_gui_factory_radio_button_group_construct *) green_radio_button_group_construct,
         .pfn_radio_button_construct       = (fn_gui_factory_radio_button_construct *)       green_radio_button_construct,
+        .pfn_textbox_construct            = (fn_gui_factory_textbox_construct *)            green_textbox_construct,
     };
 
     return 1;
@@ -114,4 +118,12 @@ radio_button *green_radio_button_construct ( green_gui_factory *p_green_factory,
     radio_button *p_radio_button = radio_button_construct(p_group, text);
     p_radio_button->_row._composition._glyph.pfn_draw = (fn_glyph_draw *)green_radio_button_draw;
     return p_radio_button;
+}
+
+textbox *green_textbox_construct ( green_gui_factory *p_green_factory, const char *text )
+{
+    (void)p_green_factory;
+    textbox *p_textbox = textbox_construct(text);
+    p_textbox->_mono_glyph._composition._glyph.pfn_draw = (fn_glyph_draw *)green_textbox_draw;
+    return p_textbox;
 }

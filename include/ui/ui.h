@@ -75,6 +75,10 @@ struct radio_button_s;
 struct red_radio_button_s;
 struct green_radio_button_s;
 struct blue_radio_button_s;
+struct textbox_s;
+struct red_textbox_s;
+struct green_textbox_s;
+struct blue_textbox_s;
 
 typedef struct point_s point;
 typedef struct rect_s rect;
@@ -144,6 +148,23 @@ typedef struct radio_button_s radio_button;
 typedef struct red_radio_button_s red_radio_button;
 typedef struct green_radio_button_s green_radio_button;
 typedef struct blue_radio_button_s blue_radio_button;
+typedef struct textbox_s textbox;
+typedef struct red_textbox_s red_textbox;
+typedef struct green_textbox_s green_textbox;
+typedef struct blue_textbox_s blue_textbox;
+
+enum ui_key_e
+{
+    UI_KEY_BACKSPACE = '\b',
+    UI_KEY_DELETE    = 127,
+    UI_KEY_LEFT      = 17,
+    UI_KEY_RIGHT     = 18,
+    UI_KEY_UP        = 19,
+    UI_KEY_DOWN      = 20,
+    UI_KEY_HOME      = 1,
+    UI_KEY_END       = 5
+};
+typedef enum ui_key_e ui_key;
 
 typedef array key_map;
 
@@ -163,6 +184,7 @@ typedef void(fn_window_clear_circle)(window *p_window, int x, int y, int w, int 
 typedef void(fn_window_fill_circle)(window *p_window, int x, int y, int w, int h);
 typedef void(fn_window_draw_button)(window *p_window, int x, int y, int w, int h, const char *p_button);
 typedef void(fn_window_draw_label)(window *p_window, int x, int y, int w, int h, const char *p_label);
+typedef void(fn_window_draw_textbox)(window *p_window, int x, int y, int w, int h, const char *p_color, bool is_focused);
 typedef int(fn_window_char_width)(window *p_window, char c, bool bold, bool italic, float size);
 typedef int(fn_window_char_height)(window *p_window, char c, bool bold, bool italic, float size);
 typedef void(fn_window_key)(window *p_window, char c);
@@ -184,6 +206,7 @@ typedef void(fn_window_impl_clear_circle)(window *p_window, int x, int y, int w,
 typedef void(fn_window_impl_fill_circle)(window *p_window, int x, int y, int w, int h);
 typedef void(fn_window_impl_draw_button)(window_impl *p_window_impl, int x, int y, int w, int h, const char *p_button);
 typedef void(fn_window_impl_draw_label)(window_impl *p_window_impl, int x, int y, int w, int h, const char *p_label);
+typedef void(fn_window_impl_draw_textbox)(window_impl *p_window_impl, int x, int y, int w, int h, const char *p_color, bool is_focused);
 typedef int(fn_window_impl_char_width)(window_impl *p_window_impl, char c, bool bold, bool italic, float size);
 typedef int(fn_window_impl_char_height)(window_impl *p_window_impl, char c, bool bold, bool italic, float size);
 typedef void(fn_window_impl_key)(window_impl *p_window_impl, char c);
@@ -212,6 +235,7 @@ typedef iterator(fn_glyph_iterator)(glyph *p_glyph);
 typedef glyph *(fn_glyph_find)(glyph *p_glyph, point p);
 typedef void(fn_glyph_click)(glyph *p_glyph);
 typedef void(fn_glyph_key)(glyph *p_glyph, char c);
+typedef void(fn_glyph_focus)(glyph *p_glyph, bool focused);
 typedef void (fn_glyph_command_set)( glyph *p_glyph, command *p_command );
 typedef glyph *(fn_glyph_command_get)( glyph *p_glyph );
 
@@ -226,6 +250,7 @@ typedef checkbox_group *(fn_gui_factory_checkbox_group_construct)( gui_factory *
 typedef checkbox *(fn_gui_factory_checkbox_construct)( gui_factory *p_gui_factory, const char *text );
 typedef radio_button_group *(fn_gui_factory_radio_button_group_construct)( gui_factory *p_gui_factory );
 typedef radio_button *(fn_gui_factory_radio_button_construct)( gui_factory *p_gui_factory, radio_button_group *p_group, const char *text );
+typedef textbox *(fn_gui_factory_textbox_construct)( gui_factory *p_gui_factory, const char *text );
 
 typedef void (fn_command_execute)( command *p_command );
 typedef void (fn_command_unexecute)( command *p_command );
@@ -258,6 +283,7 @@ struct window_impl_s
     fn_window_impl_fill_circle  *pfn_fill_circle;
     fn_window_impl_draw_button  *pfn_draw_button;
     fn_window_impl_draw_label   *pfn_draw_label;
+    fn_window_impl_draw_textbox *pfn_draw_textbox;
     fn_window_impl_char_width   *pfn_char_width;
     fn_window_impl_char_height  *pfn_char_height;
     fn_window_impl_key          *pfn_key;
@@ -282,6 +308,7 @@ struct window_s
     fn_window_fill_circle  *pfn_fill_circle;
     fn_window_draw_button  *pfn_draw_button;
     fn_window_draw_label   *pfn_draw_label;
+    fn_window_draw_textbox *pfn_draw_textbox;
     fn_window_char_width   *pfn_char_width;
     fn_window_char_height  *pfn_char_height;
     fn_window_key          *pfn_key;
@@ -295,6 +322,7 @@ struct application_window_s
 {
     window _window;
     key_map *p_key_map;
+    glyph *p_focus;
 };
 
 struct window_factory_s
@@ -347,6 +375,7 @@ struct glyph_s
     fn_glyph_find            *pfn_find;   
     fn_glyph_click           *pfn_click;    
     fn_glyph_key             *pfn_key;
+    fn_glyph_focus           *pfn_focus;
     fn_glyph_command_set     *pfn_command_set;
     fn_glyph_command_get     *pfn_command_get;
     command                  *p_command;
@@ -438,6 +467,7 @@ struct gui_factory_s
     fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
     fn_gui_factory_radio_button_group_construct *pfn_radio_button_group_construct;
     fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
+    fn_gui_factory_textbox_construct      *pfn_textbox_construct;
 };
 
 struct red_gui_factory_s
@@ -451,6 +481,7 @@ struct red_gui_factory_s
     fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
     fn_gui_factory_radio_button_group_construct *pfn_radio_button_group_construct;
     fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
+    fn_gui_factory_textbox_construct      *pfn_textbox_construct;
 };
 
 struct green_gui_factory_s
@@ -464,6 +495,7 @@ struct green_gui_factory_s
     fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
     fn_gui_factory_radio_button_group_construct *pfn_radio_button_group_construct;
     fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
+    fn_gui_factory_textbox_construct      *pfn_textbox_construct;
 };
 
 struct blue_gui_factory_s
@@ -477,6 +509,7 @@ struct blue_gui_factory_s
     fn_gui_factory_checkbox_construct     *pfn_checkbox_construct;
     fn_gui_factory_radio_button_group_construct *pfn_radio_button_group_construct;
     fn_gui_factory_radio_button_construct *pfn_radio_button_construct;
+    fn_gui_factory_textbox_construct      *pfn_textbox_construct;
 };
 
 struct button_s
@@ -496,6 +529,23 @@ struct label_s
 struct red_label_s   { label _label; };
 struct green_label_s { label _label; };
 struct blue_label_s  { label _label; };
+
+struct textbox_s
+{
+    mono_glyph _mono_glyph;
+    char text[256];
+    size_t length;
+    size_t cursor_index;
+    float last_click_x;
+    bool is_focused;
+    float font_size;
+    float min_width;
+    float min_height;
+};
+
+struct red_textbox_s   { textbox _textbox; };
+struct green_textbox_s { textbox _textbox; };
+struct blue_textbox_s  { textbox _textbox; };
 
 struct menu_s
 {
