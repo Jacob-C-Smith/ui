@@ -23,6 +23,7 @@
 #include <command/menu_toggle.h>
 #include <glyph/checkbox.h>
 #include <glyph/radio_button.h>
+#include <compositor/array_compositor.h>
 
 key_map *setup_key_map ( void );
 glyph   *setup_menu_bar ( void );
@@ -31,9 +32,6 @@ int main ( int argc, const char *argv[] )
 {
     (void) argc;
     (void) argv;
-
-    char _text[128] = { 'p', 'q', '\0' };
-    char *p_text = _text;
 
     application_window *p_window      = application_window_construct(" UI ");
     gui_factory        *p_gui_factory = gui_factory_instance();
@@ -72,6 +70,26 @@ int main ( int argc, const char *argv[] )
         0
     );
 
+    glyph *array_grid = NULL;
+
+    {
+        array_grid = (glyph *)row_from_arguments(
+            9,
+            character_construct('1', false, false, 20.0),
+            character_construct('2', false, false, 20.0),
+            character_construct('3', false, false, 20.0),
+            character_construct('4', false, false, 40.0),
+            character_construct('5', false, false, 40.0),
+            character_construct('6', false, false, 40.0),
+            character_construct('7', false, false, 60.0),
+            character_construct('8', false, false, 60.0),
+            character_construct('9', false, false, 60.0)
+        );
+        composition *comp_grid = (composition *)array_grid;
+        comp_grid->p_compositor = (compositor *)array_compositor_construct(3);
+        comp_grid->p_compositor->pfn_compositor_composition_set(comp_grid->p_compositor, comp_grid);
+    }
+
     glyph *main_doc = (glyph *)column_from_arguments
         (
             1,
@@ -85,13 +103,15 @@ int main ( int argc, const char *argv[] )
                         (
                             (glyph *)column_from_arguments
                             (
-                                8,
+                                10,
                                 (glyph *)row_from_string("User Interface",true,false,48.0),
                                 (glyph *)row_from_string("Elements",false,false,40.0),
                                 (glyph *)b,
                                 (glyph *)l,
                                 (glyph *)r,
                                 (glyph *)c,
+                                (glyph *)row_from_string("Array Compositor Grid",false,false,40.0),
+                                (glyph *)array_grid,
                                 (glyph *)row_from_string("Compositor",false,false,40.0),
                                 (glyph *)border_construct
                                 (
