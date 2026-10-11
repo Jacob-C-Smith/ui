@@ -77,6 +77,7 @@ void array_compositor_compose ( compositor *p_compositor )
     }
 
     idx = 0;
+    c = start_c;
     for (iterator it = p_comp->pfn_iterator(p_comp); !it.done(&it); it.next(&it))
     {
         glyph *p_child = it.item(&it);
@@ -84,6 +85,8 @@ void array_compositor_compose ( compositor *p_compositor )
         int col = idx % columns;
 
         p_child->pfn_position_set(p_child, c);
+        p_child->pfn_compose(p_child);
+        p_child->pfn_size(p_child, p_window);
         c.x += col_widths[col];
 
         idx++;
